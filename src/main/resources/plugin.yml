@@ -2,3 +2,22 @@ name: PlayTime
 author: Deanveloper
 main: com.deanveloper.playtime.PlayTime
 softdepend: [GroupManager, Essentials]
+commands:
+  playtime:
+    permission: playtime.command.self
+    description: "Checks the amount of time someone has played"
+    usage: "Syntax error: Usage: /playtime [name]"
+
+
+permissions:
+  playtime.command.self:
+    description: "Allows self access to the /playtime command"
+    default: false
+  playtime.command:
+    description: "Allows full access to the /playtime command"
+    default: op
+    children:
+      playtime.command.self: true
+  playtime.podium:
+    description: "Allows the creation/destruction of a podium"
+    default: op

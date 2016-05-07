@@ -2,10 +2,8 @@ package com.deanveloper.playtime;
 
 import com.deanveloper.playtime.hooks.EssentialsHook;
 import com.deanveloper.playtime.hooks.GroupManagerHook;
+import com.deanveloper.playtime.util.ConfigManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -13,27 +11,36 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Dean B
  */
 public class PlayTime extends JavaPlugin {
+	private ConfigManager playerDb;
+	private ConfigManager settings;
 	private EssentialsHook eHook;
 	private GroupManagerHook gmHook;
 
 	@Override
 	public void onEnable() {
+		playerDb = new ConfigManager(this, "players.yml");
+		settings = new ConfigManager(this, "config.yml");
 		startTimer();
 		getLogger().info("PlayTime enabled!");
 	}
 
-	private void startTimer() {
+	@Override
+	public void onDisable() {
+		playerDb.save();
+		settings.save();
+	}
 
+	private void startTimer() {
 		new BukkitRunnable() {
 			public void run() {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					if(eHook.isAfk(p)) {
-						MetadataValue val = p.getMetadata("playtime_online").get(0);
-						double onlineTime = val == null ? 0 : val.asInt();
-						onlineTime += 20L;
-						p.setMetadata("playtime_online", new FixedMetadataValue(PlayTime.this, onlineTime));
-					}
-				}
+				Bukkit.getOnlinePlayers().stream()
+						.filter(player -> !eHook.isAfk(player))
+						.forEach(player -> {
+							String stringyId = player.getUniqueId().toString();
+							double time = playerDb.get(stringyId, 0);
+							time += 1;
+							playerDb.set(player.getUniqueId().toString(), time);
+						});
 			}
 		}.runTaskTimer(this, 20L, 20L);
 	}
