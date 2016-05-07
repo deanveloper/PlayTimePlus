@@ -1,0 +1,4 @@
+name: PlayTime
+author: Deanveloper
+main: com.deanveloper.playtime.PlayTime
+softdepend: [GroupManager, Essentials]
