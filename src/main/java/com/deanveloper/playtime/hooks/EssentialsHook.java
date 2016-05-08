@@ -3,6 +3,7 @@ package com.deanveloper.playtime.hooks;
 import com.earth2me.essentials.Essentials;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * @author Dean B
@@ -11,10 +12,11 @@ public class EssentialsHook {
 	private Essentials plugin;
 
 	public EssentialsHook() {
-		try {
-			this.plugin = (Essentials) Bukkit.getServer().getPluginManager().getPlugin("Essentials");
-		} catch (Exception e) {
-			Bukkit.getLogger().info("GroupManager is not being used, prefixes will be done through scoreboard");
+		Plugin plug = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
+		if (plug != null) {
+			plugin = (Essentials) plug;
+		} else {
+			Bukkit.getLogger().info("Essentials is not installed, we cannot account for if the player is AFK");
 		}
 	}
 

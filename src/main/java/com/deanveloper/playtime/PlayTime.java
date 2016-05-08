@@ -20,6 +20,8 @@ public class PlayTime extends JavaPlugin {
 	public void onEnable() {
 		playerDb = new ConfigManager(this, "players.yml");
 		settings = new ConfigManager(this, "config.yml");
+		eHook = new EssentialsHook();
+		gmHook = new GroupManagerHook();
 		startTimer();
 		getLogger().info("PlayTime enabled!");
 	}
