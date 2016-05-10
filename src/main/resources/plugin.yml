@@ -6,7 +6,7 @@ commands:
   playtime:
     permission: playtime.command.self
     description: "Checks the amount of time someone has played"
-    usage: "Syntax error: Usage: /playtime [name]"
+    usage: "An error has occured!"
 
 
 permissions:
