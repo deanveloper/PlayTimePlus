@@ -1,6 +1,5 @@
 package com.deanveloper.playtime.hooks;
 
-import com.earth2me.essentials.Essentials;
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;

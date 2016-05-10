@@ -4,6 +4,7 @@ import com.deanveloper.playtime.hooks.EssentialsHook;
 import com.deanveloper.playtime.hooks.GroupManagerHook;
 import com.deanveloper.playtime.util.ConfigManager;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -11,10 +12,15 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Dean B
  */
 public class PlayTime extends JavaPlugin {
-	private ConfigManager playerDb;
+	private static ConfigManager playerDb;
 	private ConfigManager settings;
 	private EssentialsHook eHook;
 	private GroupManagerHook gmHook;
+	private static PlayTime instance;
+
+	public static PlayTime getInstance() {
+		return instance;
+	}
 
 	@Override
 	public void onEnable() {
@@ -30,6 +36,10 @@ public class PlayTime extends JavaPlugin {
 	public void onDisable() {
 		playerDb.save();
 		settings.save();
+	}
+
+	public static ConfigManager getPlayerDb() {
+		return playerDb;
 	}
 
 	private void startTimer() {
