@@ -56,6 +56,10 @@ public class ConfigManager {
 		}
 	}
 
+	public FileConfiguration getConfig() {
+		return config;
+	}
+
 	public void save() {
 		try {
 			config.save(configFile);
