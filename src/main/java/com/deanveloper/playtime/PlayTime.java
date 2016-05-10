@@ -4,7 +4,6 @@ import com.deanveloper.playtime.hooks.EssentialsHook;
 import com.deanveloper.playtime.hooks.GroupManagerHook;
 import com.deanveloper.playtime.util.ConfigManager;
 import org.bukkit.Bukkit;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -30,6 +29,7 @@ public class PlayTime extends JavaPlugin {
 		gmHook = new GroupManagerHook();
 		startTimer();
 		getLogger().info("PlayTime enabled!");
+		instance = this;
 	}
 
 	@Override
@@ -55,5 +55,11 @@ public class PlayTime extends JavaPlugin {
 						});
 			}
 		}.runTaskTimer(this, 20L, 20L);
+
+		new BukkitRunnable() {
+			public void run() {
+				getPlayerDb().save();
+			}
+		}.runTaskTimer(this, 20L * 60, 20L * 60); //every minute
 	}
 }
