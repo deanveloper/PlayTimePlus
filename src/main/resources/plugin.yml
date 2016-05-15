@@ -1,6 +1,7 @@
 name: PlayTime
 author: Deanveloper
 main: com.deanveloper.playtime.PlayTime
+version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
   playtime:
