@@ -1,17 +1,39 @@
 package com.deanveloper.playtime.util;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Deque;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collector;
 
 /**
  * @author Dean B
  */
 public class Utils {
+	private static BiMap<UUID, CaseInsensitiveString> nameIdMap = HashBiMap.create();
+
+	public static UUID getUuid(String name) {
+		return nameIdMap.inverse().get(new CaseInsensitiveString(name));
+	}
+
+	public static String getName(UUID id) {
+		return nameIdMap.get(id).toString();
+	}
+
+	public static String correctCase(String s) {
+		return nameIdMap.values().stream()
+				.filter(value -> value.equals(s))
+				.findFirst()
+				.orElse(null)
+				.toString();
+	}
+
+	public static void update(UUID id, String name) {
+		nameIdMap.forcePut(id, new CaseInsensitiveString(name));
+	}
+
 	public static String format(int seconds) {
 		Duration dur = Duration.of(seconds, ChronoUnit.SECONDS);
 
