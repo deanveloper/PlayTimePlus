@@ -23,9 +23,12 @@ public class GroupManagerHook {
 
 	public String getPrefix(final Player base) {
 		final AnjoPermissionsHandler handler = plugin.getWorldsHolder().getWorldPermissions(base);
-		if (handler == null) {
-			return null;
+		if (handler != null) {
+			return handler.getUserPrefix(base.getName());
+		} else {
+			return Bukkit.getScoreboardManager().getMainScoreboard()
+					.getEntryTeam(base.getName())
+					.getPrefix();
 		}
-		return handler.getUserPrefix(base.getName());
 	}
 }
