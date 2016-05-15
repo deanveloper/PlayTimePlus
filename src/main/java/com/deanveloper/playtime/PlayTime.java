@@ -18,8 +18,8 @@ import org.bukkit.scheduler.BukkitRunnable;
  */
 public class PlayTime extends JavaPlugin implements Listener {
 	private static ConfigManager playerDb;
-	private EssentialsHook eHook;
-	private GroupManagerHook gmHook;
+	private static EssentialsHook eHook;
+	private static GroupManagerHook gmHook;
 	private static PlayTime instance;
 
 	public static PlayTime getInstance() {
@@ -49,6 +49,10 @@ public class PlayTime extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		playerDb.save();
+	}
+
+	public static GroupManagerHook getGroupManagerHook() {
+		return gmHook;
 	}
 
 	public static ConfigManager getPlayerDb() {

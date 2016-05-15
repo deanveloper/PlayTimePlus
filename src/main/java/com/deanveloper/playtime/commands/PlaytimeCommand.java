@@ -47,9 +47,10 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 					}
 
 					sender.sendMessage(String.format(
-							"§d#%d. §r%s §ewith §d%s§e.",
+							"§d#%d. §r%s%s §ewith §d%s§e.",
 							i + 1,
 							topTen.get(i),
+							PlayTime.getGroupManagerHook().getPrefix(topTen.get(i)),
 							Utils.format(PlayTime.getPlayerDb().get(Utils.getUuid(topTen.get(i)).toString(), int.class
 							)))
 					);

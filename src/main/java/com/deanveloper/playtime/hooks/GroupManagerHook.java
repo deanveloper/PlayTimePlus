@@ -21,13 +21,13 @@ public class GroupManagerHook {
 		}
 	}
 
-	public String getPrefix(final Player base) {
-		final AnjoPermissionsHandler handler = plugin.getWorldsHolder().getWorldPermissions(base);
+	public String getPrefix(final String base) {
+		final AnjoPermissionsHandler handler = plugin.getWorldsHolder().getWorldPermissionsByPlayerName(base);
 		if (handler != null) {
-			return handler.getUserPrefix(base.getName());
+			return handler.getUserPrefix(base);
 		} else {
 			return Bukkit.getScoreboardManager().getMainScoreboard()
-					.getEntryTeam(base.getName())
+					.getEntryTeam(base)
 					.getPrefix();
 		}
 	}
