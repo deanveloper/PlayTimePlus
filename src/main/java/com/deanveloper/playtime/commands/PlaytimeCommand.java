@@ -8,9 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * @author Dean B
@@ -31,15 +29,25 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 			}
 		} else if (sender instanceof Player) {
 			if (args.length > 0 && args[0].equalsIgnoreCase("top")) {
-				List<String> topTenIds = PlayTime.getPlayerDb().getConfig().getKeys(false).stream()
-						.sorted((key1, key2) -> PlayTime.getPlayerDb().get(key1, int.class)
-								.compareTo(PlayTime.getPlayerDb().get(key2, int.class)))
-						.collect(Utils.lastN(10));
+				List<String> topTenIds = new ArrayList<>(PlayTime.getPlayerDb().getConfig().getKeys(false));
+				Collections.sort(topTenIds, new Comparator<String>() {
+					@Override
+					public int compare(String key1, String key2) {
+						return PlayTime.getPlayerDb().get(key1, int.class)
+								.compareTo(PlayTime.getPlayerDb().get(key2, int.class));
+					}
+				});
+
+				while(topTenIds.size() < 10) {
+					topTenIds.remove(0);
+				}
+
 				sender.sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
-				List<String> topTen = topTenIds.parallelStream()
-						.map(id -> Utils.getName(UUID.fromString(id)))
-						.collect(Collectors.toList());
+				List<String> topTen = new ArrayList<>(topTenIds.size());
+				for(String id : topTenIds) {
+					topTen.add(Utils.getName(UUID.fromString(id)));
+				}
 
 				for (int i = 0; i < 10; i++) {
 					if (i >= topTenIds.size()) {
