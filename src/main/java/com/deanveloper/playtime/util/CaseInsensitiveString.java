@@ -1,7 +1,5 @@
 package com.deanveloper.playtime.util;
 
-import java.util.stream.IntStream;
-
 /**
  * @author Dean B
  */
@@ -27,16 +25,6 @@ public class CaseInsensitiveString implements CharSequence {
 	@Override
 	public CharSequence subSequence(int start, int end) {
 		return new CaseInsensitiveString(original.subSequence(start, end).toString());
-	}
-
-	@Override
-	public IntStream chars() {
-		return original.chars();
-	}
-
-	@Override
-	public IntStream codePoints() {
-		return original.codePoints();
 	}
 
 	public String toLowerCase() {
