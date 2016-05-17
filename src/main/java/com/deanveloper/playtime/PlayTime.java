@@ -1,5 +1,6 @@
 package com.deanveloper.playtime;
 
+import com.deanveloper.playtime.commands.ExportPlayersCommand;
 import com.deanveloper.playtime.commands.PlaytimeCommand;
 import com.deanveloper.playtime.hooks.EssentialsHook;
 import com.deanveloper.playtime.hooks.GroupManagerHook;
@@ -30,6 +31,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getCommand("playtime").setExecutor(new PlaytimeCommand());
+        getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
 		getLogger().info("Loading players...");
 		playerDb = new ConfigManager(this, "players.yml");
 		getLogger().info("Players loaded!");

@@ -5,20 +5,27 @@ version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
   playtime:
-    permission: playtime.command.self
+    permission: playtime.command.playtime.self
     description: "Checks the amount of time someone has played"
     usage: "An error has occured!"
+  exportplayers:
+    permission: playtime.command.export
+    description: "Exports players to a file"
+    usage: "/exportplayers [help|filetype]"
 
 
 permissions:
-  playtime.command.self:
+  playtime.command.playtime.self:
     description: "Allows self access to the /playtime command"
-    default: false
-  playtime.command:
+    default: true
+  playtime.command.playtime:
     description: "Allows full access to the /playtime command"
     default: op
     children:
-      playtime.command.self: true
+      playtime.command.playtime.self: true
+  playtime.command.export:
+    description: "Allows access to the /exportplayers command"
+    default: op
   playtime.podium:
     description: "Allows the creation/destruction of a podium"
     default: op

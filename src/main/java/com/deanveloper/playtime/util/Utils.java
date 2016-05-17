@@ -2,6 +2,8 @@ package com.deanveloper.playtime.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.util.concurrent.FutureCallback;
+import org.bukkit.Bukkit;
 
 import java.util.UUID;
 
@@ -16,7 +18,11 @@ public class Utils {
 	}
 
 	public static String getName(UUID id) {
-		return nameIdMap.get(id).toString();
+        CaseInsensitiveString cis = nameIdMap.get(id);
+        if(cis == null) {
+            return null;
+        }
+		return cis.toString();
 	}
 
 	public static String correctCase(String s) {
@@ -29,6 +35,17 @@ public class Utils {
 	public static void update(UUID id, String name) {
 		nameIdMap.forcePut(id, new CaseInsensitiveString(name));
 	}
+
+    public static String forceGetName(UUID id) {
+        String name = getName(id);
+
+        if(name == null) {
+            name = Bukkit.getOfflinePlayer(id).getName();
+            update(id, name);
+        }
+
+        return name;
+    }
 
 	public static String format(int seconds) {
 		StringBuilder sb = new StringBuilder();

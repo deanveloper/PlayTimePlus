@@ -16,7 +16,7 @@ import java.util.*;
 public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
-		if (sender.hasPermission("playtime.command") && args.length > 0 && !args[0].equalsIgnoreCase("top")) {
+		if (sender.hasPermission("playtime.command.playtime") && args.length > 0 && !args[0].equalsIgnoreCase("top")) {
 			UUID id = Utils.getUuid(args[0]);
 			if (id == null) {
 				sender.sendMessage("Couldn't find player " + args[0]);
