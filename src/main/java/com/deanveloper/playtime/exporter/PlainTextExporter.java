@@ -16,20 +16,20 @@ import java.util.UUID;
  * @author Dean B
  */
 public class PlainTextExporter extends Exporter {
-    @Override
-    protected void exportFile(List<String> names, List<UUID> ids, List<Integer> secondsOnline) {
-        File f = new File(PlayTime.getInstance().getDataFolder(), getFileName() + ".txt");
+	@Override
+	protected void exportFile(List<String> names, List<UUID> ids, List<Integer> secondsOnline) {
+		File f = new File(PlayTime.getInstance().getDataFolder(), getFileName() + ".txt");
 
-        try (PrintWriter writer = new PrintWriter(f, "utf8")){
-            for(int i = 0; i < names.size(); i++) {
-                writer.printf("%s (aka %s) has been on for %s",
-                    ids.get(i),
-                    names.get(i),
-                    Utils.format(secondsOnline.get(i))
-                );
-            }
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-    }
+		try (PrintWriter writer = new PrintWriter(f, "utf8")) {
+			for (int i = 0; i < names.size(); i++) {
+				writer.printf("%s (aka %s) has been on for %s",
+						ids.get(i),
+						names.get(i),
+						Utils.format(secondsOnline.get(i))
+				);
+			}
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
 }

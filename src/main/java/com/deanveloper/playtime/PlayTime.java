@@ -31,7 +31,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		getCommand("playtime").setExecutor(new PlaytimeCommand());
-        getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
+		getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
 		getLogger().info("Loading players...");
 		playerDb = new ConfigManager(this, "players.yml");
 		getLogger().info("Players loaded!");
@@ -42,7 +42,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 		startTimer();
 		getLogger().info("PlayTime enabled!");
 
-		for(OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+		for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
 			Utils.update(p.getUniqueId(), p.getName());
 		}
 
@@ -70,14 +70,14 @@ public class PlayTime extends JavaPlugin implements Listener {
 	private void startTimer() {
 		new BukkitRunnable() {
 			public void run() {
-                for(Player p : Bukkit.getOnlinePlayers()) {
-                    if(!eHook.isAfk(p)) {
-                        String stringyId = p.getUniqueId().toString();
-                        int time = playerDb.get(stringyId, 0);
-                        time += 1;
-                        playerDb.set(stringyId, time);
-                    }
-                }
+				for (Player p : Bukkit.getOnlinePlayers()) {
+					if (!eHook.isAfk(p)) {
+						String stringyId = p.getUniqueId().toString();
+						int time = playerDb.get(stringyId, 0);
+						time += 1;
+						playerDb.set(stringyId, time);
+					}
+				}
 			}
 		}.runTaskTimer(this, 20L, 20L);
 

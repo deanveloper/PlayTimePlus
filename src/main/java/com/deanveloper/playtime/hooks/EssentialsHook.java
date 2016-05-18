@@ -24,7 +24,7 @@ public class EssentialsHook {
 	 * If the player is afk
 	 *
 	 * @param p The player to check
-	 * @return  If they are AFK, assumes not AFK if essentials is not installed
+	 * @return If they are AFK, assumes not AFK if essentials is not installed
 	 */
 	public boolean isAfk(Player p) {
 		return plugin != null && plugin.getUser(p).isAfk();

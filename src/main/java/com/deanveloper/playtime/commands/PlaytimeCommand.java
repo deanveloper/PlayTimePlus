@@ -38,14 +38,14 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 					}
 				});
 
-				while(topTenIds.size() < 10) {
+				while (topTenIds.size() > 10) {
 					topTenIds.remove(0);
 				}
 
 				sender.sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
 				List<String> topTen = new ArrayList<>(topTenIds.size());
-				for(String id : topTenIds) {
+				for (String id : topTenIds) {
 					topTen.add(Utils.getName(UUID.fromString(id)));
 				}
 

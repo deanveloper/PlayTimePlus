@@ -18,16 +18,18 @@ public class Utils {
 	}
 
 	public static String getName(UUID id) {
-        CaseInsensitiveString cis = nameIdMap.get(id);
-        if(cis == null) {
-            return null;
-        }
+		CaseInsensitiveString cis = nameIdMap.get(id);
+		if (cis == null) {
+			return null;
+		}
 		return cis.toString();
 	}
 
 	public static String correctCase(String s) {
-		for(CaseInsensitiveString cis : nameIdMap.values()) {
-			if(cis.equals(s)) return cis.toString();
+		for (CaseInsensitiveString cis : nameIdMap.values()) {
+			if (cis.equals(s)) {
+				return cis.toString();
+			}
 		}
 		return null;
 	}
@@ -36,16 +38,16 @@ public class Utils {
 		nameIdMap.forcePut(id, new CaseInsensitiveString(name));
 	}
 
-    public static String forceGetName(UUID id) {
-        String name = getName(id);
+	public static String forceGetName(UUID id) {
+		String name = getName(id);
 
-        if(name == null) {
-            name = Bukkit.getOfflinePlayer(id).getName();
-            update(id, name);
-        }
+		if (name == null) {
+			name = Bukkit.getOfflinePlayer(id).getName();
+			update(id, name);
+		}
 
-        return name;
-    }
+		return name;
+	}
 
 	public static String format(int seconds) {
 		StringBuilder sb = new StringBuilder();
