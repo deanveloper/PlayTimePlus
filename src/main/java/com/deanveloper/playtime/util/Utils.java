@@ -2,7 +2,6 @@ package com.deanveloper.playtime.util;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.util.concurrent.FutureCallback;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
@@ -55,16 +54,16 @@ public class Utils {
 		int hours = seconds / 60 / 60;
 		if (hours > 0) {
 			sb.append(hours).append(" hour");
-			if (hours > 1) {
+			if (hours != 1) {
 				sb.append('s');
 			}
-			sb.append(',');
+			sb.append(", ");
 		}
 
 		//always include minutes, even if 0
-		int minutes = hours % 60;
+		int minutes = seconds / 60 % 60;
 		sb.append(minutes).append(" minute");
-		if (minutes > 1) {
+		if (minutes != 1) {
 			sb.append('s');
 		}
 
