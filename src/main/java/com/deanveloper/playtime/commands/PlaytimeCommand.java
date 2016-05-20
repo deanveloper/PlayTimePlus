@@ -30,16 +30,18 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 		} else if (sender instanceof Player) {
 			if (args.length > 0 && args[0].equalsIgnoreCase("top")) {
 				List<String> topTenIds = new ArrayList<>(PlayTime.getPlayerDb().getConfig().getKeys(false));
+				//sort from most to least
 				Collections.sort(topTenIds, new Comparator<String>() {
 					@Override
 					public int compare(String key1, String key2) {
-						return PlayTime.getPlayerDb().get(key1, int.class)
-								.compareTo(PlayTime.getPlayerDb().get(key2, int.class));
+						return PlayTime.getPlayerDb().get(key2, int.class)
+								.compareTo(PlayTime.getPlayerDb().get(key1, int.class));
 					}
 				});
 
+				//remove from the end until it has 10
 				while (topTenIds.size() > 10) {
-					topTenIds.remove(0);
+					topTenIds.remove(topTenIds.size() - 1);
 				}
 
 				sender.sendMessage("§e---------------§a[Playtime Top]§e---------------");
@@ -57,8 +59,8 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 					sender.sendMessage(String.format(
 							"§d#%d. §r%s%s §ewith §d%s§e.",
 							i + 1,
-							topTen.get(i),
 							PlayTime.getGroupManagerHook().getPrefix(topTen.get(i)),
+							topTen.get(i),
 							Utils.format(PlayTime.getPlayerDb().get(Utils.getUuid(topTen.get(i)).toString(), int.class
 							)))
 					);

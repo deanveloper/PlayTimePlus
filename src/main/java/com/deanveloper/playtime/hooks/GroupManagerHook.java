@@ -3,6 +3,7 @@ package com.deanveloper.playtime.hooks;
 import org.anjocaido.groupmanager.GroupManager;
 import org.anjocaido.groupmanager.permissions.AnjoPermissionsHandler;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
 /**
@@ -23,7 +24,7 @@ public class GroupManagerHook {
 	public String getPrefix(final String base) {
 		final AnjoPermissionsHandler handler = plugin.getWorldsHolder().getWorldPermissionsByPlayerName(base);
 		if (handler != null) {
-			return handler.getUserPrefix(base);
+			return ChatColor.translateAlternateColorCodes('&', handler.getUserPrefix(base));
 		} else {
 			return Bukkit.getScoreboardManager().getMainScoreboard()
 					.getEntryTeam(base)
