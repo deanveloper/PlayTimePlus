@@ -1,8 +1,6 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.exporter.Exporter;
-import com.deanveloper.playtime.util.Utils;
 
 import java.io.File;
 import java.io.FileNotFoundException;
