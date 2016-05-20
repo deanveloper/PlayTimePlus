@@ -3,6 +3,7 @@ package com.deanveloper.playtime.util;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
+import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
 
@@ -46,6 +47,12 @@ public class Utils {
 		}
 
 		return name;
+	}
+
+	public static String getPrefix(String name) {
+		Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(name);
+		if(team == null) return "";
+		else return team.getPrefix();
 	}
 
 	public static String format(int seconds) {

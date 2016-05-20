@@ -3,7 +3,6 @@ package com.deanveloper.playtime;
 import com.deanveloper.playtime.commands.ExportPlayersCommand;
 import com.deanveloper.playtime.commands.PlaytimeCommand;
 import com.deanveloper.playtime.hooks.EssentialsHook;
-import com.deanveloper.playtime.hooks.GroupManagerHook;
 import com.deanveloper.playtime.util.ConfigManager;
 import com.deanveloper.playtime.util.Utils;
 import org.bukkit.Bukkit;
@@ -21,7 +20,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class PlayTime extends JavaPlugin implements Listener {
 	private static ConfigManager playerDb;
 	private static EssentialsHook eHook;
-	private static GroupManagerHook gmHook;
 	private static PlayTime instance;
 
 	public static PlayTime getInstance() {
@@ -37,7 +35,6 @@ public class PlayTime extends JavaPlugin implements Listener {
 		getLogger().info("Players loaded!");
 		getLogger().info("Hooking plugins...");
 		eHook = new EssentialsHook();
-		gmHook = new GroupManagerHook();
 		getLogger().info("Hooked into available plugins!");
 		startTimer();
 		getLogger().info("PlayTime enabled!");
@@ -52,10 +49,6 @@ public class PlayTime extends JavaPlugin implements Listener {
 	@Override
 	public void onDisable() {
 		playerDb.save();
-	}
-
-	public static GroupManagerHook getGroupManagerHook() {
-		return gmHook;
 	}
 
 	public static ConfigManager getPlayerDb() {
