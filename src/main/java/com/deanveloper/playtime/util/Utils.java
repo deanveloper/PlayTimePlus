@@ -50,6 +50,7 @@ public class Utils {
 	}
 
 	public static String getPrefix(String name) {
+		if(name == null) return "";
 		Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(name);
 		if(team == null) return "";
 		else return team.getPrefix();

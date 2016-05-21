@@ -6,7 +6,7 @@
 
     <groupId>com.deanveloper</groupId>
     <artifactId>playtime</artifactId>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <build>
         <resources>
             <resource>
