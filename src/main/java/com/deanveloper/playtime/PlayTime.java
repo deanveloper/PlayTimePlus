@@ -18,66 +18,66 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Dean B
  */
 public class PlayTime extends JavaPlugin implements Listener {
-	private static ConfigManager playerDb;
-	private static EssentialsHook eHook;
-	private static PlayTime instance;
+    private static ConfigManager playerDb;
+    private static EssentialsHook eHook;
+    private static PlayTime instance;
 
-	public static PlayTime getInstance() {
-		return instance;
-	}
+    public static PlayTime getInstance() {
+        return instance;
+    }
 
-	@Override
-	public void onEnable() {
-		getCommand("playtime").setExecutor(new PlaytimeCommand());
-		getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
-		getLogger().info("Loading players...");
-		playerDb = new ConfigManager(this, "players.yml");
-		getLogger().info("Players loaded!");
-		getLogger().info("Hooking plugins...");
-		eHook = new EssentialsHook();
-		getLogger().info("Hooked into available plugins!");
-		startTimer();
-		getLogger().info("PlayTime enabled!");
+    public static ConfigManager getPlayerDb() {
+        return playerDb;
+    }
 
-		for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
-			Utils.update(p.getUniqueId(), p.getName());
-		}
+    @Override
+    public void onEnable() {
+        getCommand("playtime").setExecutor(new PlaytimeCommand());
+        getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
+        getLogger().info("Loading players...");
+        playerDb = new ConfigManager(this, "players.yml");
+        getLogger().info("Players loaded!");
+        getLogger().info("Hooking plugins...");
+        eHook = new EssentialsHook();
+        getLogger().info("Hooked into available plugins!");
+        startTimer();
+        getLogger().info("PlayTime enabled!");
 
-		instance = this;
-	}
+        for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
+            Utils.update(p.getUniqueId(), p.getName());
+        }
 
-	@Override
-	public void onDisable() {
-		playerDb.save();
-	}
+        instance = this;
+    }
 
-	public static ConfigManager getPlayerDb() {
-		return playerDb;
-	}
+    @Override
+    public void onDisable() {
+        playerDb.save();
+    }
 
-	@EventHandler
-	public void onJoin(PlayerJoinEvent e) {
-		Utils.update(e.getPlayer().getUniqueId(), e.getPlayer().getName());
-	}
+    @EventHandler
+    public void onJoin(PlayerJoinEvent e) {
+        Utils.update(e.getPlayer().getUniqueId(), e.getPlayer().getName());
+    }
 
-	private void startTimer() {
-		new BukkitRunnable() {
-			public void run() {
-				for (Player p : Bukkit.getOnlinePlayers()) {
-					if (!eHook.isAfk(p)) {
-						String stringyId = p.getUniqueId().toString();
-						int time = playerDb.get(stringyId, 0);
-						time += 1;
-						playerDb.set(stringyId, time);
-					}
-				}
-			}
-		}.runTaskTimer(this, 20L, 20L);
+    private void startTimer() {
+        new BukkitRunnable() {
+            public void run() {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (!eHook.isAfk(p)) {
+                        String stringyId = p.getUniqueId().toString();
+                        int time = playerDb.get(stringyId, 0);
+                        time += 1;
+                        playerDb.set(stringyId, time);
+                    }
+                }
+            }
+        }.runTaskTimer(this, 20L, 20L);
 
-		new BukkitRunnable() {
-			public void run() {
-				getPlayerDb().save();
-			}
-		}.runTaskTimer(this, 20L * 60, 20L * 60); //every minute
-	}
+        new BukkitRunnable() {
+            public void run() {
+                getPlayerDb().save();
+            }
+        }.runTaskTimer(this, 20L * 60, 20L * 60); //every minute
+    }
 }
