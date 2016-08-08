@@ -11,31 +11,29 @@ import java.util.UUID;
  * @author Dean B
  */
 public class Utils {
-    private static BiMap<UUID, CaseInsensitiveString> nameIdMap = HashBiMap.create();
+    private static BiMap<UUID, String> nameIdMap = HashBiMap.create(new CaseInsensitiveMap<UUID>()).inverse();
 
     public static UUID getUuid(String name) {
-        return nameIdMap.inverse().get(new CaseInsensitiveString(name));
+        if(name == null) throw new NullPointerException("Cannot get the UUID of a null username!");
+        return nameIdMap.inverse().get(name);
     }
 
     public static String getName(UUID id) {
-        CaseInsensitiveString cis = nameIdMap.get(id);
-        if (cis == null) {
-            return null;
-        }
-        return cis.toString();
+        if(id == null) throw new NullPointerException("Cannot get the name of a null UUID!");
+        return nameIdMap.get(id);
     }
 
-    public static String correctCase(String s) {
-        for (CaseInsensitiveString cis : nameIdMap.values()) {
-            if (cis.equals(s)) {
-                return cis.toString();
+    public static String correctCase(String name) {
+        for (String eachName : nameIdMap.values()) {
+            if (eachName.equals(name)) {
+                return eachName;
             }
         }
         return null;
     }
 
     public static void update(UUID id, String name) {
-        nameIdMap.forcePut(id, new CaseInsensitiveString(name));
+        nameIdMap.forcePut(id, name);
     }
 
     public static String forceGetName(UUID id) {
