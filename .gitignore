@@ -1,6 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
 .idea
 *.xml
-PlayTime.iml
 target
 !pom.xml
