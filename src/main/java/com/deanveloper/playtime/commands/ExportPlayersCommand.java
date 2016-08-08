@@ -66,7 +66,6 @@ public class ExportPlayersCommand implements CommandExecutor {
 
     enum FileType {
         JSON("Exports to a parsable JavaScript object file", new JsonExporter()),
-        PLAINTEXT("A nice, human-readable file", new PlainTextExporter()),
         TXT("A nice, human-readable file", new PlainTextExporter()),
         CSV("Exports to a spreadsheet-parsable file", new CsvExporter());
 
