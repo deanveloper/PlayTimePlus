@@ -7,7 +7,6 @@ import com.deanveloper.playtime.util.ConfigManager;
 import com.deanveloper.playtime.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -63,14 +62,14 @@ public class PlayTime extends JavaPlugin implements Listener {
     private void startTimer() {
         new BukkitRunnable() {
             public void run() {
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    if (!eHook.isAfk(p)) {
-                        String stringyId = p.getUniqueId().toString();
-                        int time = playerDb.get(stringyId, 0);
-                        time += 1;
-                        playerDb.set(stringyId, time);
-                    }
-                }
+                Bukkit.getOnlinePlayers().stream()
+                        .filter(eHook::isAfk)
+                        .forEach(p -> {
+                            String stringyId = p.getUniqueId().toString();
+                            int time = playerDb.get(stringyId, 0);
+                            time += 1;
+                            playerDb.set(stringyId, time);
+                        });
             }
         }.runTaskTimer(this, 20L, 20L);
 

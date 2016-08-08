@@ -8,7 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author Dean B
@@ -31,13 +34,11 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
             if (args.length > 0 && args[0].equalsIgnoreCase("top")) {
                 List<String> topTenIds = new ArrayList<>(PlayTime.getPlayerDb().getConfig().getKeys(false));
                 //sort from most to least
-                Collections.sort(topTenIds, new Comparator<String>() {
-                    @Override
-                    public int compare(String key1, String key2) {
-                        return PlayTime.getPlayerDb().get(key2, int.class)
-                                .compareTo(PlayTime.getPlayerDb().get(key1, int.class));
-                    }
-                });
+                topTenIds = topTenIds.stream()
+                        .sorted((key1, key2) ->
+                                PlayTime.getPlayerDb().get(key2, int.class)
+                                        .compareTo(PlayTime.getPlayerDb().get(key1, int.class)))
+                        .collect(Collectors.toList());
 
                 //remove from the end until it has 10
                 while (topTenIds.size() > 10) {
@@ -47,9 +48,9 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                 sender.sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
                 List<String> topTen = new ArrayList<>(topTenIds.size());
-                for (String id : topTenIds) {
-                    topTen.add(Utils.getName(UUID.fromString(id)));
-                }
+                topTen.addAll(topTenIds.stream()
+                        .map(id -> Utils.getName(UUID.fromString(id)))
+                        .collect(Collectors.toList()));
 
                 for (int i = 0; i < 10; i++) {
                     if (i >= topTenIds.size()) {
@@ -61,8 +62,9 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                             i + 1,
                             Utils.getPrefix(topTen.get(i)),
                             topTen.get(i),
-                            Utils.format(PlayTime.getPlayerDb().get(Utils.getUuid(topTen.get(i)).toString(), int.class
-                            )))
+                            Utils.format(
+                                    PlayTime.getPlayerDb().get(Utils.getUuid(topTen.get(i)).toString(), int.class))
+                            )
                     );
                 }
             } else {
