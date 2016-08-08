@@ -71,12 +71,12 @@ public class PlayTime extends JavaPlugin implements Listener {
                             playerDb.set(stringyId, time);
                         });
             }
-        }.runTaskTimer(this, 20L, 20L);
+        }.runTaskTimer(this, 20L, 20L); // every second
 
         new BukkitRunnable() {
             public void run() {
                 getPlayerDb().save();
             }
-        }.runTaskTimer(this, 20L * 60, 20L * 60); //every minute
+        }.runTaskTimer(this, 20L * 60, 20L * 60); // every minute
     }
 }
