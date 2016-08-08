@@ -1,11 +1,17 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtime.util.Utils;
 import com.google.gson.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,13 +41,12 @@ public class JsonExporter extends Exporter {
         JsonElement je = jp.parse(root.toString());
         String prettyJson = gson.toJson(je);
 
-        File f = new File(PlayTime.getInstance().getDataFolder(), getFileName() + ".json");
-
-        try (PrintWriter writer = new PrintWriter(f)) {
-            for (String s : prettyJson.split("\\n")) {
-                writer.println(s);
-            }
-        } catch (FileNotFoundException e) {
+        try {
+            Files.write(
+                    Paths.get(PlayTime.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
+                    Arrays.asList(prettyJson.split("\\n"))
+            );
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
