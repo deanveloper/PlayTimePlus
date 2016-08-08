@@ -1,16 +1,11 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.util.Utils;
 import com.google.gson.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;

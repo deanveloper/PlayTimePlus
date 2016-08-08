@@ -1,9 +1,8 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.util.Utils;
 
-import java.io.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
