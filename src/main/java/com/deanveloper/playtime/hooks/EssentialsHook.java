@@ -34,8 +34,8 @@ public class EssentialsHook {
     /**
      * The player's full name
      *
-     * @param name The player to get the nickname of
-     * @return The player's nickname
+     * @param name The player to get the full name of
+     * @return The player's full name
      */
     public String fullName(String name) {
         String nickName = name;
