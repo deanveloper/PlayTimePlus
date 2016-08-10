@@ -79,4 +79,8 @@ public class PlayTime extends JavaPlugin implements Listener {
             }
         }.runTaskTimer(this, 20L * 60, 20L * 60); // every minute
     }
+
+    public static EssentialsHook getEssentialsHook() {
+        return eHook;
+    }
 }

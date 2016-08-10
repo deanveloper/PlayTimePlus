@@ -1,8 +1,10 @@
 package com.deanveloper.playtime.util;
 
+import com.deanveloper.playtime.PlayTime;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
@@ -48,7 +50,7 @@ public class Utils {
     }
 
     public static String getPrefix(String name) {
-        if (name == null) return "";
+        if (name == null) throw new NullPointerException("Cannot get the prefix of a null name!");
         Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(name);
         if (team == null) return "";
         else return team.getPrefix();
