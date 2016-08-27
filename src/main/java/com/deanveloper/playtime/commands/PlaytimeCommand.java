@@ -27,7 +27,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 
             // HELP
             if (args[0].equals("help")) {
-                StringJoiner joiner = new StringJoiner("|", "[", "]");
+                StringJoiner joiner = new StringJoiner("§a|§b", "§a[§b", "§a]");
                 joiner.add("help");
                 if (sender.hasPermission("playtime.command.playtime.self")) {
                     joiner.add("self");
@@ -45,7 +45,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                 if (joiner.length() == 0) {
                     sender.sendMessage("You do not have permission to use this command!");
                 } else {
-                    sender.sendMessage("Usage: " + joiner.toString());
+                    sender.sendMessage("§aUsage: " + joiner.toString());
                 }
 
                 // SELF
