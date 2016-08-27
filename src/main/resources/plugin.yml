@@ -7,7 +7,7 @@ commands:
   playtime:
     permission: playtime.command.playtime
     description: "Checks the amount of time someone has played"
-    usage: "An error has occured!"
+    usage: "/playtime help"
   exportplayers:
     permission: playtime.command.export
     description: "Exports players to a file"
