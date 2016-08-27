@@ -5,6 +5,8 @@ import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -12,39 +14,25 @@ import java.util.UUID;
  */
 public class Utils {
     private static BiMap<UUID, String> nameIdMap = HashBiMap.create(new CaseInsensitiveMap<UUID>()).inverse();
+    private static Map<String, String> correctCaseMap = new HashMap<>();
 
     public static UUID getUuid(String name) {
         if(name == null) throw new NullPointerException("Cannot get the UUID of a null username!");
-        return nameIdMap.inverse().get(name);
+        return nameIdMap.inverse().get(name.toLowerCase());
     }
 
     public static String getName(UUID id) {
         if(id == null) throw new NullPointerException("Cannot get the name of a null UUID!");
-        return nameIdMap.get(id);
+        return correctCaseMap.get(nameIdMap.get(id));
     }
 
     public static String correctCase(String name) {
-        for (String eachName : nameIdMap.values()) {
-            if (eachName.equals(name)) {
-                return eachName;
-            }
-        }
-        return name;
+        return correctCaseMap.getOrDefault(name.toLowerCase(), name.toLowerCase());
     }
 
     public static void update(UUID id, String name) {
-        nameIdMap.forcePut(id, name);
-    }
-
-    public static String forceGetName(UUID id) {
-        String name = getName(id);
-
-        if (name == null) {
-            name = Bukkit.getOfflinePlayer(id).getName();
-            update(id, name);
-        }
-
-        return name;
+        nameIdMap.forcePut(id, name.toLowerCase());
+        correctCaseMap.put(name.toLowerCase(), name);
     }
 
     public static String getPrefix(String name) {

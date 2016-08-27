@@ -40,7 +40,7 @@ public class ExportPlayersCommand implements CommandExecutor {
                 //populate lists
                 for (Entry<String, Object> entry : PlayTime.getPlayerDb().getConfig().getValues(false).entrySet()) {
                     UUID id = UUID.fromString(entry.getKey());
-                    String name = Utils.forceGetName(id);
+                    String name = Utils.getName(id);
                     Integer time = PlayTime.getPlayerDb().get(entry.getKey(), int.class);
 
                     names.add(name);
