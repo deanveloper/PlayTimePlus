@@ -21,7 +21,7 @@ commands:
 permissions:
   playtime.command.playtime:
     description: "Allows access to use /playtime (Note: subcommands must be given separately)"
-    defualt: true
+    default: true
   playtime.command.playtime.self:
     description: "Allows access to view their own playtime"
     default: true
