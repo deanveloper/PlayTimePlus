@@ -5,7 +5,7 @@ version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
   playtime:
-    permission: playtime.command.playtime.self
+    permission: playtime.command.playtime
     description: "Checks the amount of time someone has played"
     usage: "An error has occured!"
   exportplayers:
@@ -19,14 +19,37 @@ commands:
 
 
 permissions:
-  playtime.command.playtime.self:
-    description: "Allows self access to the /playtime command"
-    default: true
   playtime.command.playtime:
+    description: "Allows access to use /playtime (Note: subcommands must be given separately)"
+    defualt: true
+  playtime.command.playtime.self:
+    description: "Allows access to view their own playtime"
+    default: true
+    children:
+      playtime.command.playtime: true
+  playtime.command.playtime.top:
+    description: "Allows access to view the top 10 players"
+    default: true
+    children:
+      playtime.command.playtime: true
+  playtime.command.playtime.other:
+    description: "Allows access to view other people's playtimes"
+    default: op
+    children:
+      playtime.command.playtime: true
+  playtime.command.playtime.change:
+    description: "Allows access to change people's playtime"
+    default: op
+    children:
+      playtime.command.playtime: true
+  playtime.command.playtime.*:
     description: "Allows full access to the /playtime command"
     default: op
     children:
       playtime.command.playtime.self: true
+      playtime.command.playtime.other: true
+      playtime.command.playtime.change: true
+      playtime.command.playtime.top: true
   playtime.command.export:
     description: "Allows access to the /exportplayers command"
     default: op
