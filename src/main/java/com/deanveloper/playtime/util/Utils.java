@@ -1,10 +1,8 @@
 package com.deanveloper.playtime.util;
 
-import com.deanveloper.playtime.PlayTime;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
@@ -31,7 +29,7 @@ public class Utils {
                 return eachName;
             }
         }
-        return null;
+        return name;
     }
 
     public static void update(UUID id, String name) {
