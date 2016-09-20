@@ -36,20 +36,23 @@ public class PlayTime extends JavaPlugin implements Listener {
     public void onEnable() {
         saveDefaultConfig();
 
-        getLogger().info("Setting commands...");
+        getLogger().info("Setting commands and listeners...");
         getCommand("playtime").setExecutor(new PlaytimeCommand());
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
+        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         getLogger().info("Done!");
 
         getLogger().info("Loading players...");
         playerDb = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
         getLogger().info("Done!");
+        getLogger().info("Starting autosave...");
+        startAutoSave();
+        getLogger().info("Done!");
 
         getLogger().info("Hooking into essentials...");
         eHook = new EssentialsHook();
         getLogger().info("Done!");
-        startAutoSave();
         Bukkit.getPluginManager().registerEvents(this, this);
 
         for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
@@ -71,26 +74,17 @@ public class PlayTime extends JavaPlugin implements Listener {
     }
 
     private void startAutoSave() {
+        int autosave = getConfig().getInt("autosave", -1);
+        if(autosave < 1) {
+            throw new IllegalStateException("Autosave must be above 0! (current: " + autosave + " seconds)");
+        }
         new BukkitRunnable() {
             public void run() {
-                Bukkit.getOnlinePlayers().stream()
-                        .filter(player -> !eHook.isAfk(player))
-                        .forEach(p -> {
-                            debug("added 1 second to " + p.getName());
-                            String stringyId = p.toString();
-                            int time = playerDb.get(p.getUniqueId(), 0);
-                            time += 1;
-                            playerDb.set(stringyId, time);
-                        });
-            }
-        }.runTaskTimer(this, 20L, 20L); // every second
-
-        new BukkitRunnable() {
-            public void run() {
+                Storage.PlayerEntry.updatePlayers();
                 getPlayerDb().save();
                 debug(getPlayerDb().getPlayers().toString());
             }
-        }.runTaskTimer(this, 20L * 60, 20L * 60); // every minute
+        }.runTaskTimer(this, autosave, autosave); // every minute
     }
 
     public static EssentialsHook getEssentialsHook() {

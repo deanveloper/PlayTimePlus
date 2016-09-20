@@ -5,6 +5,7 @@ import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -42,10 +43,10 @@ public class Utils {
         else return team.getPrefix();
     }
 
-    public static String format(int seconds) {
+    public static String format(Duration dur) {
         StringBuilder sb = new StringBuilder();
 
-        int hours = seconds / 60 / 60;
+        int hours = (int) dur.toHours();
         if (hours > 0) {
             sb.append(hours).append(" hour");
             if (hours != 1) {
@@ -55,7 +56,7 @@ public class Utils {
         }
 
         //always include minutes, even if 0
-        int minutes = seconds / 60 % 60;
+        int minutes = (int) dur.toMinutes() % 60;
         sb.append(minutes).append(" minute");
         if (minutes != 1) {
             sb.append('s');

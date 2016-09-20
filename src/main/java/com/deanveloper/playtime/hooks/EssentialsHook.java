@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import java.util.UUID;
+
 /**
  * @author Dean B
  */
@@ -28,6 +30,16 @@ public class EssentialsHook {
      * @return If they are AFK, assumes not AFK if essentials is not installed
      */
     public boolean isAfk(Player p) {
+        return plugin != null && plugin.getUser(p).isAfk();
+    }
+
+    /**
+     * If the player is afk
+     *
+     * @param p The player to check
+     * @return If they are AFK, assumes not AFK if essentials is not installed
+     */
+    public boolean isAfk(UUID p) {
         return plugin != null && plugin.getUser(p).isAfk();
     }
 

@@ -13,7 +13,7 @@ commands:
     description: "Exports players to a file"
     usage: "/exportplayers [help|filetype]"
   debug:
-    permission: playtime.command.debugEnabled
+    permission: playtime.command.debug
     description: "Enable debug mode"
     usage: "/debug [true|false]"
 

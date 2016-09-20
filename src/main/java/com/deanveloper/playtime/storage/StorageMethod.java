@@ -1,19 +1,20 @@
 package com.deanveloper.playtime.storage;
 
+import com.deanveloper.playtime.util.Lazy;
+
 /**
  * @author Dean
  */
 public enum StorageMethod {
-    JSON(new JsonStorage());
+    JSON(Lazy.create(JsonStorage::new));
 
-    private final Storage storage;
+    private final Lazy<Storage> storageSupplier;
 
-    StorageMethod(Storage storage) {
-
-        this.storage = storage;
+    StorageMethod(Lazy<Storage> storageSupplier) {
+        this.storageSupplier = storageSupplier;
     }
 
     public Storage getStorage() {
-        return storage;
+        return storageSupplier.get();
     }
 }
