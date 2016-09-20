@@ -1,11 +1,17 @@
 package com.deanveloper.playtime.storage;
 
 import com.deanveloper.playtime.PlayTime;
+import com.google.common.io.Files;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +29,17 @@ public class JsonStorage implements Storage {
     private final Map<UUID, LocalDateTime> current;
 
     JsonStorage() {
-        storage = new File(PlayTime.getInstance().getDataFolder(), "players.root");
+        storage = new File(PlayTime.getInstance().getDataFolder(), "players.json");
         JsonObject temp;
         try {
-            temp = new JsonParser().parse(new FileReader(storage)).getAsJsonObject();
+            temp = new JsonParser().parse(Files.readFirstLine(storage, Charset.defaultCharset())).getAsJsonObject();
         } catch (FileNotFoundException e) {
             temp = new JsonObject();
             temp.addProperty("version", 1);
             temp.add("version", new JsonObject());
+            temp.add("players", new JsonArray());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
         root = temp;
         version = root.get("version");
@@ -54,11 +63,6 @@ public class JsonStorage implements Storage {
     @Override
     public PlayerEntry get(UUID id) {
         return PlayTime.GSON.fromJson(players.get(id.toString()), PlayerEntry.class);
-    }
-
-    @Override
-    public void update(PlayerEntry entry) {
-        players.add(entry.getId().toString(), PlayTime.GSON.toJsonTree(entry));
     }
 
     @Override

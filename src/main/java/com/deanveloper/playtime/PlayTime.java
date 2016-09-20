@@ -55,6 +55,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        instance = this;
         saveDefaultConfig();
 
         getLogger().info("Setting commands and listeners...");
@@ -80,12 +81,11 @@ public class PlayTime extends JavaPlugin implements Listener {
             Utils.update(p.getUniqueId(), p.getName());
         }
         getLogger().info("PlayTime enabled!");
-
-        instance = this;
     }
 
     @Override
     public void onDisable() {
+        Storage.PlayerEntry.updatePlayers();
         playerDb.save();
     }
 
@@ -95,7 +95,7 @@ public class PlayTime extends JavaPlugin implements Listener {
     }
 
     private void startAutoSave() {
-        int autosave = getConfig().getInt("autosave", -1);
+        int autosave = getConfig().getInt("autosave", -1) * 20;
         if (autosave < 1) {
             throw new IllegalStateException("Autosave must be above 0! (current: " + autosave + " seconds)");
         }

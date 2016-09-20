@@ -20,8 +20,6 @@ public interface Storage {
 
     PlayerEntry get(UUID id);
 
-    void update(PlayerEntry entry);
-
     Map<UUID, PlayerEntry> getPlayers();
 
     class PlayerEntry implements Comparable<PlayerEntry> {
