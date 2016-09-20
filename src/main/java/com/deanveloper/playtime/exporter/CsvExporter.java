@@ -1,6 +1,7 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtime.storage.Storage;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,27 +9,31 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Comma separated list
  *
  * @author Dean B
  */
-public class CsvExporter extends Exporter {
+public class CsvExporter implements Exporter {
+
     @Override
-    protected void exportFile(List<String> names, List<UUID> ids, List<Integer> secondsOnline) {
-        List<String> formatted = new ArrayList<>(names.size());
-        for (int i = 0; i < names.size(); i++) {
-            formatted.add(String.format("%s,%s,%d",
-                    ids.get(i),
-                    names.get(i),
-                    secondsOnline.get(i)
-            ));
-        }
+    public void export(List<Storage.PlayerEntry> entries) {
+        List<String> formatted = new ArrayList<>(entries.size());
+
+        formatted.addAll(
+                entries.stream()
+                        .map(entry -> String.format("%s,%s,%d",
+                                entry.getId(),
+                                entry.getName(),
+                                entry.totalTime().getSeconds()))
+                        .collect(Collectors.toList())
+        );
 
         try {
             Files.write(
-                    Paths.get(PlayTime.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".csv"),
+                    PlayTime.getInstance().getDataFolder().toPath().resolve(getFileName() + ".csv"),
                     formatted
             );
         } catch (IOException e) {

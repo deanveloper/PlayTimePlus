@@ -6,17 +6,11 @@ import com.deanveloper.playtime.exporter.Exporter;
 import com.deanveloper.playtime.exporter.JsonExporter;
 import com.deanveloper.playtime.exporter.PlainTextExporter;
 import com.deanveloper.playtime.storage.Storage;
-import com.deanveloper.playtime.util.QuickSort;
-import com.deanveloper.playtime.util.Utils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Command to export players
@@ -30,29 +24,12 @@ public class ExportPlayersCommand implements CommandExecutor {
             args[0] = args[0].toUpperCase();
 
             try {
-                Exporter exp = FileType.valueOf(args[0]).getExporter();
+                Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                int length = Bukkit.getOfflinePlayers().length;
-                List<String> names = new ArrayList<>(length);
-                List<UUID> ids = new ArrayList<>(length);
-                List<Integer> times = new ArrayList<>(length);
+                List<Storage.PlayerEntry> players = new ArrayList<>(PlayTime.getPlayerDb().getPlayers().values());
+                Collections.sort(players);
 
-                QuickSort quickSorter = new QuickSort();
-                //populate lists
-                for (Entry<UUID, Storage.PlayerEntry> entry : PlayTime.getPlayerDb().getPlayers().entrySet()) {
-                    UUID id = entry.getKey();
-                    String name = Utils.getName(id);
-                    Storage.PlayerEntry player = entry.getValue();
-
-                    names.add(name);
-                    ids.add(id);
-                    times.add(player.getTimes());
-                }
-
-                //sort by time
-                quickSorter.sort(names, ids, times);
-
-                exp.export(names, ids, times);
+                exporter.export(players);
             } catch (IllegalArgumentException e) {
                 sender.sendMessage("§6File Types");
                 for (FileType type : FileType.values()) {
