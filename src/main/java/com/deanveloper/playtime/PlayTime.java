@@ -4,6 +4,7 @@ import com.deanveloper.playtime.commands.DebugCommand;
 import com.deanveloper.playtime.commands.ExportPlayersCommand;
 import com.deanveloper.playtime.commands.PlaytimeCommand;
 import com.deanveloper.playtime.hooks.EssentialsHook;
+import com.deanveloper.playtime.storage.PlayerEntry;
 import com.deanveloper.playtime.storage.Storage;
 import com.deanveloper.playtime.storage.StorageMethod;
 import com.deanveloper.playtime.util.Utils;
@@ -85,7 +86,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        Storage.PlayerEntry.updatePlayers();
+        PlayerEntry.updatePlayers();
         playerDb.save();
     }
 
@@ -101,7 +102,7 @@ public class PlayTime extends JavaPlugin implements Listener {
         }
         new BukkitRunnable() {
             public void run() {
-                Storage.PlayerEntry.updatePlayers();
+                PlayerEntry.updatePlayers();
                 getPlayerDb().save();
                 debug(getPlayerDb().getPlayers().toString());
             }

@@ -1,6 +1,6 @@
 package com.deanveloper.playtime.exporter;
 
-import com.deanveloper.playtime.storage.Storage;
+import com.deanveloper.playtime.storage.PlayerEntry;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  * @author Dean B
  */
 public interface Exporter {
-    void export(List<Storage.PlayerEntry> entries);
+    void export(List<PlayerEntry> entries);
 
     default String getFileName() {
         return "PlayerReport_" + System.currentTimeMillis();

@@ -1,7 +1,7 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.Storage;
+import com.deanveloper.playtime.storage.PlayerEntry;
 import com.deanveloper.playtime.util.Utils;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class PlainTextExporter implements Exporter {
 
     @Override
-    public void export(List<Storage.PlayerEntry> entries) {
+    public void export(List<PlayerEntry> entries) {
         List<String> formatted = new ArrayList<>(entries.size());
 
         formatted.addAll(

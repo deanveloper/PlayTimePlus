@@ -1,7 +1,7 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.Storage;
+import com.deanveloper.playtime.storage.PlayerEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -21,11 +21,11 @@ import java.util.List;
 public class JsonExporter implements Exporter {
 
     @Override
-    public void export(List<Storage.PlayerEntry> entries) {
+    public void export(List<PlayerEntry> entries) {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        for (Storage.PlayerEntry entry : entries) {
+        for (PlayerEntry entry : entries) {
             JsonObject data = new JsonObject();
             data.addProperty("name", entry.getName());
             data.add("id", PlayTime.GSON.toJsonTree(entry.getId()));

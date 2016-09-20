@@ -1,11 +1,11 @@
 package com.deanveloper.playtime.commands;
 
 import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtime.storage.PlayerEntry;
 import com.deanveloper.playtime.exporter.CsvExporter;
 import com.deanveloper.playtime.exporter.Exporter;
 import com.deanveloper.playtime.exporter.JsonExporter;
 import com.deanveloper.playtime.exporter.PlainTextExporter;
-import com.deanveloper.playtime.storage.Storage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,7 +28,7 @@ public class ExportPlayersCommand implements CommandExecutor {
             try {
                 Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                List<Storage.PlayerEntry> players = new ArrayList<>(PlayTime.getPlayerDb().getPlayers().values());
+                List<PlayerEntry> players = new ArrayList<>(PlayTime.getPlayerDb().getPlayers().values());
                 Collections.sort(players);
 
                 exporter.export(players);

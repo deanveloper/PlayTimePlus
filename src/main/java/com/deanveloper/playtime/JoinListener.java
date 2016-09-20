@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
+        PlayTime.getPlayerDb().createIfNotPresent(e.getPlayer().getUniqueId());
         PlayTime.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(true);
     }
 

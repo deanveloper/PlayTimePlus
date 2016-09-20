@@ -1,7 +1,7 @@
 package com.deanveloper.playtime.commands;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.Storage;
+import com.deanveloper.playtime.storage.PlayerEntry;
 import com.deanveloper.playtime.util.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -36,9 +36,6 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                 if (sender.hasPermission("playtime.command.playtime.top")) {
                     joiner.add("top");
                 }
-                if (sender.hasPermission("playtime.command.playtime.change")) {
-                    joiner.add("change");
-                }
                 if (sender.hasPermission("playtime.command.playtime.other")) {
                     joiner.add("playername");
                 }
@@ -55,7 +52,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                     sender.sendMessage("§cYou don't have permission to view your playtime");
                 } else {
                     if (sender instanceof Player) {
-                        Storage.PlayerEntry playerEntry = PlayTime.getPlayerDb().get(((Player) sender).getUniqueId());
+                        PlayerEntry playerEntry = PlayTime.getPlayerDb().get(((Player) sender).getUniqueId());
 
                         sender.sendMessage("§a[Playtime] §dYou §ehave played for §d"
                                 + Utils.format(playerEntry.getTotalTime()) + "§e.");
@@ -70,7 +67,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                     sender.sendMessage("§cYou don't have permission to view the top players");
                 }
                 try {
-                    List<Storage.PlayerEntry> topTen = new ArrayList<>(
+                    List<PlayerEntry> topTen = new ArrayList<>(
                             PlayTime.getPlayerDb().getPlayers().values()
                     );
 
@@ -112,7 +109,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                         if (id == null) {
                             sender.sendMessage("Couldn't find player " + args[0]);
                         } else {
-                            Storage.PlayerEntry time = PlayTime.getPlayerDb().get(id);
+                            PlayerEntry time = PlayTime.getPlayerDb().get(id);
                             sender.sendMessage(
                                     String.format("§a[Playtime] §d%s §ehas played for §d%s§e.",
                                             Utils.correctCase(args[0]), Utils.format(time.getTotalTime()))

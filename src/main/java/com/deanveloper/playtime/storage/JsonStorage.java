@@ -2,18 +2,14 @@ package com.deanveloper.playtime.storage;
 
 import com.deanveloper.playtime.PlayTime;
 import com.google.common.io.Files;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,25 +22,27 @@ public class JsonStorage implements Storage {
     private final JsonObject root;
     private final JsonElement version;
     private final JsonObject players;
-    private final Map<UUID, LocalDateTime> current;
 
     JsonStorage() {
         storage = new File(PlayTime.getInstance().getDataFolder(), "players.json");
         JsonObject temp;
         try {
-            temp = new JsonParser().parse(Files.readFirstLine(storage, Charset.defaultCharset())).getAsJsonObject();
+            String line = Files.readFirstLine(storage, Charset.defaultCharset());
+            if (line == null || line.isEmpty()) {
+                throw new FileNotFoundException("Just in case");
+            }
+            temp = new JsonParser().parse(line).getAsJsonObject();
         } catch (FileNotFoundException e) {
             temp = new JsonObject();
             temp.addProperty("version", 1);
-            temp.add("version", new JsonObject());
-            temp.add("players", new JsonArray());
+            temp.add("players", new JsonObject());
+            save();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         root = temp;
         version = root.get("version");
         players = root.getAsJsonObject("players");
-        current = new HashMap<>();
     }
 
     public JsonObject getRoot() {
@@ -52,12 +50,26 @@ public class JsonStorage implements Storage {
     }
 
     @Override
+    public void createIfNotPresent(UUID id) {
+        if(players.get(id.toString()) != null) {
+            return;
+        }
+
+        players.add(id.toString(), PlayTime.GSON.toJsonTree(new PlayerEntry(id)));
+    }
+
+    @Override
     public void save() {
         try {
-            new FileWriter(storage).write(root.toString());
+            Files.write(PlayTime.GSON.toJson(root), storage, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void update(PlayerEntry entry) {
+        players.add(entry.getId().toString(), PlayTime.GSON.toJsonTree(entry));
     }
 
     @Override
