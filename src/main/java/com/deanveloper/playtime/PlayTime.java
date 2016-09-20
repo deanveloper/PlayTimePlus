@@ -4,7 +4,8 @@ import com.deanveloper.playtime.commands.DebugCommand;
 import com.deanveloper.playtime.commands.ExportPlayersCommand;
 import com.deanveloper.playtime.commands.PlaytimeCommand;
 import com.deanveloper.playtime.hooks.EssentialsHook;
-import com.deanveloper.playtime.util.ConfigManager;
+import com.deanveloper.playtime.storage.Storage;
+import com.deanveloper.playtime.storage.StorageMethod;
 import com.deanveloper.playtime.util.Utils;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -18,7 +19,7 @@ import org.bukkit.scheduler.BukkitRunnable;
  * @author Dean B
  */
 public class PlayTime extends JavaPlugin implements Listener {
-    private static ConfigManager playerDb;
+    private static Storage playerDb;
     private static EssentialsHook eHook;
     private static PlayTime instance;
     public static boolean debugEnabled = false;
@@ -27,22 +28,28 @@ public class PlayTime extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public static ConfigManager getPlayerDb() {
+    public static Storage getPlayerDb() {
         return playerDb;
     }
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
+        getLogger().info("Setting commands...");
         getCommand("playtime").setExecutor(new PlaytimeCommand());
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
-        getLogger().info("Loading players...");
-        playerDb = new ConfigManager(this, "players.yml");
         getLogger().info("Done!");
+
+        getLogger().info("Loading players...");
+        playerDb = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
+        getLogger().info("Done!");
+
         getLogger().info("Hooking into essentials...");
         eHook = new EssentialsHook();
         getLogger().info("Done!");
-        startTimer();
+        startAutoSave();
         Bukkit.getPluginManager().registerEvents(this, this);
 
         for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
@@ -63,15 +70,15 @@ public class PlayTime extends JavaPlugin implements Listener {
         Utils.update(e.getPlayer().getUniqueId(), e.getPlayer().getName());
     }
 
-    private void startTimer() {
+    private void startAutoSave() {
         new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().stream()
                         .filter(player -> !eHook.isAfk(player))
                         .forEach(p -> {
-                            debug(p.getName() + " incremented");
-                            String stringyId = p.getUniqueId().toString();
-                            int time = playerDb.get(stringyId, 0);
+                            debug("added 1 second to " + p.getName());
+                            String stringyId = p.toString();
+                            int time = playerDb.get(p.getUniqueId(), 0);
                             time += 1;
                             playerDb.set(stringyId, time);
                         });
@@ -81,7 +88,7 @@ public class PlayTime extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             public void run() {
                 getPlayerDb().save();
-                debug(getPlayerDb().getConfig().saveToString());
+                debug(getPlayerDb().getPlayers().toString());
             }
         }.runTaskTimer(this, 20L * 60, 20L * 60); // every minute
     }

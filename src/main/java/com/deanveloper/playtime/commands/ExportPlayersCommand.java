@@ -5,6 +5,7 @@ import com.deanveloper.playtime.exporter.CsvExporter;
 import com.deanveloper.playtime.exporter.Exporter;
 import com.deanveloper.playtime.exporter.JsonExporter;
 import com.deanveloper.playtime.exporter.PlainTextExporter;
+import com.deanveloper.playtime.storage.Storage;
 import com.deanveloper.playtime.util.QuickSort;
 import com.deanveloper.playtime.util.Utils;
 import org.bukkit.Bukkit;
@@ -38,14 +39,14 @@ public class ExportPlayersCommand implements CommandExecutor {
 
                 QuickSort quickSorter = new QuickSort();
                 //populate lists
-                for (Entry<String, Object> entry : PlayTime.getPlayerDb().getConfig().getValues(false).entrySet()) {
-                    UUID id = UUID.fromString(entry.getKey());
+                for (Entry<UUID, Storage.PlayerEntry> entry : PlayTime.getPlayerDb().getPlayers().entrySet()) {
+                    UUID id = entry.getKey();
                     String name = Utils.getName(id);
-                    Integer time = PlayTime.getPlayerDb().get(entry.getKey(), int.class);
+                    Storage.PlayerEntry player = entry.getValue();
 
                     names.add(name);
                     ids.add(id);
-                    times.add(time);
+                    times.add(player.getTimes());
                 }
 
                 //sort by time
