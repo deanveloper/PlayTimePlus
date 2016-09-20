@@ -3,7 +3,6 @@ package com.deanveloper.playtime.exporter;
 import com.deanveloper.playtime.storage.Storage;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * A way to export to a file

@@ -10,9 +10,10 @@ public class CaseInsensitiveMap<V> extends HashMap<String, V> {
     public V put(String key, V value) {
         return super.put(key.toLowerCase(), value);
     }
+
     @Override
     public V get(Object key) {
-        if(key instanceof String) {
+        if (key instanceof String) {
             return super.get(((String) key).toLowerCase());
         } else {
             throw new IllegalArgumentException("Key must be of type String!");

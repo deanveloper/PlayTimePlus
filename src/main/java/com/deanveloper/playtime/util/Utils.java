@@ -18,12 +18,12 @@ public class Utils {
     private static Map<String, String> correctCaseMap = new HashMap<>();
 
     public static UUID getUuid(String name) {
-        if(name == null) throw new NullPointerException("Cannot get the UUID of a null username!");
+        if (name == null) throw new NullPointerException("Cannot get the UUID of a null username!");
         return nameIdMap.inverse().get(name.toLowerCase());
     }
 
     public static String getName(UUID id) {
-        if(id == null) throw new NullPointerException("Cannot get the name of a null UUID!");
+        if (id == null) throw new NullPointerException("Cannot get the name of a null UUID!");
         return correctCaseMap.get(nameIdMap.get(id));
     }
 

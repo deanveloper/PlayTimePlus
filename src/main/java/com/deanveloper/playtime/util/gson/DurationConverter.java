@@ -11,7 +11,7 @@ import java.time.Duration;
 public class DurationConverter implements JsonSerializer<Duration>, JsonDeserializer<Duration> {
     @Override
     public Duration deserialize(JsonElement elem, Type type, JsonDeserializationContext context) {
-        if(!elem.isJsonPrimitive() || elem.getAsJsonPrimitive().isNumber()) {
+        if (!elem.isJsonPrimitive() || elem.getAsJsonPrimitive().isNumber()) {
             throw new JsonParseException("Duration must be a Number!");
         }
         Number json = elem.getAsJsonPrimitive().getAsNumber();

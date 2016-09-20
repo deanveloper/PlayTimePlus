@@ -26,14 +26,14 @@ import java.time.LocalDateTime;
  * @author Dean B
  */
 public class PlayTime extends JavaPlugin implements Listener {
-    private static Storage playerDb;
-    private static EssentialsHook eHook;
-    private static PlayTime instance;
-    public static boolean debugEnabled = false;
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
+    public static boolean debugEnabled = false;
+    private static Storage playerDb;
+    private static EssentialsHook eHook;
+    private static PlayTime instance;
 
     public static PlayTime getInstance() {
         return instance;
@@ -41,6 +41,16 @@ public class PlayTime extends JavaPlugin implements Listener {
 
     public static Storage getPlayerDb() {
         return playerDb;
+    }
+
+    public static EssentialsHook getEssentialsHook() {
+        return eHook;
+    }
+
+    public static void debug(String msg) {
+        if (debugEnabled) {
+            Bukkit.getLogger().info("[DEBUG] " + msg);
+        }
     }
 
     @Override
@@ -86,7 +96,7 @@ public class PlayTime extends JavaPlugin implements Listener {
 
     private void startAutoSave() {
         int autosave = getConfig().getInt("autosave", -1);
-        if(autosave < 1) {
+        if (autosave < 1) {
             throw new IllegalStateException("Autosave must be above 0! (current: " + autosave + " seconds)");
         }
         new BukkitRunnable() {
@@ -96,15 +106,5 @@ public class PlayTime extends JavaPlugin implements Listener {
                 debug(getPlayerDb().getPlayers().toString());
             }
         }.runTaskTimer(this, autosave, autosave); // every minute
-    }
-
-    public static EssentialsHook getEssentialsHook() {
-        return eHook;
-    }
-
-    public static void debug(String msg) {
-        if(debugEnabled) {
-            Bukkit.getLogger().info("[DEBUG] " + msg);
-        }
     }
 }

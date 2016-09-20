@@ -12,13 +12,13 @@ import java.util.Arrays;
 public class LocalDateTimeConverter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
     @Override
     public LocalDateTime deserialize(JsonElement elem, Type type, JsonDeserializationContext context) {
-        if(!elem.isJsonObject()) {
+        if (!elem.isJsonObject()) {
             throw new JsonParseException("LocalDateTime must be a JsonObject!");
         }
         JsonObject json = (JsonObject) elem;
 
         Arrays.asList("Y", "M", "d", "h", "m", "s").forEach(string -> {
-            if(json.get(string) == null || !json.isJsonPrimitive() || !json.getAsJsonPrimitive().isNumber()) {
+            if (json.get(string) == null || !json.isJsonPrimitive() || !json.getAsJsonPrimitive().isNumber()) {
                 throw new JsonParseException(string + " is not a number! it is " + json.get(string));
             }
         });

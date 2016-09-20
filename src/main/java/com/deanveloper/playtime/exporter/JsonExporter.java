@@ -2,14 +2,16 @@ package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
 import com.deanveloper.playtime.storage.Storage;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Export to a Json file
@@ -23,7 +25,7 @@ public class JsonExporter implements Exporter {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        for(Storage.PlayerEntry entry : entries) {
+        for (Storage.PlayerEntry entry : entries) {
             JsonObject data = new JsonObject();
             data.addProperty("name", entry.getName());
             data.add("id", PlayTime.GSON.toJsonTree(entry.getId()));
