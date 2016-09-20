@@ -37,11 +37,6 @@ permissions:
     default: op
     children:
       playtime.command.playtime: true
-  playtime.command.playtime.change:
-    description: "Allows access to change people's playtime"
-    default: op
-    children:
-      playtime.command.playtime: true
   playtime.command.playtime.*:
     description: "Allows full access to the /playtime command"
     default: op
