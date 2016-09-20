@@ -7,6 +7,10 @@ import com.deanveloper.playtime.hooks.EssentialsHook;
 import com.deanveloper.playtime.storage.Storage;
 import com.deanveloper.playtime.storage.StorageMethod;
 import com.deanveloper.playtime.util.Utils;
+import com.deanveloper.playtime.util.gson.DurationConverter;
+import com.deanveloper.playtime.util.gson.LocalDateTimeConverter;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -14,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * @author Dean B
@@ -23,6 +30,10 @@ public class PlayTime extends JavaPlugin implements Listener {
     private static EssentialsHook eHook;
     private static PlayTime instance;
     public static boolean debugEnabled = false;
+    public static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
+            .registerTypeAdapter(Duration.class, new DurationConverter())
+            .create();
 
     public static PlayTime getInstance() {
         return instance;

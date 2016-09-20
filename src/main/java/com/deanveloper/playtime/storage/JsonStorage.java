@@ -1,12 +1,11 @@
 package com.deanveloper.playtime.storage;
 
 import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.util.gson.DurationConverter;
-import com.deanveloper.playtime.util.gson.LocalDateTimeConverter;
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.*;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +17,6 @@ import java.util.stream.Collectors;
  */
 public class JsonStorage implements Storage {
     private final File storage;
-    private final Gson gson = new GsonBuilder()
-            .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
-            .registerTypeAdapter(Duration.class, new DurationConverter())
-            .create();
     private final JsonObject root;
     private final JsonElement version;
     private final JsonObject players;
@@ -58,12 +53,12 @@ public class JsonStorage implements Storage {
 
     @Override
     public PlayerEntry get(UUID id) {
-        return gson.fromJson(players.get(id.toString()), PlayerEntry.class);
+        return PlayTime.GSON.fromJson(players.get(id.toString()), PlayerEntry.class);
     }
 
     @Override
     public void update(PlayerEntry entry) {
-        players.add(entry.getId().toString(), gson.toJsonTree(entry));
+        players.add(entry.getId().toString(), PlayTime.GSON.toJsonTree(entry));
     }
 
     @Override
@@ -72,7 +67,7 @@ public class JsonStorage implements Storage {
             return players.entrySet().parallelStream()
                     .collect(Collectors.toMap(
                             entry -> UUID.fromString(entry.getKey()),
-                            entry -> gson.fromJson(entry.getValue(), PlayerEntry.class)
+                            entry -> PlayTime.GSON.fromJson(entry.getValue(), PlayerEntry.class)
                     ));
         }
     }

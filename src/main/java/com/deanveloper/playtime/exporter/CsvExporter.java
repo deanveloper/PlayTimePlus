@@ -5,10 +5,8 @@ import com.deanveloper.playtime.storage.Storage;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -27,7 +25,7 @@ public class CsvExporter implements Exporter {
                         .map(entry -> String.format("%s,%s,%d",
                                 entry.getId(),
                                 entry.getName(),
-                                entry.totalTime().getSeconds()))
+                                entry.getTotalTime().getSeconds()))
                         .collect(Collectors.toList())
         );
 

@@ -58,7 +58,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                         Storage.PlayerEntry playerEntry = PlayTime.getPlayerDb().get(((Player) sender).getUniqueId());
 
                         sender.sendMessage("§a[Playtime] §dYou §ehave played for §d"
-                                + Utils.format(playerEntry.totalTime()) + "§e.");
+                                + Utils.format(playerEntry.getTotalTime()) + "§e.");
                     } else {
                         sender.sendMessage("You need to be a player to see your playtime, silly!");
                     }
@@ -92,7 +92,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                                         "§d#%d. §r%s §ewith §d%s§e.",
                                         i + 1,
                                         PlayTime.getEssentialsHook().fullName(topTen.get(i).getName()),
-                                        Utils.format(topTen.get(i).totalTime())
+                                        Utils.format(topTen.get(i).getTotalTime())
                                 )
                         );
                     }
@@ -115,7 +115,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                             Storage.PlayerEntry time = PlayTime.getPlayerDb().get(id);
                             sender.sendMessage(
                                     String.format("§a[Playtime] §d%s §ehas played for §d%s§e.",
-                                            Utils.correctCase(args[0]), Utils.format(time.totalTime()))
+                                            Utils.correctCase(args[0]), Utils.format(time.getTotalTime()))
                             );
                         }
                     }

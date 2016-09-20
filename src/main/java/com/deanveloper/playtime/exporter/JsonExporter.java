@@ -1,6 +1,7 @@
 package com.deanveloper.playtime.exporter;
 
 import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtime.storage.Storage;
 import com.google.gson.*;
 
 import java.io.IOException;
@@ -15,26 +16,26 @@ import java.util.UUID;
  *
  * @author Dean B
  */
-public class JsonExporter extends Exporter {
+public class JsonExporter implements Exporter {
+
     @Override
-    protected void exportFile(List<String> names, List<UUID> ids, List<Integer> secondsOnline) {
+    public void export(List<Storage.PlayerEntry> entries) {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        for (int i = 0; i < names.size(); i++) {
+        for(Storage.PlayerEntry entry : entries) {
             JsonObject data = new JsonObject();
-            data.addProperty("name", names.get(i));
-            data.addProperty("id", ids.get(i).toString());
-            data.addProperty("secondsOnline", secondsOnline.get(i));
+            data.addProperty("name", entry.getName());
+            data.add("id", PlayTime.GSON.toJsonTree(entry.getId()));
+            data.addProperty("idString", entry.getId().toString());
+            data.addProperty("secondsOnline", entry.getTotalTime().getSeconds());
             arr.add(data);
         }
 
-        root.add("people", arr);
+        root.add("players", arr);
 
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(root.toString());
-        String prettyJson = gson.toJson(je);
+        Gson prettyPrint = new GsonBuilder().setPrettyPrinting().create();
+        String prettyJson = prettyPrint.toJson(root);
 
         try {
             Files.write(
@@ -44,5 +45,6 @@ public class JsonExporter extends Exporter {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }

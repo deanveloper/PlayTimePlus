@@ -3,7 +3,6 @@ package com.deanveloper.playtime.storage;
 import com.deanveloper.playtime.PlayTime;
 import com.deanveloper.playtime.util.Utils;
 import com.google.gson.annotations.SerializedName;
-import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -85,7 +84,7 @@ public interface Storage {
             }
         }
 
-        public Duration totalTime() {
+        public Duration getTotalTime() {
             Duration total = Duration.ZERO;
             for (TimeEntry entry : getTimes()) {
                 total = total.plus(entry.duration);
@@ -98,7 +97,7 @@ public interface Storage {
         @Override
         public int compareTo(PlayerEntry o) {
             // Put the other object first to sort in descending order
-            return Long.compare(o.totalTime().getSeconds(), this.totalTime().getSeconds());
+            return Long.compare(o.getTotalTime().getSeconds(), this.getTotalTime().getSeconds());
         }
 
         public class TimeEntry {
