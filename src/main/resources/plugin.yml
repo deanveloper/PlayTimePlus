@@ -1,29 +1,29 @@
-name: PlayTime
+name: PlayTimePlus
 author: Deanveloper
-main: com.deanveloper.playtime.PlayTime
+main: com.deanveloper.playtimeplus.PlayTimePlus
 version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
   playtime:
-    permission: playtime.command.playtime
+    permission: playtimeplus.command.playtimeplus
     description: "Checks the amount of time someone has played"
-    usage: "/playtime help"
+    usage: "/playtimeplus help"
   exportplayers:
-    permission: playtime.command.export
+    permission: playtimeplus.command.export
     description: "Exports players to a file"
     usage: "/exportplayers [help|filetype]"
   debug:
-    permission: playtime.command.debug
+    permission: playtimeplus.command.debug
     description: "Enable debug mode"
     usage: "/debug [true|false]"
 
 
 permissions:
   playtime.command.playtime:
-    description: "Allows access to use /playtime (Note: subcommands must be given separately)"
+    description: "Allows access to use /playtimeplus (Note: subcommands must be given separately)"
     default: true
   playtime.command.playtime.self:
-    description: "Allows access to view their own playtime"
+    description: "Allows access to view their own playtimeplus"
     default: true
     children:
       playtime.command.playtime: true
@@ -38,7 +38,7 @@ permissions:
     children:
       playtime.command.playtime: true
   playtime.command.playtime.*:
-    description: "Allows full access to the /playtime command"
+    description: "Allows full access to the /playtimeplus command"
     default: op
     children:
       playtime.command.playtime.self: true

@@ -1,4 +1,4 @@
-package com.deanveloper.playtime.util;
+package com.deanveloper.playtimeplus.util;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

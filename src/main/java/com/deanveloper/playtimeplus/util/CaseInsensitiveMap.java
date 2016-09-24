@@ -1,4 +1,4 @@
-package com.deanveloper.playtime.util;
+package com.deanveloper.playtimeplus.util;
 
 import java.util.HashMap;
 

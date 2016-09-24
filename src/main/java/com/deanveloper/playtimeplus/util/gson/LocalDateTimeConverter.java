@@ -1,10 +1,9 @@
-package com.deanveloper.playtime.util.gson;
+package com.deanveloper.playtimeplus.util.gson;
 
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 /**
  * @author Dean
@@ -17,19 +16,18 @@ public class LocalDateTimeConverter implements JsonSerializer<LocalDateTime>, Js
         }
         JsonObject json = (JsonObject) elem;
 
-        Arrays.asList("Y", "M", "d", "h", "m", "s").forEach(string -> {
-            if (json.get(string) == null || !json.isJsonPrimitive() || !json.getAsJsonPrimitive().isNumber()) {
-                throw new JsonParseException(string + " is not a number! it is " + json.get(string));
-            }
-        });
-        return LocalDateTime.of(
-                json.get("Y").getAsInt(),
-                json.get("M").getAsInt(),
-                json.get("d").getAsInt(),
-                json.get("h").getAsInt(),
-                json.get("m").getAsInt(),
-                json.get("s").getAsInt()
-        );
+        try {
+            return LocalDateTime.of(
+                    json.get("Y").getAsInt(),
+                    json.get("M").getAsInt(),
+                    json.get("d").getAsInt(),
+                    json.get("h").getAsInt(),
+                    json.get("m").getAsInt(),
+                    json.get("s").getAsInt()
+            );
+        } catch (NumberFormatException e) {
+            throw new JsonParseException("Error initializing a LocalDateTime", e);
+        }
     }
 
     @Override

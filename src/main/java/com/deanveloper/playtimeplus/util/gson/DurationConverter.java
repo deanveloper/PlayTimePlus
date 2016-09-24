@@ -1,4 +1,4 @@
-package com.deanveloper.playtime.util.gson;
+package com.deanveloper.playtimeplus.util.gson;
 
 import com.google.gson.*;
 
@@ -11,12 +11,12 @@ import java.time.Duration;
 public class DurationConverter implements JsonSerializer<Duration>, JsonDeserializer<Duration> {
     @Override
     public Duration deserialize(JsonElement elem, Type type, JsonDeserializationContext context) {
-        if (!elem.isJsonPrimitive() || elem.getAsJsonPrimitive().isNumber()) {
-            throw new JsonParseException("Duration must be a Number!");
-        }
-        Number json = elem.getAsJsonPrimitive().getAsNumber();
 
-        return Duration.ofSeconds(json.intValue());
+        try {
+            return Duration.ofSeconds(elem.getAsInt());
+        } catch (NumberFormatException e) {
+            throw new JsonParseException("Error initializing a Duration", e);
+        }
     }
 
     @Override

@@ -1,8 +1,8 @@
-package com.deanveloper.playtime.exporter;
+package com.deanveloper.playtimeplus.exporter;
 
-import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.PlayerEntry;
-import com.deanveloper.playtime.util.Utils;
+import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,7 +34,7 @@ public class PlainTextExporter implements Exporter {
 
         try {
             Files.write(
-                    Paths.get(PlayTime.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
+                    Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
                     formatted
             );
         } catch (IOException e) {

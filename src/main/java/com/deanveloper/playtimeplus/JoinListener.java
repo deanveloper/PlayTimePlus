@@ -1,4 +1,4 @@
-package com.deanveloper.playtime;
+package com.deanveloper.playtimeplus;
 
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,17 +12,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
-        PlayTime.getPlayerDb().createIfNotPresent(e.getPlayer().getUniqueId());
-        PlayTime.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(true);
+        PlayTimePlus.getPlayerDb().createIfNotPresent(e.getPlayer().getUniqueId());
+        PlayTimePlus.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(true);
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent e) {
-        PlayTime.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(false);
+        PlayTimePlus.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(false);
     }
 
     @EventHandler
     public void onLeave(PlayerKickEvent e) {
-        PlayTime.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(false);
+        PlayTimePlus.getPlayerDb().get(e.getPlayer().getUniqueId()).setOnline(false);
     }
 }

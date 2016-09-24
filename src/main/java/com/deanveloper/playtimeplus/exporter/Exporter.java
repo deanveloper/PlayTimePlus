@@ -1,6 +1,6 @@
-package com.deanveloper.playtime.exporter;
+package com.deanveloper.playtimeplus.exporter;
 
-import com.deanveloper.playtime.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
 
 import java.util.List;
 

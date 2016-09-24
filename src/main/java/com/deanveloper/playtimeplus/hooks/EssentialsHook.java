@@ -1,6 +1,6 @@
-package com.deanveloper.playtime.hooks;
+package com.deanveloper.playtimeplus.hooks;
 
-import com.deanveloper.playtime.util.Utils;
+import com.deanveloper.playtimeplus.util.Utils;
 import com.earth2me.essentials.Essentials;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

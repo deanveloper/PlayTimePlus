@@ -1,7 +1,7 @@
-package com.deanveloper.playtime.exporter;
+package com.deanveloper.playtimeplus.exporter;
 
-import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -28,7 +28,7 @@ public class JsonExporter implements Exporter {
         for (PlayerEntry entry : entries) {
             JsonObject data = new JsonObject();
             data.addProperty("name", entry.getName());
-            data.add("id", PlayTime.GSON.toJsonTree(entry.getId()));
+            data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getId()));
             data.addProperty("idString", entry.getId().toString());
             data.addProperty("secondsOnline", entry.getTotalTime().getSeconds());
             arr.add(data);
@@ -41,7 +41,7 @@ public class JsonExporter implements Exporter {
 
         try {
             Files.write(
-                    Paths.get(PlayTime.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
+                    Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
                     Arrays.asList(prettyJson.split("\\n"))
             );
         } catch (IOException e) {

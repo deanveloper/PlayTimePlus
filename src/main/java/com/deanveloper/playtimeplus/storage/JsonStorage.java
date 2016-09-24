@@ -1,6 +1,6 @@
-package com.deanveloper.playtime.storage;
+package com.deanveloper.playtimeplus.storage;
 
-import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -24,7 +24,7 @@ public class JsonStorage implements Storage {
     private final JsonObject players;
 
     JsonStorage() {
-        storage = new File(PlayTime.getInstance().getDataFolder(), "players.json");
+        storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
         JsonObject temp;
         try {
             String line = Files.readFirstLine(storage, Charset.defaultCharset());
@@ -55,13 +55,13 @@ public class JsonStorage implements Storage {
             return;
         }
 
-        players.add(id.toString(), PlayTime.GSON.toJsonTree(new PlayerEntry(id)));
+        players.add(id.toString(), PlayTimePlus.GSON.toJsonTree(new PlayerEntry(id)));
     }
 
     @Override
     public void save() {
         try {
-            Files.write(PlayTime.GSON.toJson(root), storage, Charset.defaultCharset());
+            Files.write(PlayTimePlus.GSON.toJson(root), storage, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,12 +69,12 @@ public class JsonStorage implements Storage {
 
     @Override
     public void update(PlayerEntry entry) {
-        players.add(entry.getId().toString(), PlayTime.GSON.toJsonTree(entry));
+        players.add(entry.getId().toString(), PlayTimePlus.GSON.toJsonTree(entry));
     }
 
     @Override
     public PlayerEntry get(UUID id) {
-        return PlayTime.GSON.fromJson(players.get(id.toString()), PlayerEntry.class);
+        return PlayTimePlus.GSON.fromJson(players.get(id.toString()), PlayerEntry.class);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class JsonStorage implements Storage {
             return players.entrySet().parallelStream()
                     .collect(Collectors.toMap(
                             entry -> UUID.fromString(entry.getKey()),
-                            entry -> PlayTime.GSON.fromJson(entry.getValue(), PlayerEntry.class)
+                            entry -> PlayTimePlus.GSON.fromJson(entry.getValue(), PlayerEntry.class)
                     ));
         }
     }

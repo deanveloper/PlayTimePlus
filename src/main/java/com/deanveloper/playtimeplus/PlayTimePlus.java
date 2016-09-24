@@ -1,15 +1,15 @@
-package com.deanveloper.playtime;
+package com.deanveloper.playtimeplus;
 
-import com.deanveloper.playtime.commands.DebugCommand;
-import com.deanveloper.playtime.commands.ExportPlayersCommand;
-import com.deanveloper.playtime.commands.PlaytimeCommand;
-import com.deanveloper.playtime.hooks.EssentialsHook;
-import com.deanveloper.playtime.storage.PlayerEntry;
-import com.deanveloper.playtime.storage.Storage;
-import com.deanveloper.playtime.storage.StorageMethod;
-import com.deanveloper.playtime.util.Utils;
-import com.deanveloper.playtime.util.gson.DurationConverter;
-import com.deanveloper.playtime.util.gson.LocalDateTimeConverter;
+import com.deanveloper.playtimeplus.commands.DebugCommand;
+import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
+import com.deanveloper.playtimeplus.commands.PlayTimePlusCommand;
+import com.deanveloper.playtimeplus.hooks.EssentialsHook;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.Storage;
+import com.deanveloper.playtimeplus.storage.StorageMethod;
+import com.deanveloper.playtimeplus.util.Utils;
+import com.deanveloper.playtimeplus.util.gson.DurationConverter;
+import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 /**
  * @author Dean B
  */
-public class PlayTime extends JavaPlugin implements Listener {
+public class PlayTimePlus extends JavaPlugin implements Listener {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
@@ -34,9 +34,9 @@ public class PlayTime extends JavaPlugin implements Listener {
     public static boolean debugEnabled = false;
     private static Storage playerDb;
     private static EssentialsHook eHook;
-    private static PlayTime instance;
+    private static PlayTimePlus instance;
 
-    public static PlayTime getInstance() {
+    public static PlayTimePlus getInstance() {
         return instance;
     }
 
@@ -60,7 +60,7 @@ public class PlayTime extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         getLogger().info("Setting commands and listeners...");
-        getCommand("playtime").setExecutor(new PlaytimeCommand());
+        getCommand("playtimeplus").setExecutor(new PlayTimePlusCommand());
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
@@ -81,7 +81,7 @@ public class PlayTime extends JavaPlugin implements Listener {
         for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
             Utils.update(p.getUniqueId(), p.getName());
         }
-        getLogger().info("PlayTime enabled!");
+        getLogger().info("PlayTimePlus enabled!");
     }
 
     @Override

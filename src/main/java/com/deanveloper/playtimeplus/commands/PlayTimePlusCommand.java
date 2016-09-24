@@ -1,8 +1,8 @@
-package com.deanveloper.playtime.commands;
+package com.deanveloper.playtimeplus.commands;
 
-import com.deanveloper.playtime.PlayTime;
-import com.deanveloper.playtime.storage.PlayerEntry;
-import com.deanveloper.playtime.util.Utils;
+import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * @author Dean B
  */
-public class PlaytimeCommand implements CommandExecutor, TabExecutor {
+public class PlayTimePlusCommand implements CommandExecutor, TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
         if (args.length == 0) {
@@ -30,13 +30,13 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
             if (args[0].equals("help")) {
                 StringJoiner joiner = new StringJoiner("§a|§b", "§a[§b", "§a]");
                 joiner.add("help");
-                if (sender.hasPermission("playtime.command.playtime.self")) {
+                if (sender.hasPermission("playtimeplus.command.playtimeplus.self")) {
                     joiner.add("self");
                 }
-                if (sender.hasPermission("playtime.command.playtime.top")) {
+                if (sender.hasPermission("playtimeplus.command.playtimeplus.top")) {
                     joiner.add("top");
                 }
-                if (sender.hasPermission("playtime.command.playtime.other")) {
+                if (sender.hasPermission("playtimeplus.command.playtimeplus.other")) {
                     joiner.add("playername");
                 }
 
@@ -48,27 +48,27 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 
                 // SELF
             } else if (args[0].equals("self")) {
-                if (!sender.hasPermission("playtime.command.playtime.self")) {
-                    sender.sendMessage("§cYou don't have permission to view your playtime");
+                if (!sender.hasPermission("playtimeplus.command.playtimeplus.self")) {
+                    sender.sendMessage("§cYou don't have permission to view your playtimeplus");
                 } else {
                     if (sender instanceof Player) {
-                        PlayerEntry playerEntry = PlayTime.getPlayerDb().get(((Player) sender).getUniqueId());
+                        PlayerEntry playerEntry = PlayTimePlus.getPlayerDb().get(((Player) sender).getUniqueId());
 
                         sender.sendMessage("§a[Playtime] §dYou §ehave played for §d"
                                 + Utils.format(playerEntry.getTotalTime()) + "§e.");
                     } else {
-                        sender.sendMessage("You need to be a player to see your playtime, silly!");
+                        sender.sendMessage("You need to be a player to see your playtimeplus, silly!");
                     }
                 }
 
                 // TOP
             } else if (args[0].equals("top")) {
-                if (!sender.hasPermission("playtime.command.playtime.top")) {
+                if (!sender.hasPermission("playtimeplus.command.playtimeplus.top")) {
                     sender.sendMessage("§cYou don't have permission to view the top players");
                 }
                 try {
                     List<PlayerEntry> topTen = new ArrayList<>(
-                            PlayTime.getPlayerDb().getPlayers().values()
+                            PlayTimePlus.getPlayerDb().getPlayers().values()
                     );
 
                     //sort from most to least
@@ -88,7 +88,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                                 String.format(
                                         "§d#%d. §r%s §ewith §d%s§e.",
                                         i + 1,
-                                        PlayTime.getEssentialsHook().fullName(topTen.get(i).getName()),
+                                        PlayTimePlus.getEssentialsHook().fullName(topTen.get(i).getName()),
                                         Utils.format(topTen.get(i).getTotalTime())
                                 )
                         );
@@ -101,7 +101,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
 
                 // CHANGE
             } else {
-                if (!sender.hasPermission("playtime.command.playtime.other")) {
+                if (!sender.hasPermission("playtimeplus.command.playtimeplus.other")) {
                     sender.sendMessage("§cYou do not have permission to view other people's playtimes!");
                 } else {
                     if (args.length >= 1) {
@@ -109,7 +109,7 @@ public class PlaytimeCommand implements CommandExecutor, TabExecutor {
                         if (id == null) {
                             sender.sendMessage("Couldn't find player " + args[0]);
                         } else {
-                            PlayerEntry time = PlayTime.getPlayerDb().get(id);
+                            PlayerEntry time = PlayTimePlus.getPlayerDb().get(id);
                             sender.sendMessage(
                                     String.format("§a[Playtime] §d%s §ehas played for §d%s§e.",
                                             Utils.correctCase(args[0]), Utils.format(time.getTotalTime()))

@@ -1,6 +1,6 @@
-package com.deanveloper.playtime.commands;
+package com.deanveloper.playtimeplus.commands;
 
-import com.deanveloper.playtime.PlayTime;
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,10 +14,10 @@ public class DebugCommand implements CommandExecutor {
         if (args.length > 0) {
 
             if (args[0].equalsIgnoreCase("true")) {
-                PlayTime.debugEnabled = true;
+                PlayTimePlus.debugEnabled = true;
                 sender.sendMessage(sender.getName() + " enabled debug mode!");
             } else if (args[0].equalsIgnoreCase("false")) {
-                PlayTime.debugEnabled = false;
+                PlayTimePlus.debugEnabled = false;
                 sender.sendMessage(sender.getName() + " disabled debug mode!");
             } else {
                 return false;
