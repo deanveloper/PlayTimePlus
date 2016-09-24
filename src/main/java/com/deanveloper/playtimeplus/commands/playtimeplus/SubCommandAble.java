@@ -57,7 +57,7 @@ public class SubCommandAble implements CommandExecutor {
                 .filter(subCmd -> sender instanceof Player || subCmd.canConsoleExecute())
                 .forEach(subCmd ->
                         join.add(String.format(
-                                "§b/%s %s §d%s §9%s",
+                                "§b/%s %s §d%s §e%s",
                                 label,
                                 subCmd.getName(),
                                 subCmd.getUsage(),

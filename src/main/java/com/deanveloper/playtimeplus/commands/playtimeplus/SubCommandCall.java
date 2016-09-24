@@ -48,6 +48,6 @@ public final class SubCommandCall {
     }
 
     public void sendBack(String format, Object... args) {
-        sender.sendMessage("§a[PlayTime] §r" + String.format(format, args));
+        sender.sendMessage("§a[PlayTimePlus] §r" + String.format(format, args));
     }
 }
