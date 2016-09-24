@@ -60,7 +60,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         saveDefaultConfig();
 
         getLogger().info("Setting commands and listeners...");
-        getCommand("playtimeplus").setExecutor(new PlayTimeCommand());
+        getCommand("playtime").setExecutor(new PlayTimeCommand());
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);

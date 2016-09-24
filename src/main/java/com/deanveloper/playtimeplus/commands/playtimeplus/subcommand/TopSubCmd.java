@@ -77,6 +77,6 @@ public class TopSubCmd implements SubCommandExecutor {
 
     @Override
     public String getPermission() {
-        return "playtimeplus.command.playtimeplus.top";
+        return "playtimeplus.command.playtime.top";
     }
 }

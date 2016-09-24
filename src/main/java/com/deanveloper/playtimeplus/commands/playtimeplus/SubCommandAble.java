@@ -3,6 +3,8 @@ package com.deanveloper.playtimeplus.commands.playtimeplus;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 
@@ -52,6 +54,7 @@ public class SubCommandAble implements CommandExecutor {
         StringJoiner join = new StringJoiner("\n");
         subCommands.stream()
                 .filter(subCmd -> sender.hasPermission(subCmd.getPermission()))
+                .filter(subCmd -> sender instanceof Player || subCmd.canConsoleExecute())
                 .forEach(subCmd ->
                         join.add(String.format(
                                 "§b/%s %s §d%s §9%s",

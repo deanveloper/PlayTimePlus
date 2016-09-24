@@ -45,6 +45,6 @@ public class SelfSubCmd implements SubCommandExecutor {
 
     @Override
     public String getPermission() {
-        return "playtimeplus.command.playtimeplus.self";
+        return "playtimeplus.command.playtime.self";
     }
 }

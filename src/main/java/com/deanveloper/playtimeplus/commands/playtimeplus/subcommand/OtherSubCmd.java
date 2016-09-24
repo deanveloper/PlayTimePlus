@@ -45,16 +45,16 @@ public class OtherSubCmd implements SubCommandExecutor {
 
     @Override
     public String getDesc() {
-        return null;
+        return "Get another player's play time.";
     }
 
     @Override
     public String getUsage() {
-        return null;
+        return "<player>";
     }
 
     @Override
     public String getPermission() {
-        return null;
+        return "playtimeplus.command.playtime.other";
     }
 }
