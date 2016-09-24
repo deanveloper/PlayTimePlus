@@ -28,16 +28,7 @@ public class SubCommandAble implements CommandExecutor {
     @Override
     public final boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            SubCommandExecutor subCmd = subCommandMap.get("");
-            if (subCmd == null) {
-                sendUsages(sender, label);
-            } else {
-                if (sender.hasPermission(subCmd.getPermission())) {
-                    subCmd.execute(new SubCommandCall(sender, cmd, label, null));
-                } else {
-                    sender.sendMessage("§cYou don't have permission to do that!");
-                }
-            }
+            sendUsages(sender, label);
         } else {
             SubCommandExecutor subCmd = subCommandMap.get(args[0]);
             if (subCmd == null) {

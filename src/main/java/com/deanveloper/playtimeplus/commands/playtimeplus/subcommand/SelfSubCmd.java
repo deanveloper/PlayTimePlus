@@ -10,6 +10,7 @@ import com.deanveloper.playtimeplus.util.Utils;
  * @author Dean
  */
 public class SelfSubCmd implements SubCommandExecutor {
+    private String[] aliases = new String[] {"me", "s"};
     @Override
     public void execute(SubCommandCall call) {
         PlayerEntry playerEntry = PlayTimePlus.getPlayerDb().get(call.getPlayer().getUniqueId());
@@ -24,7 +25,7 @@ public class SelfSubCmd implements SubCommandExecutor {
 
     @Override
     public String[] getAliases() {
-        return NO_ALIASES;
+        return aliases;
     }
 
     @Override

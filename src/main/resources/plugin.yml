@@ -4,9 +4,10 @@ main: com.deanveloper.playtimeplus.PlayTimePlus
 version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
-  playtimeplus:
-    permission: playtimeplus.command.playtimeplus
-    description: "Checks the amount of time someone has played"
+  playtime:
+    permission: playtimeplus.command.playtime
+    description: "Command to view play times"
+    usage: "/PlayTime <cmd> [args...]"
     aliases: [playtime, ptp]
   exportplayers:
     permission: playtimeplus.command.exportplayers
@@ -18,32 +19,37 @@ commands:
     usage: "/debug [true|false]"
 
 permissions:
-  playtimeplus.command.playtimeplus:
+  playtimeplus.command.playtime:
     description: "Allows access to use /playtimeplus (Note: subcommands must be given separately)"
     default: true
-  playtimeplus.command.playtimeplus.self:
+  playtimeplus.command.playtime.self:
     description: "Allows access to view their own play time"
     default: true
     children:
-      playtime.command.playtimeplus: true
-  playtimeplus.command.playtimeplus.top:
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.top:
     description: "Allows access to view the top 10 players"
     default: true
     children:
-      playtimeplus.command.playtimeplus: true
-  playtimeplus.command.playtimeplus.other:
-    description: "Allows access to view other people's playtimes"
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.other:
+    description: "Allows access to view other people's play times"
     default: op
     children:
-      playtime.command.playtimeplus: true
-  playtimeplus.command.playtimeplus.*:
-    description: "Allows full access to the /playtimeplus command"
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.version:
+    description: "Allows access to view the version of the plugin"
     default: op
     children:
-      playtimeplus.command.playtimeplus.self: true
-      playtimeplus.command.playtimeplus.other: true
-      playtimeplus.command.playtimeplus.change: true
-      playtimeplus.command.playtimeplus.top: true
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.*:
+    description: "Allows full access to the /playtime command"
+    default: op
+    children:
+      playtimeplus.command.playtime.self: true
+      playtimeplus.command.playtime.top: true
+      playtimeplus.command.playtime.other: true
+      playtimeplus.command.playtime.version: true
   playtimeplus.command.exportplayers:
     description: "Allows access to the /exportplayers command"
     default: op

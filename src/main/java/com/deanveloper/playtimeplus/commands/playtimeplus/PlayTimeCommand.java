@@ -7,8 +7,8 @@ import com.deanveloper.playtimeplus.commands.playtimeplus.subcommand.TopSubCmd;
 /**
  * @author Dean B
  */
-public class PlayTimePlusCommand extends SubCommandAble {
-    public PlayTimePlusCommand() {
+public class PlayTimeCommand extends SubCommandAble {
+    public PlayTimeCommand() {
         super(
                 new SelfSubCmd(),
                 new TopSubCmd(),
