@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * @author Dean
  */
-public abstract class SubCommandAble implements CommandExecutor {
+public class SubCommandAble implements CommandExecutor {
     private Set<SubCommandExecutor> subCommands = new HashSet<>();
     private Map<String, SubCommandExecutor> subCommandMap = new HashMap<>();
 
@@ -32,15 +32,23 @@ public abstract class SubCommandAble implements CommandExecutor {
             if (subCmd == null) {
                 sendUsages(sender, label);
             } else {
-                subCmd.execute(new SubCommandCall(sender, cmd, label, null));
+                if (sender.hasPermission(subCmd.getPermission())) {
+                    subCmd.execute(new SubCommandCall(sender, cmd, label, null));
+                } else {
+                    sender.sendMessage("§cYou don't have permission to do that!");
+                }
             }
         } else {
             SubCommandExecutor subCmd = subCommandMap.get(args[0]);
-            if(subCmd == null) {
+            if (subCmd == null) {
                 sendUsages(sender, label);
             } else {
                 try {
-                    subCmd.execute(new SubCommandCall(sender, cmd, args[0], args));
+                    if (sender.hasPermission(subCmd.getPermission())) {
+                        subCmd.execute(new SubCommandCall(sender, cmd, args[0], args));
+                    } else {
+                        sender.sendMessage("§cYou don't have permission to do that!");
+                    }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     sender.sendMessage("§aUsage: " + label + " " + args[0].toLowerCase() + " §d" + subCmd.getUsage());
                 }
