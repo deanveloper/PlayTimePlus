@@ -40,7 +40,7 @@ public class OtherSubCmd implements SubCommandExecutor {
 
     @Override
     public boolean canConsoleExecute() {
-        return false;
+        return true;
     }
 
     @Override
