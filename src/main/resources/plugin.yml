@@ -4,12 +4,12 @@ main: com.deanveloper.playtimeplus.PlayTimePlus
 version: ${project.version}
 softdepend: [GroupManager, Essentials]
 commands:
-  playtime:
+  playtimeplus:
     permission: playtimeplus.command.playtimeplus
     description: "Checks the amount of time someone has played"
-    usage: "/playtimeplus help"
+    aliases: [playtime, ptp]
   exportplayers:
-    permission: playtimeplus.command.export
+    permission: playtimeplus.command.exportplayers
     description: "Exports players to a file"
     usage: "/exportplayers [help|filetype]"
   debug:
@@ -17,37 +17,36 @@ commands:
     description: "Enable debug mode"
     usage: "/debug [true|false]"
 
-
 permissions:
-  playtime.command.playtime:
+  playtimeplus.command.playtimeplus:
     description: "Allows access to use /playtimeplus (Note: subcommands must be given separately)"
     default: true
-  playtime.command.playtime.self:
-    description: "Allows access to view their own playtimeplus"
+  playtimeplus.command.playtimeplus.self:
+    description: "Allows access to view their own play time"
     default: true
     children:
-      playtime.command.playtime: true
-  playtime.command.playtime.top:
+      playtime.command.playtimeplus: true
+  playtimeplus.command.playtimeplus.top:
     description: "Allows access to view the top 10 players"
     default: true
     children:
-      playtime.command.playtime: true
-  playtime.command.playtime.other:
+      playtimeplus.command.playtimeplus: true
+  playtimeplus.command.playtimeplus.other:
     description: "Allows access to view other people's playtimes"
     default: op
     children:
-      playtime.command.playtime: true
-  playtime.command.playtime.*:
+      playtime.command.playtimeplus: true
+  playtimeplus.command.playtimeplus.*:
     description: "Allows full access to the /playtimeplus command"
     default: op
     children:
-      playtime.command.playtime.self: true
-      playtime.command.playtime.other: true
-      playtime.command.playtime.change: true
-      playtime.command.playtime.top: true
-  playtime.command.export:
+      playtimeplus.command.playtimeplus.self: true
+      playtimeplus.command.playtimeplus.other: true
+      playtimeplus.command.playtimeplus.change: true
+      playtimeplus.command.playtimeplus.top: true
+  playtimeplus.command.exportplayers:
     description: "Allows access to the /exportplayers command"
     default: op
-  playtime.podium:
+  playtimeplus.podium:
     description: "Allows the creation/destruction of a podium"
     default: op

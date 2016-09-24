@@ -1,0 +1,69 @@
+package com.deanveloper.playtimeplus.commands.playtimeplus;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+
+import java.util.*;
+
+/**
+ * @author Dean
+ */
+public abstract class SubCommandAble implements CommandExecutor {
+    private Set<SubCommandExecutor> subCommands = new HashSet<>();
+    private Map<String, SubCommandExecutor> subCommandMap = new HashMap<>();
+
+    public SubCommandAble(SubCommandExecutor... subCmds) {
+        for (SubCommandExecutor subCmd : subCmds) {
+            subCommandMap.put(subCmd.getName(), subCmd);
+            subCommands.add(subCmd);
+
+            for (String alias : subCmd.getAliases()) {
+                subCommandMap.put(alias, subCmd);
+            }
+        }
+    }
+
+
+    @Override
+    public final boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (args.length == 0) {
+            SubCommandExecutor subCmd = subCommandMap.get("");
+            if (subCmd == null) {
+                sendUsages(sender, label);
+            } else {
+                subCmd.execute(new SubCommandCall(sender, cmd, label, null));
+            }
+        } else {
+            SubCommandExecutor subCmd = subCommandMap.get(args[0]);
+            if(subCmd == null) {
+                sendUsages(sender, label);
+            } else {
+                try {
+                    subCmd.execute(new SubCommandCall(sender, cmd, args[0], args));
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    sender.sendMessage("§aUsage: " + label + " " + args[0].toLowerCase() + " §d" + subCmd.getUsage());
+                }
+            }
+        }
+        return true;
+    }
+
+    private void sendUsages(CommandSender sender, String label) {
+        StringJoiner join = new StringJoiner("\n");
+        subCommands.stream()
+                .filter(subCmd -> sender.hasPermission(subCmd.getPermission()))
+                .forEach(subCmd ->
+                        join.add(String.format(
+                                "§b/%s %s §d%s §9%s",
+                                label,
+                                subCmd.getName(),
+                                subCmd.getUsage(),
+                                subCmd.getDesc()
+                        ))
+                );
+
+        sender.sendMessage("§6Usage: " + label + " <command> [args...]");
+        sender.sendMessage(join.toString());
+    }
+}
