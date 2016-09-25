@@ -28,6 +28,9 @@ public class Query {
             "((?<m>\\d+)(?:m))?" +
             "((?<s>\\d+)(?:s))?");
 
+    private Query() {
+    }
+
     static PlayerEntry query(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
         PlayerEntry toReturn = new PlayerEntry(pEntry.getId());
         final Duration duration;

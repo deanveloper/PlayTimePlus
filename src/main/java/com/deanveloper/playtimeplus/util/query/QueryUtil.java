@@ -3,61 +3,156 @@ package com.deanveloper.playtimeplus.util.query;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Dean
  */
+@SuppressWarnings("Duplicates")
 public class QueryUtil {
     /**
-     * Queries are ways to filter out data you don't want.
+     * Queries are ways to filter out data so you only get what you want.
      *
      * @param query The query to pass
      * @return A list of players containing players that pass the query
      */
-    public static List<PlayerEntry> query(String query) throws QueryException {
+    public static Set<PlayerEntry> query(String query) throws QueryException {
         return query(query.split("\\s"));
     }
 
     /**
-     * Queries are ways to filter out data you don't want.
+     * Queries are ways to filter out data so you only get what you want.
      *
      * @param args The queries to pass
      * @return A list of incomplete PlayerEntries with players that pass the query along with their TimeEntries
      */
-    public static List<PlayerEntry> query(String... args) throws QueryException {
-        if (args.length == 1) {
-            return querySingle(args[0]);
-        } else {
-            for (int i = 0; i < args.length; i++) {
-                // if the argument is in a spot designated for a query
-                List<PlayerEntry> current = new ArrayList<>();
-                if(i % 2 == 1) {
-                    String[] split = args[i].split(":", 2);
-                    current.add(Query.query(split[0], split[1], current));
+    public static Set<PlayerEntry> query(String... args) throws QueryException {
+        Set<PlayerEntry> mutating = new HashSet<>();
+        String currentOp = "or";
+        for (int i = 0; i < args.length; i++) {
+
+            // if the argument is in a spot designated for a query
+            if(i % 2 == 0) {
+                switch (currentOp) {
+                    case "or":
+                        for (PlayerEntry entry1 : mutating) {
+                            for (PlayerEntry entry2 : querySingle(args[i])) {
+                                or(entry1, entry2);
+                            }
+                        }
+                        break;
+                    case "and":
+                        for (PlayerEntry entry1 : mutating) {
+                            for (PlayerEntry entry2 : querySingle(args[i])) {
+                                and(entry1, entry2);
+                            }
+                        }
+                        break;
+                    case "xor":
+                        for (PlayerEntry entry1 : mutating) {
+                            for (PlayerEntry entry2 : querySingle(args[i])) {
+                                or(entry1, entry2);
+                            }
+                        }
+                        break;
+                }
+            } else {
+                currentOp = args[i];
+            }
+        }
+
+        return mutating;
+    }
+
+    // OPERATIONS
+    private static void or(PlayerEntry entry1, PlayerEntry entry2) {
+        if(entry1.getId() != entry2.getId()) {
+            return;
+        }
+        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+                if(isWithin(time1.getStart(), time2)) {
+                    time1.setStart(time2.getStart());
+                }
+                if(isWithin(time1.getEnd(), time2)) {
+                    time1.setEnd(time2.getEnd());
                 }
             }
         }
+    }
 
+    private static void nor(PlayerEntry entry1, PlayerEntry entry2) {
 
-        for (String query : args) {
+    }
 
-            String[] split = arg.split(":", 2);
-            String key = split[0];
-            String value = split[1];
-
-
+    private static void and(PlayerEntry entry1, PlayerEntry entry2) {
+        if(entry1.getId() != entry2.getId()) {
+            return;
+        }
+        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+                if(isWithin(time2.getStart(), time1)) {
+                    time1.setStart(time2.getStart());
+                }
+                if(isWithin(time2.getEnd(), time1)) {
+                    time1.setEnd(time2.getEnd());
+                }
+            }
         }
     }
 
-    private static List<PlayerEntry> querySingle(String query) throws QueryException {
-        List<PlayerEntry> toReturn = new ArrayList<>();
-        for (PlayerEntry base : PlayTimePlus.getPlayerDb().getPlayers().values()) {
-            PlayerEntry entry = new PlayerEntry(base.getId());
-            for (PlayerEntry.TimeEntry time : entry.getTimes()) {
-                Query q = new Query();
+    private static void xor(PlayerEntry entry1, PlayerEntry entry2) {
+        if(entry1.getId() != entry2.getId()) {
+            return;
+        }
+        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+                // a series of booleans determining if they are within each other
+                boolean start1 = isWithin(time1.getStart(), time2);
+                boolean start2 = isWithin(time2.getStart(), time1);
+                boolean end1 = isWithin(time1.getEnd(), time2);
+                boolean end2 = isWithin(time2.getEnd(), time1);
+
+                if(start1 || start2 || end1 || end2) {
+                    entry1.getTimes().remove(time1);
+
+                    // if time1 is not encapsulated by or encapsulates time2
+                    if(start1 != end1) {
+                        if (start1) {
+                            entry1.getTimes().add(entry1.new TimeEntry(time2.getStart(), time1.getStart()));
+                            entry1.getTimes().add(entry1.new TimeEntry(time2.getEnd(), time1.getEnd()));
+                        } else {
+                            entry1.getTimes().add(entry1.new TimeEntry(time1.getStart(), time2.getStart()));
+                            entry1.getTimes().add(entry1.new TimeEntry(time1.getEnd(), time2.getEnd()));
+                        }
+                    } else {
+                        if(start1) {
+                            entry1.getTimes().add(entry1.new TimeEntry(time2.getStart(), time1.getStart()));
+                            entry1.getTimes().add(entry1.new TimeEntry(time1.getEnd(), time2.getEnd()));
+                        } else {
+                            entry1.getTimes().add(entry1.new TimeEntry(time1.getStart(), time2.getStart()));
+                            entry1.getTimes().add(entry1.new TimeEntry(time2.getEnd(), time1.getEnd()));
+                        }
+                    }
+                }
             }
         }
+    }
+
+    private static boolean isWithin(LocalDateTime time, PlayerEntry.TimeEntry range) {
+        return range.getStart().isBefore(time) && range.getEnd().isAfter(time);
+    }
+
+    private static Set<PlayerEntry> querySingle(String query) throws QueryException {
+        Set<PlayerEntry> toReturn = new HashSet<>();
+        String[] split = query.split(":", 2);
+        for (PlayerEntry base : PlayTimePlus.getPlayerDb().getPlayers().values()) {
+            PlayerEntry entry = new PlayerEntry(base.getId());
+            Query.query(split[0], split[1], entry);
+            toReturn.add(entry);
+        }
+        return toReturn;
     }
 }
