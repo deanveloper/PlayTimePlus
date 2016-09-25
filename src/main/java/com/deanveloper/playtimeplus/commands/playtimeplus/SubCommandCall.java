@@ -23,7 +23,12 @@ public final class SubCommandCall {
         if(args == null) {
             this.args = EMPTY;
         } else {
-            this.args = Arrays.copyOfRange(args, 1, args.length);
+            // do not include first arg
+            this.args = new String[args.length - 1];
+
+            for(int i = 1; i < args.length; i++) {
+                this.args[i] = args[i].toLowerCase();
+            }
         }
     }
 
