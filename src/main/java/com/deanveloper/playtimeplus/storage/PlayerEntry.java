@@ -18,14 +18,15 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
     private UUID id;
     @SerializedName("t")
     private List<TimeEntry> times;
-    private transient boolean hasChanged;
+
+    private transient boolean totalChanged;
     private transient Duration lastTotal;
 
     /**
      * For gson to use
      */
     private PlayerEntry() {
-        hasChanged = true;
+        totalChanged = true;
         lastTotal = Duration.ZERO;
     }
 
@@ -56,9 +57,9 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("TimeEntry not found starting with " + start));
 
-            current.duration = Duration.between(start, LocalDateTime.now());
+            current.end = LocalDateTime.now();
 
-            entry.hasChanged = true;
+            entry.totalChanged = true;
 
             PlayTimePlus.getPlayerDb().update(entry);
         }
@@ -93,8 +94,8 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
             LocalDateTime now = LocalDateTime.now();
             onlineTimes.put(id, now);
             TimeEntry time = new TimeEntry();
-            time.start = now;
-            time.duration = Duration.ZERO;
+            time.setStart(now);
+            time.setEnd(now);
             times.add(time);
         } else if (!online && onlineTimes.containsKey(id)) {
             LocalDateTime start = onlineTimes.remove(id);
@@ -104,10 +105,10 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("TimeEntry not found starting with " + start));
 
-            current.duration = Duration.between(start, LocalDateTime.now());
+            current.setEnd(LocalDateTime.now());
         }
 
-        hasChanged = true;
+        totalChanged = true;
         PlayTimePlus.getPlayerDb().update(this);
     }
 
@@ -115,12 +116,12 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
      * The total time the player has been online
      */
     public Duration getTotalTime() {
-        if (hasChanged) {
+        if (totalChanged) {
             lastTotal = Duration.ZERO;
             for (TimeEntry entry : getTimes()) {
-                lastTotal = lastTotal.plus(entry.duration);
+                lastTotal = lastTotal.plus(Duration.between(entry.getStart(), entry.getEnd()));
             }
-            hasChanged = false;
+            totalChanged = false;
         }
         return lastTotal;
     }
@@ -139,20 +140,55 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
     public class TimeEntry {
         @SerializedName("s")
         private LocalDateTime start;
-        @SerializedName("d")
-        private Duration duration;
+        @SerializedName("e")
+        private LocalDateTime end;
+
+        private transient boolean durationChanged;
+        private transient Duration lastDuration;
+
+        private TimeEntry() {
+            durationChanged = true;
+            totalChanged = true;
+            lastDuration = Duration.ZERO;
+        }
+
+        public TimeEntry(LocalDateTime start, LocalDateTime end) {
+            this();
+            this.start = start;
+            this.end = end;
+        }
+
+        public void setStart(LocalDateTime start) {
+            durationChanged = true;
+            totalChanged = true;
+            this.start = start;
+        }
+
+        public void setEnd(LocalDateTime end) {
+            durationChanged = true;
+            totalChanged = true;
+            this.start = end;
+        }
+
+        public Duration getDuration() {
+            if (durationChanged) {
+                lastDuration = Duration.between(start, end);
+                durationChanged = false;
+            }
+            return lastDuration;
+        }
 
         public LocalDateTime getStart() {
             return start;
         }
 
-        public Duration getDuration() {
-            return duration;
+        public LocalDateTime getEnd() {
+            return end;
         }
 
         @Override
         public String toString() {
-            return "TimeEntry[start=" + start + ",duration=" + duration + "]";
+            return "TimeEntry[start=" + start + ",end=" + end + "]";
         }
     }
 }
