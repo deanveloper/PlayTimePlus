@@ -138,6 +138,6 @@ public class Query {
     }
 
     private static int fromGroup(String s, int def) {
-        return s.isEmpty() ? def : Integer.parseInt(s);
+        return (s == null || s.isEmpty()) ? def : Integer.parseInt(s);
     }
 }
