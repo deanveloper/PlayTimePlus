@@ -50,13 +50,6 @@ public class QueryUtil {
                             }
                         }
                         break;
-                    case "xor":
-                        for (PlayerEntry entry1 : mutating) {
-                            for (PlayerEntry entry2 : querySingle(args[i])) {
-                                xor(entry1, entry2);
-                            }
-                        }
-                        break;
                 }
             } else {
                 currentOp = args[i];
@@ -94,46 +87,6 @@ public class QueryUtil {
                 }
                 if(isWithin(time2.getEnd(), time1)) {
                     time1.setEnd(time2.getEnd());
-                }
-            }
-        }
-    }
-
-    private static void xor(PlayerEntry source, PlayerEntry query) {
-        if(source.getId() != query.getId()) {
-            return;
-        }
-        for(PlayerEntry.TimeEntry time1 : source.getTimes()) {
-            for(PlayerEntry.TimeEntry time2 : query.getTimes()) {
-                // a series of booleans determining if they are within each other
-                boolean start1 = isWithin(time1.getStart(), time2);
-                boolean start2 = isWithin(time2.getStart(), time1);
-                boolean end1 = isWithin(time1.getEnd(), time2);
-                boolean end2 = isWithin(time2.getEnd(), time1);
-
-                if(start1 || start2 || end1 || end2) {
-                    source.getTimes().remove(time1);
-
-                    // if time1 is not encapsulated by or encapsulates time2
-                    if(start1 != end1) {
-                        if (start1) {
-                            source.getTimes().add(source.new TimeEntry(time2.getStart(), time1.getStart()));
-                            source.getTimes().add(source.new TimeEntry(time2.getEnd(), time1.getEnd()));
-                        } else {
-                            source.getTimes().add(source.new TimeEntry(time1.getStart(), time2.getStart()));
-                            source.getTimes().add(source.new TimeEntry(time1.getEnd(), time2.getEnd()));
-                        }
-                    } else {
-                        if(start1) {
-                            source.getTimes().add(source.new TimeEntry(time2.getStart(), time1.getStart()));
-                            source.getTimes().add(source.new TimeEntry(time1.getEnd(), time2.getEnd()));
-                        } else {
-                            source.getTimes().add(source.new TimeEntry(time1.getStart(), time2.getStart()));
-                            source.getTimes().add(source.new TimeEntry(time2.getEnd(), time1.getEnd()));
-                        }
-                    }
-                } else {
-                    source.getTimes().add(time2);
                 }
             }
         }
