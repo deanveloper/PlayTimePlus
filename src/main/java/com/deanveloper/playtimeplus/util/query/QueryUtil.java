@@ -53,7 +53,7 @@ public class QueryUtil {
                     case "xor":
                         for (PlayerEntry entry1 : mutating) {
                             for (PlayerEntry entry2 : querySingle(args[i])) {
-                                or(entry1, entry2);
+                                xor(entry1, entry2);
                             }
                         }
                         break;
