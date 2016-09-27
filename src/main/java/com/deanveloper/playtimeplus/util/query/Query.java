@@ -32,10 +32,9 @@ public class Query {
     }
 
     static PlayerEntry queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
-        PlayerEntry toReturn = new PlayerEntry(pEntry.getId());
+        final PlayerEntry toReturn = new PlayerEntry(pEntry.getId());
         final Duration duration;
         final LocalDateTime time;
-        final LocalDateTime secondTime;
 
         switch (type) {
             case "total<":
@@ -44,10 +43,14 @@ public class Query {
 
                 switch (type) {
                     case "total>":
-                        toReturn = pEntry.getTotalTime().compareTo(duration) > 0 ? pEntry : null;
+                        if(pEntry.getTotalTime().compareTo(duration) > 0) {
+                            toReturn.getTimes().addAll(pEntry.getTimes());
+                        }
                         break;
                     case "total<":
-                        toReturn = pEntry.getTotalTime().compareTo(duration) < 0 ? pEntry : null;
+                        if(pEntry.getTotalTime().compareTo(duration) < 0) {
+                            toReturn.getTimes().addAll(pEntry.getTimes());
+                        }
                         break;
                 }
                 break;
@@ -72,9 +75,9 @@ public class Query {
                                 .filter(tEntry -> !tEntry.getStart().isBefore(time))
                                 .forEach(tEntry -> {
                                     if (tEntry.getEnd().isAfter(time)) {
-                                        pEntry.getTimes().add(tEntry);
+                                        toReturn.getTimes().add(tEntry);
                                     } else {
-                                        pEntry.getTimes().add(pEntry.new TimeEntry(tEntry.getStart(), time));
+                                        toReturn.getTimes().add(pEntry.new TimeEntry(tEntry.getStart(), time));
                                     }
                                 });
                     }
