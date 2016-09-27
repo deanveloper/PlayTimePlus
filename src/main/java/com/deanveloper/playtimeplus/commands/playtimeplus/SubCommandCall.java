@@ -27,7 +27,7 @@ public final class SubCommandCall {
             this.args = new String[args.length - 1];
 
             for(int i = 1; i < args.length; i++) {
-                this.args[i] = args[i].toLowerCase();
+                this.args[i - 1] = args[i].toLowerCase();
             }
         }
     }

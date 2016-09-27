@@ -3,7 +3,6 @@ package com.deanveloper.playtimeplus.commands.playtimeplus;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -43,7 +42,7 @@ public class SubCommandAble implements CommandExecutor {
                         sender.sendMessage("§cYou don't have permission to do that!");
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    sender.sendMessage("§aUsage: " + label + " " + args[0].toLowerCase() + " §d" + subCmd.getUsage());
+                    sender.sendMessage("§aUsage: /" + label + " " + args[0].toLowerCase() + " §d" + subCmd.getUsage());
                 }
             }
         }
