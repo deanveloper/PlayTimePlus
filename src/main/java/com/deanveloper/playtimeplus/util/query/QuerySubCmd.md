@@ -20,7 +20,7 @@ Note that you must use a `Duration` for this, you cannot enter a `DateTime`. Let
 ### Times
 There are two ways to show time.
 
-The first way is to use a specific `DateTime`. You can do this by following the format `[Y:####],[M:##],[d:##],[h:##],[m:##],[s:##]`.
+The first way is to use a specific `DateTime`. You can do this by following the format `[Y:####][M:##][d:##][h:##][m:##][s:##]`.
 Any of these are optional, and if you decide not to specify any of these time units, it will default to whatever time unit we are currently at.
 (For instance, if it is 2016 and you don't specify a year, it will assume that you want the year parameter to be 2016.)
 
@@ -29,6 +29,10 @@ These must be used if you are going to query by `total`, although you can use th
 If you use a `Duration` for the `after` or `before` types, it will convert the `Duration` to a `DateTime` by subtracting the `Duration` from the current `DateTime`.
 For instance, if you say `after:7d` and it was `Y:2016,M:9,d:19,h:5,m:0,s:0`, the filter would apply to times after `Y:2016,M:9,d:12,h:5,m:0,s:0`.
 This might seem complicated, but there's only one hard-to-understand part before the examples when this will all be more clear.
+
+Also, commas may be optionally used to separate the different time units. `Y:2016,M:9,d:19` is the same as `Y:2016M:9d:19`.
+The same is true for durations, so `5d,6h,30m,13s` is the same as `5d6h30m13s`.
+Feel free to use either syntax.
 
 ### Operators
 Maybe being limited to `before`, `after`, and `total` just doesn't cut it. You need something more specific. This is when operators come to use.
