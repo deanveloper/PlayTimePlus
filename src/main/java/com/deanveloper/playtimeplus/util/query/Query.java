@@ -4,7 +4,6 @@ import com.deanveloper.playtimeplus.storage.PlayerEntry;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,12 +42,12 @@ public class Query {
 
                 switch (type) {
                     case "total>":
-                        if(pEntry.getTotalTime().compareTo(duration) > 0) {
+                        if (pEntry.getTotalTime().compareTo(duration) > 0) {
                             toReturn.getTimes().addAll(pEntry.getTimes());
                         }
                         break;
                     case "total<":
-                        if(pEntry.getTotalTime().compareTo(duration) < 0) {
+                        if (pEntry.getTotalTime().compareTo(duration) < 0) {
                             toReturn.getTimes().addAll(pEntry.getTimes());
                         }
                         break;
@@ -121,13 +120,18 @@ public class Query {
             int minutes = fromGroup(relMatcher.group("m"));
             int seconds = fromGroup(relMatcher.group("s"));
 
-            return Duration.ofSeconds(seconds)
-                    .plusMinutes(minutes)
-                    .plusHours(hours)
-                    .plusDays(days)
-                    .plus(weeks, ChronoUnit.WEEKS)
-                    .plus(months, ChronoUnit.MONTHS)
-                    .plus(years, ChronoUnit.YEARS);
+            LocalDateTime now = LocalDateTime.now();
+
+            return Duration.between(now
+                            .minusSeconds(seconds)
+                            .minusMinutes(minutes)
+                            .minusHours(hours)
+                            .minusDays(days)
+                            .minusWeeks(weeks)
+                            .minusDays(days)
+                            .minusMonths(months)
+                            .minusYears(years),
+                    now);
         } else {
             throw new QueryException("Cannot parse duration from " + string);
         }
