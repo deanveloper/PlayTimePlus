@@ -46,19 +46,32 @@ This is the same as saying "in between 7 and 4 days ago"
 Finally! Now you can figure out what all that crap means.
 
 Let's say you wanted to find all players who have played in the past week. This is a fairly simple query. `after:7d`.
-This query within the code translates to "show me each player's play times that are after 7 days ago".
 
-So if we want to find all active players, we'll need more than just "logged on in the past week" to define active. We'll assume you had to have played 2 hours in the past week to do this.
-This can also be pretty simply done in one command. Let's use those operators that we mentioned earlier.
+Internally, it will read this query as "show me each player's play times that are after 7 days ago".
+
+-----
+If we want to find all active players, we'll need more than just "logged on in the past week" to define active.
+
+We'll assume you had to have played 2 hours in the past week in order to be considered active.
+
 If we use the `and` operator, we can make sure that we get play times of players who have both played in the past week AND have at least 2 hours since then.
-The proper query to do this would be `after:7d and total>2h`. Note that total uses `>` or `<` rather than a `:`, as we want to specify that the total should be greater than 2 hours.
-Internally, it will read this query as "show me each player's play time in the past 7 days, only if that amount of play time is over 2 hours"
 
-Let's say we want to find inactive players. To define an inactive player, let's say that they need to have been on for at least a month and have less than 6 hours of play time.
+The proper query to do this would be `after:7d and total>2h`. \(Note that total uses `>` or `<` rather than a `:`, as we want to specify that the total should be greater than 2 hours.\)
+
+Internally, it will read this query as "show me each player's play times that are after 7 days ago, but only if that amount of play time is over 2 hours"
+
+-----
+Let's say we want to find inactive players now.
+
+To define an inactive player, let's say that they need to have been on for at least a month but have less than 6 hours of play time.
+
 We'll use the `and` operator for this, as you might guess.
 Although there's a slight problem. If you use `before:1M and total<5h`, it will only get the total hours **before one month ago.**
+
 This means that if someone joined 1 month and a day ago, and only played 3 hours that day, but has played 20 since then, they'll get marked for inactivity.
+
 To combat this, put the total first. The proper syntax is `total<5h and before:1M`, as this would first filter out play times of people who have less than 5 hours, and then apply to that the `before:1M`.
 
+# Contact
 If this seems super confusing, feel free to contact me and I'll try to explain further.
-Check out [my website](https://www.deanveloper.com/) for different ways to contac me.
+Check out [my website](https://www.deanveloper.com/) for different ways to contact me.
