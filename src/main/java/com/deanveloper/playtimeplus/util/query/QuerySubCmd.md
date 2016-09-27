@@ -61,3 +61,4 @@ This means that if someone joined 1 month and a day ago, and only played 3 hours
 To combat this, put the total first. The proper syntax is `total<5h and before:1M`, as this would first filter out play times of people who have less than 5 hours, and then apply to that the `before:1M`.
 
 If this seems super confusing, feel free to contact me and I'll try to explain further.
+Check out [my website](https://www.deanveloper.com/) for different ways to contac me.
