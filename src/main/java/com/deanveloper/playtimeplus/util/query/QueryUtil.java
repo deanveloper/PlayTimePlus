@@ -145,10 +145,38 @@ public class QueryUtil {
 
     private static Set<PlayerEntry> querySingle(String query) throws QueryException {
         Set<PlayerEntry> toReturn = new HashSet<>();
-        String[] split = query.split(":", 2);
+        StringBuilder builder = new StringBuilder();
+        String type = null;
+        boolean doneWithType = false;
+
+        // Parse the query
+        for(char c : query.toCharArray()) {
+            if(doneWithType) {
+                builder.append(c);
+            } else {
+                if(c == ':') {
+                    type = builder.toString();
+                    builder.setLength(0);
+                    doneWithType = true;
+                } else {
+                    builder.append(c);
+                    if(c == '<' || c == '>') {
+                        type = builder.toString();
+                        builder.setLength(0);
+                        doneWithType = true;
+                    }
+                }
+            }
+        }
+        String value = builder.toString();
+
+        if (type == null || value.isEmpty()) {
+            throw new QueryException("Type or value is empty!");
+        }
+
         for (PlayerEntry base : PlayTimePlus.getPlayerDb().getPlayers().values()) {
             PlayerEntry entry = new PlayerEntry(base.getId());
-            Query.queryPlayer(split[0], split[1], entry);
+            Query.queryPlayer(type, value, entry);
             toReturn.add(entry);
         }
         return toReturn;

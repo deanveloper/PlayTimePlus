@@ -3,11 +3,11 @@ package com.deanveloper.playtimeplus.commands.playtimeplus.subcommand;
 import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
 import org.bukkit.ChatColor;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -22,7 +22,14 @@ public class QuerySubCmd implements SubCommandExecutor {
             call.sendBack("Go to this page for help: https://goo.gl/Y1KeoG");
         } else {
             try {
+                call.sendBack("Performing query...");
                 Set<PlayerEntry> entries = QueryUtil.query(call.getArgs());
+                call.sendBack("Query finished!");
+                entries.stream()
+                        .sorted()
+                        .forEach(pEntry ->
+                                call.sendBack("§d%s §e-> §d%s", pEntry.getName(), Utils.format(pEntry.getTotalTime()))
+                        );
             } catch (QueryException e) {
                 call.sendBack(ChatColor.RED + "ERROR: " + e.getMessage());
             }
