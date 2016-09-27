@@ -67,12 +67,12 @@ public class QueryUtil {
     }
 
     // OPERATIONS
-    private static void or(PlayerEntry entry1, PlayerEntry entry2) {
-        if(entry1.getId() != entry2.getId()) {
+    private static void or(PlayerEntry source, PlayerEntry query) {
+        if(source.getId() != query.getId()) {
             return;
         }
-        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
-            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+        for(PlayerEntry.TimeEntry time1 : source.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : query.getTimes()) {
                 if(isWithin(time1.getStart(), time2)) {
                     time1.setStart(time2.getStart());
                 }
@@ -83,16 +83,12 @@ public class QueryUtil {
         }
     }
 
-    private static void nor(PlayerEntry entry1, PlayerEntry entry2) {
-
-    }
-
-    private static void and(PlayerEntry entry1, PlayerEntry entry2) {
-        if(entry1.getId() != entry2.getId()) {
+    private static void and(PlayerEntry source, PlayerEntry query) {
+        if(source.getId() != query.getId()) {
             return;
         }
-        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
-            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+        for(PlayerEntry.TimeEntry time1 : source.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : query.getTimes()) {
                 if(isWithin(time2.getStart(), time1)) {
                     time1.setStart(time2.getStart());
                 }
@@ -103,12 +99,12 @@ public class QueryUtil {
         }
     }
 
-    private static void xor(PlayerEntry entry1, PlayerEntry entry2) {
-        if(entry1.getId() != entry2.getId()) {
+    private static void xor(PlayerEntry source, PlayerEntry query) {
+        if(source.getId() != query.getId()) {
             return;
         }
-        for(PlayerEntry.TimeEntry time1 : entry1.getTimes()) {
-            for(PlayerEntry.TimeEntry time2 : entry2.getTimes()) {
+        for(PlayerEntry.TimeEntry time1 : source.getTimes()) {
+            for(PlayerEntry.TimeEntry time2 : query.getTimes()) {
                 // a series of booleans determining if they are within each other
                 boolean start1 = isWithin(time1.getStart(), time2);
                 boolean start2 = isWithin(time2.getStart(), time1);
@@ -116,26 +112,28 @@ public class QueryUtil {
                 boolean end2 = isWithin(time2.getEnd(), time1);
 
                 if(start1 || start2 || end1 || end2) {
-                    entry1.getTimes().remove(time1);
+                    source.getTimes().remove(time1);
 
                     // if time1 is not encapsulated by or encapsulates time2
                     if(start1 != end1) {
                         if (start1) {
-                            entry1.getTimes().add(entry1.new TimeEntry(time2.getStart(), time1.getStart()));
-                            entry1.getTimes().add(entry1.new TimeEntry(time2.getEnd(), time1.getEnd()));
+                            source.getTimes().add(source.new TimeEntry(time2.getStart(), time1.getStart()));
+                            source.getTimes().add(source.new TimeEntry(time2.getEnd(), time1.getEnd()));
                         } else {
-                            entry1.getTimes().add(entry1.new TimeEntry(time1.getStart(), time2.getStart()));
-                            entry1.getTimes().add(entry1.new TimeEntry(time1.getEnd(), time2.getEnd()));
+                            source.getTimes().add(source.new TimeEntry(time1.getStart(), time2.getStart()));
+                            source.getTimes().add(source.new TimeEntry(time1.getEnd(), time2.getEnd()));
                         }
                     } else {
                         if(start1) {
-                            entry1.getTimes().add(entry1.new TimeEntry(time2.getStart(), time1.getStart()));
-                            entry1.getTimes().add(entry1.new TimeEntry(time1.getEnd(), time2.getEnd()));
+                            source.getTimes().add(source.new TimeEntry(time2.getStart(), time1.getStart()));
+                            source.getTimes().add(source.new TimeEntry(time1.getEnd(), time2.getEnd()));
                         } else {
-                            entry1.getTimes().add(entry1.new TimeEntry(time1.getStart(), time2.getStart()));
-                            entry1.getTimes().add(entry1.new TimeEntry(time2.getEnd(), time1.getEnd()));
+                            source.getTimes().add(source.new TimeEntry(time1.getStart(), time2.getStart()));
+                            source.getTimes().add(source.new TimeEntry(time2.getEnd(), time1.getEnd()));
                         }
                     }
+                } else {
+                    source.getTimes().add(time2);
                 }
             }
         }
@@ -150,7 +148,7 @@ public class QueryUtil {
         String[] split = query.split(":", 2);
         for (PlayerEntry base : PlayTimePlus.getPlayerDb().getPlayers().values()) {
             PlayerEntry entry = new PlayerEntry(base.getId());
-            Query.query(split[0], split[1], entry);
+            Query.queryPlayer(split[0], split[1], entry);
             toReturn.add(entry);
         }
         return toReturn;

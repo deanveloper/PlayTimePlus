@@ -31,7 +31,7 @@ public class Query {
     private Query() {
     }
 
-    static PlayerEntry query(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
+    static PlayerEntry queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
         PlayerEntry toReturn = new PlayerEntry(pEntry.getId());
         final Duration duration;
         final LocalDateTime time;
@@ -45,8 +45,10 @@ public class Query {
                 switch (type) {
                     case "total>":
                         toReturn = pEntry.getTotalTime().compareTo(duration) > 0 ? pEntry : null;
+                        break;
                     case "total<":
                         toReturn = pEntry.getTotalTime().compareTo(duration) < 0 ? pEntry : null;
+                        break;
                 }
                 break;
             case "after":
@@ -76,22 +78,6 @@ public class Query {
                                     }
                                 });
                     }
-                }
-                break;
-            case "between":
-                String[] timesAsStrings = valueAsString.split("\\.\\.\\.");
-                if (timesAsStrings.length == 2) {
-                    time = parseTime(timesAsStrings[0]);
-                    secondTime = parseTime(timesAsStrings[1]);
-                    for (PlayerEntry.TimeEntry tEntry : pEntry.getTimes()) {
-                        LocalDateTime newStart = tEntry.getStart().isAfter(time) ? tEntry.getStart() : time;
-                        LocalDateTime newEnd = tEntry.getEnd().isAfter(secondTime) ? tEntry.getEnd() : secondTime;
-                        if (newStart.isBefore(newEnd)) {
-                            toReturn.getTimes().add(pEntry.new TimeEntry(newStart, newEnd));
-                        }
-                    }
-                } else {
-                    throw new QueryException(type + " should be in the form \"time1...time2\"");
                 }
                 break;
             default:
