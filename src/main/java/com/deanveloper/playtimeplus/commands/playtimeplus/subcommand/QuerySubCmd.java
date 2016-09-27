@@ -3,9 +3,12 @@ package com.deanveloper.playtimeplus.commands.playtimeplus.subcommand;
 import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
+import org.bukkit.ChatColor;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Dean
@@ -16,9 +19,13 @@ public class QuerySubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         if (call.getArgs()[0].equals("help")) {
-            call.sendBack("Go to this page for help: https://goo.gl/xik07T");
+            call.sendBack("Go to this page for help: https://goo.gl/Y1KeoG");
         } else {
-            List<PlayerEntry> entries = QueryUtil.query()
+            try {
+                Set<PlayerEntry> entries = QueryUtil.query(call.getArgs());
+            } catch (QueryException e) {
+                call.sendBack(ChatColor.RED + "ERROR: " + e.getMessage());
+            }
         }
     }
 
@@ -32,7 +39,7 @@ public class QuerySubCmd implements SubCommandExecutor {
 
     @Override
     public String[] getAliases() {
-        return new String[0];
+        return aliases;
     }
 
     @Override
