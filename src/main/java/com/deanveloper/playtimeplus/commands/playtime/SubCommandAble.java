@@ -1,4 +1,4 @@
-package com.deanveloper.playtimeplus.commands.playtimeplus;
+package com.deanveloper.playtimeplus.commands.playtime;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

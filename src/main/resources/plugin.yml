@@ -49,7 +49,7 @@ permissions:
       playtimeplus.command.playtime.self: true
       playtimeplus.command.playtime.top: true
       playtimeplus.command.playtime.other: true
-      playtimeplus.command.playtime.version: true
+      playtimeplus.command.playtime.query: true
   playtimeplus.command.exportplayers:
     description: "Allows access to the /exportplayers command"
     default: op

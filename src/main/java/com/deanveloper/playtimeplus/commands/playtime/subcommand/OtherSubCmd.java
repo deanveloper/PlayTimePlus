@@ -1,8 +1,8 @@
-package com.deanveloper.playtimeplus.commands.playtimeplus.subcommand;
+package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandCall;
-import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandExecutor;
+import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
+import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 

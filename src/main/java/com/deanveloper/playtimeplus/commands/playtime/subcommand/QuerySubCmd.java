@@ -1,7 +1,7 @@
-package com.deanveloper.playtimeplus.commands.playtimeplus.subcommand;
+package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 
-import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandCall;
-import com.deanveloper.playtimeplus.commands.playtimeplus.SubCommandExecutor;
+import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
+import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
@@ -66,6 +66,6 @@ public class QuerySubCmd implements SubCommandExecutor {
 
     @Override
     public String getPermission() {
-        return null;
+        return "playtimeplus.command.playtime.query";
     }
 }

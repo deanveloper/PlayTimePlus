@@ -2,7 +2,7 @@ package com.deanveloper.playtimeplus;
 
 import com.deanveloper.playtimeplus.commands.DebugCommand;
 import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
-import com.deanveloper.playtimeplus.commands.playtimeplus.PlayTimeCommand;
+import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
 import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.storage.Storage;

@@ -1,10 +1,8 @@
-package com.deanveloper.playtimeplus.commands.playtimeplus;
+package com.deanveloper.playtimeplus.commands.playtime;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
 
 /**
  * @author Dean
