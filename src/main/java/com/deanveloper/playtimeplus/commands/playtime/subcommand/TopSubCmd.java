@@ -18,7 +18,7 @@ public class TopSubCmd implements SubCommandExecutor {
     public void execute(SubCommandCall call) {
         try {
             List<PlayerEntry> topTen = new ArrayList<>(
-                    PlayTimePlus.getPlayerDb().getPlayers().values()
+                    PlayTimePlus.getStorage().getPlayers().values()
             );
 
             //sort from most to least

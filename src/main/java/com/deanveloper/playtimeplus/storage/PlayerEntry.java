@@ -3,17 +3,17 @@ package com.deanveloper.playtimeplus.storage;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
-import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Dean
  */
-public class PlayerEntry implements Comparable<PlayerEntry> {
+public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     private static Map<UUID, LocalDateTime> onlineTimes = new HashMap<>();
 
     @SerializedName("i")
@@ -44,7 +44,7 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
                 continue;
             }
             LocalDateTime start = onlineTimes.get(online.getKey());
-            PlayerEntry entry = PlayTimePlus.getPlayerDb().get(online.getKey());
+            PlayerEntry entry = PlayTimePlus.getStorage().get(online.getKey());
 
             TimeEntry current = entry.times.stream()
                     .filter(time -> start.toEpochSecond(ZoneOffset.UTC) == time.getStart().toEpochSecond(ZoneOffset.UTC))
@@ -54,8 +54,6 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
             current.end = LocalDateTime.now();
 
             entry.totalChanged = true;
-
-            PlayTimePlus.getPlayerDb().update(entry);
         }
     }
 
@@ -103,7 +101,6 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
         }
 
         totalChanged = true;
-        PlayTimePlus.getPlayerDb().update(this);
     }
 
     /**
@@ -131,7 +128,24 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
         return Long.compare(o.getTotalTime().getSeconds(), this.getTotalTime().getSeconds());
     }
 
-    public class TimeEntry {
+    @Override
+    public PlayerEntry clone() {
+        PlayerEntry clone;
+        try {
+            clone = (PlayerEntry) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+
+        clone.times = new ArrayList<>();
+        clone.getTimes().addAll(times.stream()
+                .map(TimeEntry::clone)
+                .collect(Collectors.toList())
+        );
+        return clone;
+    }
+
+    public class TimeEntry implements Cloneable {
         @SerializedName("s")
         private LocalDateTime start;
         @SerializedName("e")
@@ -144,7 +158,6 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
          * For gson to use
          */
         private TimeEntry() {
-            Bukkit.getLogger().info("timeentry");
             durationChanged = true;
             totalChanged = true;
             lastDuration = Duration.ZERO;
@@ -187,6 +200,15 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
         @Override
         public String toString() {
             return "TimeEntry[start=" + start + ",end=" + end + "]";
+        }
+
+        @Override
+        public TimeEntry clone() {
+            try {
+                return (TimeEntry) super.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.deanveloper.playtimeplus.commands;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,10 +17,10 @@ public class DebugCommand implements CommandExecutor {
 
             if (args[0].equalsIgnoreCase("true")) {
                 PlayTimePlus.debugEnabled = true;
-                sender.sendMessage(sender.getName() + " enabled debug mode!");
+                Bukkit.broadcast(sender.getName() + " enabled debug mode!", Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
             } else if (args[0].equalsIgnoreCase("false")) {
                 PlayTimePlus.debugEnabled = false;
-                sender.sendMessage(sender.getName() + " disabled debug mode!");
+                Bukkit.broadcast(sender.getName() + " disabled debug mode!", Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
             } else {
                 return false;
             }

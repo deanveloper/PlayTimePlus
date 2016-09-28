@@ -28,7 +28,7 @@ public class ExportPlayersCommand implements CommandExecutor {
             try {
                 Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                List<PlayerEntry> players = new ArrayList<>(PlayTimePlus.getPlayerDb().getPlayers().values());
+                List<PlayerEntry> players = new ArrayList<>(PlayTimePlus.getStorage().getPlayers().values());
                 Collections.sort(players);
 
                 exporter.export(players);

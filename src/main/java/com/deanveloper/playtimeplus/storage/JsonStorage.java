@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -47,7 +48,12 @@ public class JsonStorage implements Storage {
         // Now let's get our fields
         version = root.get("version").getAsInt();
         Type type = new TypeToken<Map<UUID, PlayerEntry>>(){}.getType();
-        players = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
+        Map<UUID, PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
+        if(temp == null) {
+            players = new HashMap<>();
+        } else {
+            players = temp;
+        }
     }
 
     @Override

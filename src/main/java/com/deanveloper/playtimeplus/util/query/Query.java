@@ -1,9 +1,12 @@
 package com.deanveloper.playtimeplus.util.query;
 
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,14 +34,15 @@ public class Query {
     }
 
     /**
-     * Performs the query on the player, this mutates the PlayerEntry object!
+     * Performs the query on the player.
      *
      * @param type          The type of query to perform
      * @param valueAsString the value of the query
-     * @param pEntry        The PlayerEntry to mutate
+     * @param pEntry        The PlayerEntry to use
      * @throws              QueryException If something is wrong with the query
      */
-    static void queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
+    static Set<PlayerEntry.TimeEntry> queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
+        Set<PlayerEntry.TimeEntry> toReturn = new HashSet<>();
         final Duration duration;
         final LocalDateTime time;
 
@@ -50,12 +54,12 @@ public class Query {
                 switch (type) {
                     case "total>":
                         if (pEntry.getTotalTime().compareTo(duration) > 0) {
-                            pEntry.getTimes().addAll(pEntry.getTimes());
+                            toReturn.addAll(Utils.cloneElements(pEntry.getTimes()));
                         }
                         break;
                     case "total<":
                         if (pEntry.getTotalTime().compareTo(duration) < 0) {
-                            pEntry.getTimes().addAll(pEntry.getTimes());
+                            toReturn.addAll(Utils.cloneElements(pEntry.getTimes()));
                         }
                         break;
                 }
@@ -67,20 +71,24 @@ public class Query {
                 switch (type) {
                     case "after": {
                         pEntry.getTimes().stream()
-                                .filter(tEntry -> !tEntry.getEnd().isBefore(time))
+                                .filter(tEntry -> tEntry.getEnd().isAfter(time))
+                                .map(PlayerEntry.TimeEntry::clone)
                                 .forEach(tEntry -> {
                                     if (!tEntry.getStart().isAfter(time)) {
                                         tEntry.setStart(time);
                                     }
+                                    toReturn.add(tEntry);
                                 });
                     }
                     case "before": {
                         pEntry.getTimes().stream()
-                                .filter(tEntry -> !tEntry.getStart().isBefore(time))
+                                .filter(tEntry -> tEntry.getStart().isBefore(time))
+                                .map(PlayerEntry.TimeEntry::clone)
                                 .forEach(tEntry -> {
                                     if (!tEntry.getEnd().isAfter(time)) {
                                         tEntry.setEnd(time);
                                     }
+                                    toReturn.add(tEntry);
                                 });
                     }
                 }
@@ -88,6 +96,8 @@ public class Query {
             default:
                 throw new QueryException(type + " is not a valid query type!");
         }
+
+        return toReturn;
     }
 
     private static LocalDateTime parseTime(String string) throws QueryException {

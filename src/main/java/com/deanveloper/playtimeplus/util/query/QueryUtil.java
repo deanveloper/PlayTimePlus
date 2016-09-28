@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 /**
  * @author Dean
  */
-@SuppressWarnings("Duplicates")
 public class QueryUtil {
     /**
      * Queries are ways to filter out data so you only get what you want.
@@ -30,7 +29,10 @@ public class QueryUtil {
      * @return A list of incomplete PlayerEntries with players that pass the query along with their TimeEntries
      */
     public static Set<PlayerEntry> query(String... args) throws QueryException {
-        Set<PlayerEntry> mutating = new HashSet<>();
+        Set<PlayerEntry> mutating = PlayTimePlus.getStorage().getPlayers().values().stream()
+                .map(PlayerEntry::clone)
+                .collect(Collectors.toSet());
+
         String currentOp = "and";
         for (int i = 0; i < args.length; i++) {
             // if the argument is in a spot designated for a query
@@ -42,7 +44,9 @@ public class QueryUtil {
                         PlayTimePlus.debug("AFTER: " + mutating.toString());
                         break;
                     case "and":
+                        PlayTimePlus.debug("BEFORE: " + mutating.toString());
                         and(mutating, args[i]);
+                        PlayTimePlus.debug("AFTER: " + mutating.toString());
                         break;
                 }
             } else {
@@ -67,17 +71,12 @@ public class QueryUtil {
         String[] parsed = parseQuery(query);
         String type = parsed[0];
         String value = parsed[1];
-        for (PlayerEntry base : PlayTimePlus.getPlayerDb().getPlayers().values()) {
 
-            // Clone the entry and its TimeEntries
-            PlayerEntry entry = new PlayerEntry(base.getId());
-            entry.getTimes().addAll(base.getTimes().stream()
-                    .map(tEntry -> entry.new TimeEntry(tEntry.getStart(), tEntry.getEnd()))
-                    .collect(Collectors.toList())
-            );
-
-            // Mutate the cloned entry
-            Query.queryPlayer(type, value, entry);
+        for (PlayerEntry base : PlayTimePlus.getStorage().getPlayers().values()) {
+            PlayerEntry entry = base.clone();
+            Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, entry);
+            entry.getTimes().clear();
+            entry.getTimes().addAll(times);
             queried.add(entry);
         }
 
@@ -99,7 +98,9 @@ public class QueryUtil {
         String value = parsed[1];
 
         for (PlayerEntry base : players) {
-            Query.queryPlayer(type, value, base);
+            Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, base);
+            base.getTimes().clear();
+            base.getTimes().addAll(times);
         }
     }
 

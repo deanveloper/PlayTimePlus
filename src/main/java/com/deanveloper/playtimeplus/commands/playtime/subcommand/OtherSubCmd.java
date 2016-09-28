@@ -21,7 +21,7 @@ public class OtherSubCmd implements SubCommandExecutor {
             call.sendBack("Couldn't find player " + call.getArgs()[0]);
             return;
         }
-        PlayerEntry time = PlayTimePlus.getPlayerDb().get(id);
+        PlayerEntry time = PlayTimePlus.getStorage().get(id);
         call.sendBack(
                 String.format("§d%s §ehas played for §d%s§e.",
                         Utils.correctCase(call.getArgs()[0]), Utils.format(time.getTotalTime()))

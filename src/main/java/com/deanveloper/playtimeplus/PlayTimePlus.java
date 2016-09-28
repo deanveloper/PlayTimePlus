@@ -34,7 +34,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
     public static boolean debugEnabled = false;
-    private static Storage playerDb;
+    private static Storage storage;
     private static EssentialsHook eHook;
     private static PlayTimePlus instance;
 
@@ -42,8 +42,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public static Storage getPlayerDb() {
-        return playerDb;
+    public static Storage getStorage() {
+        return storage;
     }
 
     public static EssentialsHook getEssentialsHook() {
@@ -69,7 +69,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getLogger().info("Done!");
 
         getLogger().info("Loading players...");
-        playerDb = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
+        storage = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
         getLogger().info("Done!");
         getLogger().info("Starting autosave...");
         startAutoSave();
@@ -89,7 +89,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         PlayerEntry.updatePlayers();
-        playerDb.save();
+        storage.save();
     }
 
     @EventHandler
@@ -109,8 +109,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         }.runTaskTimer(this, 10 * 20, 10 * 20);
         new BukkitRunnable() {
             public void run() {
-                getPlayerDb().save();
-                debug(getPlayerDb().getPlayers().toString());
+                getStorage().save();
+                debug(getStorage().getPlayers().toString());
             }
         }.runTaskTimer(this, autosave, autosave);
     }

@@ -1,14 +1,14 @@
 package com.deanveloper.playtimeplus.util;
 
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Dean B
@@ -63,5 +63,11 @@ public class Utils {
         }
 
         return sb.toString();
+    }
+
+    public static Set<PlayerEntry.TimeEntry> cloneElements(Collection<PlayerEntry.TimeEntry> col) {
+        return col.stream()
+                .map(PlayerEntry.TimeEntry::clone)
+                .collect(Collectors.toSet());
     }
 }

@@ -13,7 +13,7 @@ public class SelfSubCmd implements SubCommandExecutor {
     private String[] aliases = new String[] {"me", "s"};
     @Override
     public void execute(SubCommandCall call) {
-        PlayerEntry playerEntry = PlayTimePlus.getPlayerDb().get(call.getPlayer().getUniqueId());
+        PlayerEntry playerEntry = PlayTimePlus.getStorage().get(call.getPlayer().getUniqueId());
 
         call.sendBack("§dYou §ehave played for §d%s§e.", Utils.format(playerEntry.getTotalTime()));
     }
