@@ -30,8 +30,15 @@ public class Query {
     private Query() {
     }
 
-    static PlayerEntry queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
-        final PlayerEntry toReturn = new PlayerEntry(pEntry.getId());
+    /**
+     * Performs the query on the player, this mutates the PlayerEntry object!
+     *
+     * @param type          The type of query to perform
+     * @param valueAsString the value of the query
+     * @param pEntry        The PlayerEntry to mutate
+     * @throws              QueryException If something is wrong with the query
+     */
+    static void queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
         final Duration duration;
         final LocalDateTime time;
 
@@ -43,12 +50,12 @@ public class Query {
                 switch (type) {
                     case "total>":
                         if (pEntry.getTotalTime().compareTo(duration) > 0) {
-                            toReturn.getTimes().addAll(pEntry.getTimes());
+                            pEntry.getTimes().addAll(pEntry.getTimes());
                         }
                         break;
                     case "total<":
                         if (pEntry.getTotalTime().compareTo(duration) < 0) {
-                            toReturn.getTimes().addAll(pEntry.getTimes());
+                            pEntry.getTimes().addAll(pEntry.getTimes());
                         }
                         break;
                 }
@@ -62,10 +69,8 @@ public class Query {
                         pEntry.getTimes().stream()
                                 .filter(tEntry -> !tEntry.getEnd().isBefore(time))
                                 .forEach(tEntry -> {
-                                    if (tEntry.getStart().isAfter(time)) {
-                                        pEntry.getTimes().add(tEntry);
-                                    } else {
-                                        pEntry.getTimes().add(pEntry.new TimeEntry(time, tEntry.getEnd()));
+                                    if (!tEntry.getStart().isAfter(time)) {
+                                        tEntry.setStart(time);
                                     }
                                 });
                     }
@@ -73,10 +78,8 @@ public class Query {
                         pEntry.getTimes().stream()
                                 .filter(tEntry -> !tEntry.getStart().isBefore(time))
                                 .forEach(tEntry -> {
-                                    if (tEntry.getEnd().isAfter(time)) {
-                                        toReturn.getTimes().add(tEntry);
-                                    } else {
-                                        toReturn.getTimes().add(pEntry.new TimeEntry(tEntry.getStart(), time));
+                                    if (!tEntry.getEnd().isAfter(time)) {
+                                        tEntry.setEnd(time);
                                     }
                                 });
                     }
@@ -85,7 +88,6 @@ public class Query {
             default:
                 throw new QueryException(type + " is not a valid query type!");
         }
-        return toReturn;
     }
 
     private static LocalDateTime parseTime(String string) throws QueryException {

@@ -10,6 +10,7 @@ import com.deanveloper.playtimeplus.storage.StorageMethod;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.gson.DurationConverter;
 import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
+import com.deanveloper.playtimeplus.util.gson.PlayerEntryConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
  */
 public class PlayTimePlus extends JavaPlugin implements Listener {
     public static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(PlayerEntry.class, new PlayerEntryConverter())
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();

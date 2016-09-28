@@ -3,9 +3,11 @@ package com.deanveloper.playtimeplus.storage;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
+import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 /**
@@ -19,26 +21,18 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
     @SerializedName("t")
     private List<TimeEntry> times;
 
-    private transient boolean totalChanged;
-    private transient Duration lastTotal;
-
-    /**
-     * For gson to use
-     */
-    private PlayerEntry() {
-        totalChanged = true;
-        lastTotal = Duration.ZERO;
-    }
+    private transient boolean totalChanged = true;
+    private transient Duration lastTotal = Duration.ZERO;
 
     /**
      * Use for players who have never logged on before, otherwise
      * please use {@link Storage#get(UUID)}
      */
     public PlayerEntry(UUID id) {
-        this();
-
         this.id = id;
         this.times = new ArrayList<>();
+        totalChanged = true;
+        lastTotal = Duration.ZERO;
     }
 
     /**
@@ -53,7 +47,7 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
             PlayerEntry entry = PlayTimePlus.getPlayerDb().get(online.getKey());
 
             TimeEntry current = entry.times.stream()
-                    .filter(time -> Duration.between(time.getStart(), start).getSeconds() == 0)
+                    .filter(time -> start.toEpochSecond(ZoneOffset.UTC) == time.getStart().toEpochSecond(ZoneOffset.UTC))
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("TimeEntry not found starting with " + start));
 
@@ -119,7 +113,7 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
         if (totalChanged) {
             lastTotal = Duration.ZERO;
             for (TimeEntry entry : getTimes()) {
-                lastTotal = lastTotal.plus(Duration.between(entry.getStart(), entry.getEnd()));
+                lastTotal = lastTotal.plus(entry.getDuration());
             }
             totalChanged = false;
         }
@@ -146,7 +140,11 @@ public class PlayerEntry implements Comparable<PlayerEntry> {
         private transient boolean durationChanged;
         private transient Duration lastDuration;
 
+        /**
+         * For gson to use
+         */
         private TimeEntry() {
+            Bukkit.getLogger().info("timeentry");
             durationChanged = true;
             totalChanged = true;
             lastDuration = Duration.ZERO;
