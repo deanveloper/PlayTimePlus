@@ -30,7 +30,17 @@ public class JsonExporter implements Exporter {
             data.addProperty("name", entry.getName());
             data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getId()));
             data.addProperty("idString", entry.getId().toString());
-            data.addProperty("secondsOnline", entry.getTotalTime().getSeconds());
+
+            JsonArray times = new JsonArray();
+
+            for(PlayerEntry.TimeEntry tEntry : entry.getTimes()) {
+                JsonObject obj = new JsonObject();
+                obj.add("start", PlayTimePlus.GSON.toJsonTree(tEntry.getStart()));
+                obj.add("end", PlayTimePlus.GSON.toJsonTree(tEntry.getEnd()));
+            }
+
+            data.add("times", times);
+            data.add("totalTime", PlayTimePlus.GSON.toJsonTree(entry.getTotalTime()));
             arr.add(data);
         }
 

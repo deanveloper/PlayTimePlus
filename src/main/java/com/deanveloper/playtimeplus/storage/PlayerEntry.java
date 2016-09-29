@@ -1,10 +1,8 @@
 package com.deanveloper.playtimeplus.storage;
 
-import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,24 +35,16 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         lastTotal = Duration.ZERO;
     }
 
-    /**
-     * Updates the players online time, should be called every ten seconds.
-     */
-    public static void updatePlayers() {
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (PlayTimePlus.getEssentialsHook().isAfk(p)) {
-                continue;
-            }
-            PlayerEntry entry = PlayTimePlus.getStorage().get(p.getUniqueId());
-
-            TimeEntry current = entry.getTimes().stream()
-                    .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
-                    .orElseThrow(() -> new RuntimeException("No max found for " + p.getDisplayName()));
-
-            current.setEnd(LocalDateTime.now());
-
-            entry.mutated();
+    public void update() {
+        if(Bukkit.getPlayer(getId()) == null) {
+            return;
         }
+
+        TimeEntry current = getTimes().stream()
+                .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
+                .orElseThrow(() -> new RuntimeException("No max found for " + getName()));
+
+        current.setEnd(LocalDateTime.now());
     }
 
     /**
@@ -75,6 +65,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * The times that the player has been online
      */
     public List<TimeEntry> getTimes() {
+        update();
         return times;
     }
 
@@ -90,15 +81,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
             LocalDateTime now = LocalDateTime.now();
             TimeEntry time = new TimeEntry(now, now);
             getTimes().add(time);
+
+            mutated();
         } else {
-            TimeEntry current = getTimes().stream()
-                    .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
-                    .orElseThrow(() -> new RuntimeException("No max found for " + this.getName()));
-
-            current.setEnd(LocalDateTime.now());
+            update();
         }
-
-        mutated();
     }
 
     /**
