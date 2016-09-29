@@ -42,11 +42,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
             return;
         }
 
-        TimeEntry current = getTimes().stream()
-                .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
-                .orElseThrow(() -> new RuntimeException("No max found for " + getName()));
-
-        current.setEnd(LocalDateTime.now());
+        getTimes().last().setEnd(LocalDateTime.now());
     }
 
     /**
@@ -114,8 +110,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
     @Override
     public int compareTo(PlayerEntry o) {
-        // Put the other object first to sort in descending order
-        return Long.compare(o.getTotalTime().getSeconds(), this.getTotalTime().getSeconds());
+        return getTotalTime().compareTo(o.getTotalTime());
     }
 
     @Override

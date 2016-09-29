@@ -6,8 +6,7 @@ import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -17,29 +16,20 @@ public class TopSubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         try {
-            List<PlayerEntry> topTen = new ArrayList<>(
+            NavigableSet<PlayerEntry> allPlayers = new TreeSet<>(
                     PlayTimePlus.getStorage().getPlayers().values()
             );
 
-            //sort from most to least
-            topTen = topTen.stream()
-                    .sorted()
-                    .limit(10)
-                    .collect(Collectors.toList());
-
             call.getSender().sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
-            for (int i = 0; i < 10; i++) {
-                if (i >= topTen.size()) {
-                    break;
-                }
-
+            for (int i = 0; i < Math.min(10, allPlayers.size()); i++) {
+                PlayerEntry entry = allPlayers.pollLast();
                 call.getSender().sendMessage(
                         String.format(
                                 "§d#%d. §r%s §ewith §d%s§e.",
                                 i + 1,
-                                PlayTimePlus.getEssentialsHook().fullName(topTen.get(i).getName()),
-                                Utils.format(topTen.get(i).getTotalTime())
+                                PlayTimePlus.getEssentialsHook().fullName(entry.getName()),
+                                Utils.format(entry.getTotalTime())
                         )
                 );
             }
