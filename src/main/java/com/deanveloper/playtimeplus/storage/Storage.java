@@ -22,5 +22,4 @@ public interface Storage {
      * Gets all players who have PlayerEntries.
      */
     Map<UUID, PlayerEntry> getPlayers();
-
 }

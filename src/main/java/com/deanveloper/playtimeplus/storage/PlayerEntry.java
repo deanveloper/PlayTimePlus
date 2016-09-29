@@ -6,9 +6,7 @@ import org.bukkit.Bukkit;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +17,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     @SerializedName("i")
     private UUID id;
     @SerializedName("t")
-    private List<TimeEntry> times;
+    private SortedSet<TimeEntry> times;
 
     private transient boolean totalChanged = true;
     private transient Duration lastTotal = Duration.ZERO;
@@ -30,7 +28,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      */
     public PlayerEntry(UUID id) {
         this.id = id;
-        this.times = new ArrayList<>();
+        this.times = new TreeSet<>();
         totalChanged = true;
         lastTotal = Duration.ZERO;
     }
@@ -68,7 +66,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     /**
      * The times that the player has been online
      */
-    public List<TimeEntry> getTimes() {
+    public SortedSet<TimeEntry> getTimes() {
         update();
         return times;
     }
@@ -129,15 +127,15 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
             throw new RuntimeException(e);
         }
 
-        clone.times = new ArrayList<>();
+        clone.times = new TreeSet<>();
         clone.getTimes().addAll(times.stream()
                 .map(TimeEntry::clone)
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
         );
         return clone;
     }
 
-    public class TimeEntry implements Cloneable {
+    public class TimeEntry implements Cloneable, Comparable<TimeEntry> {
         @SerializedName("s")
         private LocalDateTime start;
         @SerializedName("e")
@@ -204,6 +202,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public int compareTo(TimeEntry o) {
+            return start.compareTo(o.start);
         }
     }
 }

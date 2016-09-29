@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.List;
+import java.util.SortedSet;
 
 /**
  * Export to a Json file
@@ -21,7 +21,7 @@ import java.util.List;
 public class JsonExporter implements Exporter {
 
     @Override
-    public void export(List<PlayerEntry> entries) {
+    public void export(SortedSet<PlayerEntry> entries) {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 

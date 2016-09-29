@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 
 /**
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
 public class PlainTextExporter implements Exporter {
 
     @Override
-    public void export(List<PlayerEntry> entries) {
+    public void export(SortedSet<PlayerEntry> entries) {
         List<String> formatted = new ArrayList<>(entries.size());
 
         formatted.addAll(

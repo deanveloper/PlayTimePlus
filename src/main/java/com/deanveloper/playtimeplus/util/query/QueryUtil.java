@@ -6,6 +6,9 @@ import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /**
@@ -28,10 +31,10 @@ public class QueryUtil {
      * @param args The queries to pass
      * @return A list of incomplete PlayerEntries with players that pass the query along with their TimeEntries
      */
-    public static Set<PlayerEntry> query(String... args) throws QueryException {
-        Set<PlayerEntry> mutating = PlayTimePlus.getStorage().getPlayers().values().stream()
+    public static SortedSet<PlayerEntry> query(String... args) throws QueryException {
+        SortedSet<PlayerEntry> mutating = PlayTimePlus.getStorage().getPlayers().values().stream()
                 .map(PlayerEntry::clone)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
 
         String currentOp = "and";
         for (int i = 0; i < args.length; i++) {
@@ -52,7 +55,7 @@ public class QueryUtil {
 
         mutating = mutating.stream()
                 .filter(pEntry -> !pEntry.getTimes().isEmpty())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toCollection(TreeSet::new));
 
         return mutating;
     }
@@ -66,15 +69,15 @@ public class QueryUtil {
      * @param query   The query to perform
      * @throws QueryException if something goes wrong. Error message always provided.
      */
-    private static void or(Set<PlayerEntry> players, String query) throws QueryException {
-        Set<PlayerEntry> queried = new HashSet<>();
+    private static void or(SortedSet<PlayerEntry> players, String query) throws QueryException {
+        SortedSet<PlayerEntry> queried = new TreeSet<>();
         String[] parsed = parseQuery(query);
         String type = parsed[0];
         String value = parsed[1];
 
         for (PlayerEntry base : PlayTimePlus.getStorage().getPlayers().values()) {
             PlayerEntry entry = base.clone();
-            Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, entry);
+            SortedSet<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, entry);
             entry.getTimes().clear();
             entry.getTimes().addAll(times);
             entry.mutated();

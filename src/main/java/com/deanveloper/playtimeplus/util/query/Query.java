@@ -1,13 +1,12 @@
 package com.deanveloper.playtimeplus.util.query;
 
-import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,8 +41,8 @@ public class Query {
      * @param pEntry        The PlayerEntry to use
      * @throws              QueryException If something is wrong with the query
      */
-    static Set<PlayerEntry.TimeEntry> queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
-        Set<PlayerEntry.TimeEntry> toReturn = new HashSet<>();
+    static SortedSet<PlayerEntry.TimeEntry> queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
+        SortedSet<PlayerEntry.TimeEntry> toReturn = new TreeSet<>();
         final Duration duration;
         final LocalDateTime time;
 

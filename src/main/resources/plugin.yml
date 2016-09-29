@@ -13,6 +13,7 @@ commands:
     permission: playtimeplus.command.exportplayers
     description: "Exports players to a file"
     usage: "/exportplayers [help|filetype]"
+    aliases: [export]
   debug:
     permission: playtimeplus.command.debug
     description: "Enable debug mode"

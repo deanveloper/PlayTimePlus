@@ -1,18 +1,20 @@
 package com.deanveloper.playtimeplus.commands;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.exporter.CsvExporter;
 import com.deanveloper.playtimeplus.exporter.Exporter;
 import com.deanveloper.playtimeplus.exporter.JsonExporter;
 import com.deanveloper.playtimeplus.exporter.PlainTextExporter;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.util.query.QueryException;
+import com.deanveloper.playtimeplus.util.query.QueryUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Command to export players
@@ -28,8 +30,13 @@ public class ExportPlayersCommand implements CommandExecutor {
             try {
                 Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                List<PlayerEntry> players = new ArrayList<>(PlayTimePlus.getStorage().getPlayers().values());
-                Collections.sort(players);
+                SortedSet<PlayerEntry> players;
+
+                if (args.length == 1) {
+                    players = new TreeSet<>(PlayTimePlus.getStorage().getPlayers().values());
+                } else {
+                    players = QueryUtil.query(Arrays.copyOfRange(args, 1, args.length));
+                }
 
                 exporter.export(players);
             } catch (IllegalArgumentException e) {
@@ -37,6 +44,8 @@ public class ExportPlayersCommand implements CommandExecutor {
                 for (FileType type : FileType.values()) {
                     sender.sendMessage("§d" + type.name() + " §b- " + "§a" + type.getDesc());
                 }
+            } catch (QueryException e) {
+                sender.sendMessage("§6ERROR: " + e.getMessage());
             }
 
             return true;
