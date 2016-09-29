@@ -35,6 +35,10 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         lastTotal = Duration.ZERO;
     }
 
+    /**
+     * This method is called internally so you will -probably- never need to use it.
+     * Basically it updates the player's time to the most recent time if they are online.
+     */
     public void update() {
         if(Bukkit.getPlayer(getId()) == null) {
             return;
@@ -69,6 +73,9 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         return times;
     }
 
+    /**
+     * Call this if you ever change the contents of getTimes()
+     */
     public void mutated() {
         totalChanged = true;
     }

@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -88,7 +89,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        PlayerEntry.updatePlayers();
         storage.save();
     }
 
@@ -102,11 +102,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         if (autosave < 1) {
             throw new IllegalStateException("Autosave must be above 0! (current: " + autosave + " seconds)");
         }
-        new BukkitRunnable() {
-            public void run() {
-                PlayerEntry.updatePlayers();
-            }
-        }.runTaskTimer(this, 10 * 20, 10 * 20);
         new BukkitRunnable() {
             public void run() {
                 getStorage().save();

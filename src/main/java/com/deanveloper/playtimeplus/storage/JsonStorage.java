@@ -6,6 +6,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -58,6 +60,10 @@ public class JsonStorage implements Storage {
 
     @Override
     public void save() {
+        // Update the players before saving
+        for(Player p : Bukkit.getOnlinePlayers()) {
+            get(p.getUniqueId()).update();
+        }
         try {
             JsonObject root = new JsonObject();
             root.addProperty("version", version);
