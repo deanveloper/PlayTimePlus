@@ -3,18 +3,20 @@ package com.deanveloper.playtimeplus.storage;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
  * @author Dean
  */
 public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
-    private static Map<UUID, LocalDateTime> onlineTimes = new HashMap<>();
 
     @SerializedName("i")
     private UUID id;
@@ -39,21 +41,19 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * Updates the players online time, should be called every ten seconds.
      */
     public static void updatePlayers() {
-        for (Map.Entry<UUID, LocalDateTime> online : onlineTimes.entrySet()) {
-            if (PlayTimePlus.getEssentialsHook().isAfk(online.getKey())) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (PlayTimePlus.getEssentialsHook().isAfk(p)) {
                 continue;
             }
-            LocalDateTime start = onlineTimes.get(online.getKey());
-            PlayerEntry entry = PlayTimePlus.getStorage().get(online.getKey());
+            PlayerEntry entry = PlayTimePlus.getStorage().get(p.getUniqueId());
 
-            TimeEntry current = entry.times.stream()
-                    .filter(time -> start.toEpochSecond(ZoneOffset.UTC) == time.getStart().toEpochSecond(ZoneOffset.UTC))
-                    .findAny()
-                    .orElseThrow(() -> new RuntimeException("TimeEntry not found starting with " + start));
+            TimeEntry current = entry.getTimes().stream()
+                    .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
+                    .orElseThrow(() -> new RuntimeException("No max found for " + p.getDisplayName()));
 
-            current.end = LocalDateTime.now();
+            current.setEnd(LocalDateTime.now());
 
-            entry.totalChanged = true;
+            entry.mutated();
         }
     }
 
@@ -78,29 +78,27 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         return times;
     }
 
+    public void mutated() {
+        totalChanged = true;
+    }
+
     /**
      * Set the person to being online or not
      */
     public void setOnline(boolean online) {
-        if (online && !onlineTimes.containsKey(id)) {
+        if (online) {
             LocalDateTime now = LocalDateTime.now();
-            onlineTimes.put(id, now);
-            TimeEntry time = new TimeEntry();
-            time.setStart(now);
-            time.setEnd(now);
-            times.add(time);
-        } else if (!online && onlineTimes.containsKey(id)) {
-            LocalDateTime start = onlineTimes.remove(id);
-
-            TimeEntry current = times.stream()
-                    .filter(time -> Duration.between(time.getStart(), start).getSeconds() == 0)
-                    .findAny()
-                    .orElseThrow(() -> new RuntimeException("TimeEntry not found starting with " + start));
+            TimeEntry time = new TimeEntry(now, now);
+            getTimes().add(time);
+        } else {
+            TimeEntry current = getTimes().stream()
+                    .max((te1, te2) -> te1.getStart().compareTo(te2.getStart()))
+                    .orElseThrow(() -> new RuntimeException("No max found for " + this.getName()));
 
             current.setEnd(LocalDateTime.now());
         }
 
-        totalChanged = true;
+        mutated();
     }
 
     /**
@@ -170,15 +168,13 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         }
 
         public void setStart(LocalDateTime start) {
-            durationChanged = true;
-            totalChanged = true;
+            mutated();
             this.start = start;
         }
 
         public void setEnd(LocalDateTime end) {
-            durationChanged = true;
-            totalChanged = true;
-            this.start = end;
+            mutated();
+            this.end = end;
         }
 
         public Duration getDuration() {
@@ -195,6 +191,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
         public LocalDateTime getEnd() {
             return end;
+        }
+
+        public void mutated() {
+            PlayerEntry.this.mutated();
+            durationChanged = true;
         }
 
         @Override

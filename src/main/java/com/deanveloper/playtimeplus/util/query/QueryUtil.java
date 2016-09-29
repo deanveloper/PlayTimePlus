@@ -39,20 +39,20 @@ public class QueryUtil {
             if (i % 2 == 0) {
                 switch (currentOp) {
                     case "or":
-                        PlayTimePlus.debug("BEFORE: " + mutating.toString());
                         or(mutating, args[i]);
-                        PlayTimePlus.debug("AFTER: " + mutating.toString());
                         break;
                     case "and":
-                        PlayTimePlus.debug("BEFORE: " + mutating.toString());
                         and(mutating, args[i]);
-                        PlayTimePlus.debug("AFTER: " + mutating.toString());
                         break;
                 }
             } else {
                 currentOp = args[i];
             }
         }
+
+        mutating = mutating.stream()
+                .filter(pEntry -> !pEntry.getTimes().isEmpty())
+                .collect(Collectors.toSet());
 
         return mutating;
     }
@@ -77,6 +77,7 @@ public class QueryUtil {
             Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, entry);
             entry.getTimes().clear();
             entry.getTimes().addAll(times);
+            entry.mutated();
             queried.add(entry);
         }
 
@@ -101,6 +102,7 @@ public class QueryUtil {
             Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, base);
             base.getTimes().clear();
             base.getTimes().addAll(times);
+            base.mutated();
         }
     }
 
@@ -113,9 +115,6 @@ public class QueryUtil {
      * and m is the average number of time entries for each player.
      */
     private static void combine(Set<PlayerEntry> set1, Set<PlayerEntry> set2) {
-        PlayTimePlus.debug("BEFORE COMBINE 1: " + set1);
-        PlayTimePlus.debug("BEFORE COMBINE 2: " + set2);
-
         for (PlayerEntry toMerge : set2) {
             PlayerEntry entry = null;
             for (PlayerEntry each : set1) {
@@ -147,6 +146,7 @@ public class QueryUtil {
                     }
                 }
                 entry.getTimes().addAll(toAdd);
+                entry.mutated();
             }
         }
     }

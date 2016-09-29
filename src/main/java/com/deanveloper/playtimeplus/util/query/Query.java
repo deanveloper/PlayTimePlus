@@ -1,5 +1,6 @@
 package com.deanveloper.playtimeplus.util.query;
 
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
@@ -74,22 +75,24 @@ public class Query {
                                 .filter(tEntry -> tEntry.getEnd().isAfter(time))
                                 .map(PlayerEntry.TimeEntry::clone)
                                 .forEach(tEntry -> {
-                                    if (!tEntry.getStart().isAfter(time)) {
+                                    if (tEntry.getStart().isBefore(time)) {
                                         tEntry.setStart(time);
                                     }
                                     toReturn.add(tEntry);
                                 });
+                        break;
                     }
                     case "before": {
                         pEntry.getTimes().stream()
                                 .filter(tEntry -> tEntry.getStart().isBefore(time))
                                 .map(PlayerEntry.TimeEntry::clone)
                                 .forEach(tEntry -> {
-                                    if (!tEntry.getEnd().isAfter(time)) {
+                                    if (tEntry.getEnd().isAfter(time)) {
                                         tEntry.setEnd(time);
                                     }
                                     toReturn.add(tEntry);
                                 });
+                        break;
                     }
                 }
                 break;

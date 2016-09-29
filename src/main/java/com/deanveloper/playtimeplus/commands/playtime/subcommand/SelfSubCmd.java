@@ -15,6 +15,7 @@ public class SelfSubCmd implements SubCommandExecutor {
     public void execute(SubCommandCall call) {
         PlayerEntry playerEntry = PlayTimePlus.getStorage().get(call.getPlayer().getUniqueId());
 
+        PlayTimePlus.debug("execute totalTime: " + playerEntry.getTotalTime());
         call.sendBack("§dYou §ehave played for §d%s§e.", Utils.format(playerEntry.getTotalTime()));
     }
 
