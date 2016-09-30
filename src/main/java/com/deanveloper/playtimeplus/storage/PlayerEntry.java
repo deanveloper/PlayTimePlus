@@ -5,8 +5,10 @@ import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.NavigableSet;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
@@ -15,12 +17,12 @@ import java.util.stream.Collectors;
 /**
  * @author Dean
  */
-public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
+public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
 
     @SerializedName("i")
     private UUID id;
     @SerializedName("t")
-    private SortedSet<TimeEntry> times;
+    private NavigableSet<TimeEntry> times;
 
     private transient Duration lastTotal = Duration.ZERO;
 
@@ -131,7 +133,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         return clone;
     }
 
-    public class TimeEntry implements Cloneable, Comparable<TimeEntry> {
+    public class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
         @SerializedName("s")
         private LocalDateTime start;
         @SerializedName("e")

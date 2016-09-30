@@ -2,6 +2,7 @@ package com.deanveloper.playtimeplus.storage;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.google.common.io.Files;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -40,7 +41,7 @@ public class JsonStorage implements Storage {
         } catch (FileNotFoundException e) {
             root = new JsonObject();
             root.addProperty("version", 1);
-            root.add("players", new JsonObject());
+            root.add("players", new JsonArray());
             save();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -48,16 +49,20 @@ public class JsonStorage implements Storage {
 
         // Now let's get our fields
         version = root.get("version").getAsInt();
-        Type type = new TypeToken<Map<UUID, PlayerEntry>>() {
+        Type type = new TypeToken<NavigableSet<PlayerEntry>>() {
         }.getType();
-        Map<UUID, PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
+
+        NavigableSet<PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
         if (temp == null) {
-            players = new HashMap<>();
+            sortedPlayers = new TreeSet<>();
         } else {
-            players = temp;
+            sortedPlayers = temp;
         }
 
-        sortedPlayers = new TreeSet<>(players.values());
+        players = new HashMap<>(sortedPlayers.size());
+        for(PlayerEntry entry : sortedPlayers) {
+            players.put(entry.getId(), entry);
+        }
     }
 
     @Override
@@ -69,7 +74,7 @@ public class JsonStorage implements Storage {
         try {
             JsonObject root = new JsonObject();
             root.addProperty("version", version);
-            root.add("players", PlayTimePlus.GSON.toJsonTree(players));
+            root.add("players", PlayTimePlus.GSON.toJsonTree(sortedPlayers));
             Files.write(PlayTimePlus.GSON.toJson(root), storage, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();

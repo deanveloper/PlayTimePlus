@@ -6,7 +6,8 @@ import com.deanveloper.playtimeplus.util.Lazy;
  * @author Dean
  */
 public enum StorageMethod {
-    JSON(Lazy.create(JsonStorage::new));
+    JSON(Lazy.create(JsonStorage::new)),
+    BINARY(Lazy.create(BinaryStorage::new));
 
     private final Lazy<Storage> storageSupplier;
 
