@@ -73,7 +73,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      */
     public void mutated() {
         lastTotal = Duration.ZERO;
-        for (TimeEntry entry : getTimes()) {
+        for (TimeEntry entry : times) {
             lastTotal = lastTotal.plus(entry.getDuration());
         }
 
