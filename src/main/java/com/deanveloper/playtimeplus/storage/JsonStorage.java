@@ -49,9 +49,10 @@ public class JsonStorage implements Storage {
 
         // Now let's get our fields
         version = root.get("version").getAsInt();
-        Type type = new TypeToken<Map<UUID, PlayerEntry>>(){}.getType();
+        Type type = new TypeToken<Map<UUID, PlayerEntry>>() {
+        }.getType();
         Map<UUID, PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
-        if(temp == null) {
+        if (temp == null) {
             players = new HashMap<>();
         } else {
             players = temp;
@@ -61,7 +62,7 @@ public class JsonStorage implements Storage {
     @Override
     public void save() {
         // Update the players before saving
-        for(Player p : Bukkit.getOnlinePlayers()) {
+        for (Player p : Bukkit.getOnlinePlayers()) {
             get(p.getUniqueId()).update();
         }
         try {
@@ -76,7 +77,7 @@ public class JsonStorage implements Storage {
 
     @Override
     public PlayerEntry get(UUID id) {
-        return getPlayers().get(id);
+        return players.get(id);
     }
 
     @Override
