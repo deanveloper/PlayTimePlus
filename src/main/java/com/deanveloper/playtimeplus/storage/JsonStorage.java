@@ -14,9 +14,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +23,7 @@ import java.util.stream.Collectors;
 public class JsonStorage implements Storage {
     private final File storage;
     private final Map<UUID, PlayerEntry> players;
+    private final NavigableSet<PlayerEntry> sortedPlayers;
     private final int version;
 
     JsonStorage() {
@@ -57,6 +56,8 @@ public class JsonStorage implements Storage {
         } else {
             players = temp;
         }
+
+        sortedPlayers = new TreeSet<>(players.values());
     }
 
     @Override
@@ -81,7 +82,19 @@ public class JsonStorage implements Storage {
     }
 
     @Override
+    public void update(PlayerEntry entry) {
+        if(sortedPlayers.remove(entry)) {
+            sortedPlayers.add(entry);
+        }
+    }
+
+    @Override
     public Map<UUID, PlayerEntry> getPlayers() {
         return players;
+    }
+
+    @Override
+    public NavigableSet<PlayerEntry> getPlayersSorted() {
+        return sortedPlayers;
     }
 }

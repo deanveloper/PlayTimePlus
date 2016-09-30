@@ -1,5 +1,6 @@
 package com.deanveloper.playtimeplus.storage;
 
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
@@ -21,7 +22,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     @SerializedName("t")
     private SortedSet<TimeEntry> times;
 
-    private transient boolean totalChanged = true;
     private transient Duration lastTotal = Duration.ZERO;
 
     /**
@@ -31,7 +31,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     public PlayerEntry(UUID id) {
         this.id = id;
         this.times = new TreeSet<>();
-        totalChanged = true;
         lastTotal = Duration.ZERO;
     }
 
@@ -73,7 +72,12 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * Call this if you ever change the contents of getTimes()
      */
     public void mutated() {
-        totalChanged = true;
+        lastTotal = Duration.ZERO;
+        for (TimeEntry entry : getTimes()) {
+            lastTotal = lastTotal.plus(entry.getDuration());
+        }
+
+        PlayTimePlus.getStorage().update(this);
     }
 
     /**
@@ -95,13 +99,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * The total time the player has been online
      */
     public Duration getTotalTime() {
-        if (totalChanged) {
-            lastTotal = Duration.ZERO;
-            for (TimeEntry entry : getTimes()) {
-                lastTotal = lastTotal.plus(entry.getDuration());
-            }
-            totalChanged = false;
-        }
         return lastTotal;
     }
 
@@ -138,22 +135,12 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         @SerializedName("e")
         private LocalDateTime end;
 
-        private transient boolean durationChanged;
         private transient Duration lastDuration;
 
-        /**
-         * For gson to use
-         */
-        private TimeEntry() {
-            durationChanged = true;
-            totalChanged = true;
-            lastDuration = Duration.ZERO;
-        }
-
         public TimeEntry(LocalDateTime start, LocalDateTime end) {
-            this();
             this.start = start;
             this.end = end;
+            lastDuration = Duration.between(start, end);
         }
 
         public void setStart(LocalDateTime start) {
@@ -167,10 +154,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         }
 
         public Duration getDuration() {
-            if (durationChanged) {
-                lastDuration = Duration.between(start, end);
-                durationChanged = false;
-            }
             return lastDuration;
         }
 
@@ -183,8 +166,10 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         }
 
         public void mutated() {
+            lastDuration = Duration.between(start, end);
+            getTimes().remove(this);
+            getTimes().add(this);
             PlayerEntry.this.mutated();
-            durationChanged = true;
         }
 
         @Override
@@ -204,6 +189,17 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         @Override
         public int compareTo(TimeEntry o) {
             return start.compareTo(o.start);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if(o instanceof TimeEntry) {
+                TimeEntry entry = ((TimeEntry) o);
+
+                return this.getStart().equals(entry.getStart()) && this.getEnd().equals(entry.getEnd());
+            }
+
+            return false;
         }
     }
 }
