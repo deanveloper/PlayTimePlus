@@ -16,9 +16,7 @@ public class TopSubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         try {
-            NavigableSet<PlayerEntry> allPlayers = new TreeSet<>(
-                    PlayTimePlus.getStorage().getPlayers().values()
-            );
+            NavigableSet<PlayerEntry> allPlayers = new TreeSet<>(PlayTimePlus.getStorage().getPlayersSorted());
 
             call.getSender().sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
