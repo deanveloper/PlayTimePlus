@@ -43,7 +43,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
             return;
         }
 
-        getTimes().last().setEnd(LocalDateTime.now());
+        times.last().setEnd(LocalDateTime.now());
     }
 
     /**
