@@ -122,7 +122,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
         }
 
         clone.times = new TreeSet<>();
-        clone.getTimes().addAll(times.stream()
+        clone.times.addAll(times.stream()
                 .map(TimeEntry::clone)
                 .collect(Collectors.toSet())
         );
@@ -167,8 +167,8 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
         public void mutated() {
             lastDuration = Duration.between(start, end);
-            getTimes().remove(this);
-            getTimes().add(this);
+            times.remove(this);
+            times.add(this);
             PlayerEntry.this.mutated();
         }
 
