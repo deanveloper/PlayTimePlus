@@ -39,7 +39,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * Basically it updates the player's time to the most recent time if they are online.
      */
     public void update() {
-        if(Bukkit.getPlayer(getId()) == null) {
+        if(Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
             return;
         }
 
