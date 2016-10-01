@@ -16,7 +16,7 @@ public class BinaryStorage implements Storage {
     private final File storage;
     private final Map<UUID, PlayerEntry> players;
     private final NavigableSet<PlayerEntry> sortedPlayers;
-    private final int version;
+    private static final int VERSION = 1;
 
     public BinaryStorage() {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.playtimeplus");
@@ -29,16 +29,20 @@ public class BinaryStorage implements Storage {
                 ObjectInputStream objIn = new ObjectInputStream(input)
         ) {
             tempVersion = objIn.readInt();
-            tempPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
+
+            if(tempVersion != VERSION) {
+                tempPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(objIn);
+            } else {
+                tempPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
+            }
+
         } catch (FileNotFoundException e) {
-            tempVersion = 1;
             tempPlayers = new TreeSet<>();
             save();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
 
-        version = tempVersion;
         sortedPlayers = tempPlayers;
 
         players = new HashMap<>(sortedPlayers.size());
@@ -70,8 +74,7 @@ public class BinaryStorage implements Storage {
                 FileOutputStream output = new FileOutputStream(storage);
                 ObjectOutputStream objOut = new ObjectOutputStream(output)
         ) {
-
-            objOut.writeInt(version);
+            objOut.writeInt(VERSION);
             objOut.writeObject(sortedPlayers);
         } catch (IOException e) {
             e.printStackTrace();

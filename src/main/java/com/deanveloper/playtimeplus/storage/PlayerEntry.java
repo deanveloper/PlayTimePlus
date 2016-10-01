@@ -132,17 +132,26 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         return clone;
     }
 
-    public static class TimeEntry extends Observable implements Cloneable, Comparable<TimeEntry>, Serializable {
+    public static class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
+        public static long serialVersionUID = 1L;
+
         @SerializedName("s")
         private LocalDateTime start;
         @SerializedName("e")
         private LocalDateTime end;
+        @SerializedName("i")
+        private UUID parent;
 
         private transient Duration lastDuration;
 
         public TimeEntry(LocalDateTime start, LocalDateTime end) {
+            this(start, end, null);
+        }
+
+        public TimeEntry(LocalDateTime start, LocalDateTime end, UUID parent) {
             this.start = start;
             this.end = end;
+            this.parent = parent;
             lastDuration = Duration.between(start, end);
         }
 
@@ -170,7 +179,12 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         public void mutated() {
             lastDuration = Duration.between(start, end);
-            notifyObservers();
+            if(parent != null) {
+                PlayerEntry entry = PlayTimePlus.getStorage().get(parent);
+                entry.times.remove(this);
+                entry.times.add(this);
+                entry.mutated();
+            }
         }
 
         @Override
