@@ -24,7 +24,6 @@ public class BinaryStorage implements Storage {
 
         // Parse the file
         int tempVersion;
-        NavigableSet<PlayerEntry> tempPlayers;
         try (
                 FileInputStream input = new FileInputStream(storage);
                 ObjectInputStream objIn = new ObjectInputStream(input)
@@ -32,19 +31,17 @@ public class BinaryStorage implements Storage {
             tempVersion = objIn.readInt();
 
             if(tempVersion != VERSION) {
-                tempPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(objIn);
+                sortedPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(objIn);
             } else {
-                tempPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
+                sortedPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
             }
 
         } catch (FileNotFoundException e) {
-            tempPlayers = new TreeSet<>();
+            sortedPlayers = new TreeSet<>();
             save();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-        sortedPlayers = tempPlayers;
 
         players = new HashMap<>(sortedPlayers.size());
         for (PlayerEntry entry : sortedPlayers) {

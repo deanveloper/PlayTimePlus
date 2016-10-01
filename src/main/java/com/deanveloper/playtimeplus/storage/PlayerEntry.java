@@ -145,7 +145,12 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        mutated();
+        lastTotal = Duration.ZERO;
+        for (TimeEntry entry : times) {
+            lastTotal = lastTotal.plus(entry.getDuration());
+        }
+
+        updateAgainAfter = LocalDateTime.now().plus(2, ChronoUnit.SECONDS);
     }
 
     public static class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
@@ -159,6 +164,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         private UUID parent;
 
         private transient Duration lastDuration;
+        private transient boolean isClone;
 
         public TimeEntry(LocalDateTime start, LocalDateTime end) {
             this(start, end, null);
@@ -195,7 +201,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         public void mutated() {
             lastDuration = Duration.between(start, end);
-            if(parent != null) {
+            if(parent != null && !isClone) {
                 PlayerEntry entry = PlayTimePlus.getStorage().get(parent);
                 entry.times.remove(this);
                 entry.times.add(this);
@@ -211,7 +217,9 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         @Override
         public TimeEntry clone() {
             try {
-                return (TimeEntry) super.clone();
+                TimeEntry clone = (TimeEntry) super.clone();
+                clone.isClone = true;
+                return clone;
             } catch (CloneNotSupportedException e) {
                 throw new RuntimeException(e);
             }
@@ -236,6 +244,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
             in.defaultReadObject();
             lastDuration = Duration.between(start, end);
+            isClone = false;
         }
     }
 }
