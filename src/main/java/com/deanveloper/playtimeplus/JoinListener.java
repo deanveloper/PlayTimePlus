@@ -19,6 +19,7 @@ public class JoinListener implements Listener {
         if(entry == null) {
             entry = new PlayerEntry(e.getPlayer().getUniqueId());
             storage.getPlayers().put(e.getPlayer().getUniqueId(), entry);
+            storage.getPlayersSorted().add(entry);
         }
 
         entry.setOnline(true);

@@ -9,6 +9,11 @@ import java.util.function.Predicate;
 public interface Storage {
 
     /**
+     * Initializes the storage object. Do not define everything in the constructor!
+     */
+    void init();
+
+    /**
      * Gets the PlayerEntry for the associated UUID.
      */
     PlayerEntry get(UUID id);

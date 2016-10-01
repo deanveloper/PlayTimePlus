@@ -24,12 +24,13 @@ import java.util.stream.Collectors;
  * @author Dean
  */
 public class JsonStorage implements Storage {
-    private static final int VERSION = 1;
-    private final File storage;
-    private final Map<UUID, PlayerEntry> players;
-    private final NavigableSet<PlayerEntry> sortedPlayers;
+    private static final long VERSION = PlayerEntry.serialVersionUID;
+    private File storage;
+    private Map<UUID, PlayerEntry> players;
+    private NavigableSet<PlayerEntry> sortedPlayers;
 
-    public JsonStorage() {
+    @Override
+    public void init() {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
 
         // Parse the file
@@ -60,7 +61,7 @@ public class JsonStorage implements Storage {
         Type type = new TypeToken<NavigableSet<PlayerEntry>>() {
         }.getType();
 
-        NavigableSet<PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.getAsJsonObject("players"), type);
+        NavigableSet<PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.get("players"), type);
         if (temp == null) {
             sortedPlayers = new TreeSet<>();
         } else {

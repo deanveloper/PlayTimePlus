@@ -11,8 +11,10 @@ import com.deanveloper.playtimeplus.storage.StorageMethod;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.gson.DurationConverter;
 import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
+import com.deanveloper.playtimeplus.util.gson.PlayerEntryConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.LongSerializationPolicy;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
@@ -31,6 +33,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
+            .registerTypeAdapter(PlayerEntry.class, new PlayerEntryConverter())
+            .setLongSerializationPolicy(LongSerializationPolicy.STRING)
             .create();
     public static boolean debugEnabled = false;
     private static Storage storage;
@@ -70,6 +74,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 
         getLogger().info("Loading players...");
         storage = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
+        storage.init();
         getLogger().info("Done!");
         getLogger().info("Starting autosave...");
         startAutoSave();

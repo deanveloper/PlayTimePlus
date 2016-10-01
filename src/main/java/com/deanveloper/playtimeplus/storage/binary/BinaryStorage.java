@@ -13,12 +13,13 @@ import java.util.*;
  * @author Dean
  */
 public class BinaryStorage implements Storage {
-    private final File storage;
-    private final Map<UUID, PlayerEntry> players;
-    private final NavigableSet<PlayerEntry> sortedPlayers;
+    private File storage;
+    private Map<UUID, PlayerEntry> players;
+    private NavigableSet<PlayerEntry> sortedPlayers;
     private static final int VERSION = 1;
 
-    public BinaryStorage() {
+    @Override
+    public void init() {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.playtimeplus");
 
         // Parse the file

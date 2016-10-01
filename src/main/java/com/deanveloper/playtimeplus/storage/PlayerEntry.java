@@ -5,6 +5,8 @@ import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.Bukkit;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -16,14 +18,15 @@ import java.util.stream.Collectors;
  */
 public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
 
-    public static long serialVersionUID = 1L;
+    public static long serialVersionUID = 2L;
 
     @SerializedName("i")
     private UUID id;
     @SerializedName("t")
     private NavigableSet<TimeEntry> times;
 
-    private transient Duration lastTotal = Duration.ZERO;
+    private transient LocalDateTime lastTotalUpdated;
+    private transient Duration lastTotal;
 
     /**
      * Use for players who have never logged on before, otherwise
@@ -33,6 +36,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         this.id = id;
         this.times = new TreeSet<>();
         lastTotal = Duration.ZERO;
+        lastTotalUpdated = LocalDateTime.now();
     }
 
     /**
@@ -40,7 +44,9 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * Basically it updates the player's time to the most recent time if they are online.
      */
     public void update() {
-        if (Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
+        if (Bukkit.getPlayer(getId()) == null
+                || PlayTimePlus.getStorage().get(getId()) != this
+                || Duration.between(lastTotalUpdated, LocalDateTime.now()).getSeconds() < 2) {
             return;
         }
 
@@ -79,6 +85,8 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         for (TimeEntry entry : times) {
             lastTotal = lastTotal.plus(entry.getDuration());
         }
+
+        lastTotalUpdated = LocalDateTime.now();
 
         PlayTimePlus.getStorage().update(this);
     }
@@ -130,6 +138,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
                 .collect(Collectors.toSet())
         );
         return clone;
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        mutated();
     }
 
     public static class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
@@ -215,6 +228,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
             }
 
             return false;
+        }
+
+        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+            in.defaultReadObject();
+            lastDuration = Duration.between(start, end);
         }
     }
 }
