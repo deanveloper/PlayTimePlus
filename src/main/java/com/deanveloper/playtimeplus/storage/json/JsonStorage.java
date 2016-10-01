@@ -1,6 +1,8 @@
-package com.deanveloper.playtimeplus.storage;
+package com.deanveloper.playtimeplus.storage.json;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.Storage;
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -22,12 +24,12 @@ import java.util.stream.Collectors;
  * @author Dean
  */
 public class JsonStorage implements Storage {
+    private static final int VERSION = 1;
     private final File storage;
     private final Map<UUID, PlayerEntry> players;
     private final NavigableSet<PlayerEntry> sortedPlayers;
-    private final int version;
 
-    JsonStorage() {
+    public JsonStorage() {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
 
         // Parse the file
@@ -39,16 +41,22 @@ public class JsonStorage implements Storage {
             }
             root = new JsonParser().parse(line).getAsJsonObject();
         } catch (FileNotFoundException e) {
+
+            // If we are seeing the json for the first time
             root = new JsonObject();
-            root.addProperty("version", 1);
+            root.addProperty("version", VERSION);
             root.add("players", new JsonArray());
             save();
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        // Now let's get our fields
-        version = root.get("version").getAsInt();
+        // If the version is incorrect
+        if(root.get("version").getAsInt() != VERSION) {
+            JsonConverter.convertJson(root);
+        }
+
         Type type = new TypeToken<NavigableSet<PlayerEntry>>() {
         }.getType();
 
@@ -73,7 +81,7 @@ public class JsonStorage implements Storage {
         }
         try {
             JsonObject root = new JsonObject();
-            root.addProperty("version", version);
+            root.addProperty("version", VERSION);
             root.add("players", PlayTimePlus.GSON.toJsonTree(sortedPlayers));
             Files.write(PlayTimePlus.GSON.toJson(root), storage, Charset.defaultCharset());
         } catch (IOException e) {

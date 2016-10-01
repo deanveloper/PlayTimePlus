@@ -1,5 +1,6 @@
 package com.deanveloper.playtimeplus;
 
+import com.deanveloper.playtimeplus.commands.ConvertStorageCommand;
 import com.deanveloper.playtimeplus.commands.DebugCommand;
 import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
 import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
@@ -66,6 +67,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getCommand("playtime").setExecutor(new PlayTimeCommand());
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
+        getCommand("convertstorage").setExecutor(new ConvertStorageCommand());
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         getLogger().info("Done!");
 
@@ -95,6 +97,11 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
         Utils.update(e.getPlayer().getUniqueId(), e.getPlayer().getName());
+    }
+
+    public static void setStorage(StorageMethod storage) {
+        PlayTimePlus.storage = storage.getStorage();
+        instance.getConfig().set("storage", storage.name());
     }
 
     private void startAutoSave() {

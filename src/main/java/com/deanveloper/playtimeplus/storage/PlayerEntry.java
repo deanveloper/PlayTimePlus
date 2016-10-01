@@ -8,16 +8,15 @@ import org.bukkit.Bukkit;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.NavigableSet;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * @author Dean
  */
 public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
+
+    public static long serialVersionUID = 1L;
 
     @SerializedName("i")
     private UUID id;
@@ -41,11 +40,11 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * Basically it updates the player's time to the most recent time if they are online.
      */
     public void update() {
-        if(Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
+        if (Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
             return;
         }
 
-        if(!times.isEmpty()) {
+        if (!times.isEmpty()) {
             times.last().setEnd(LocalDateTime.now());
         }
     }
@@ -133,7 +132,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         return clone;
     }
 
-    public class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
+    public static class TimeEntry extends Observable implements Cloneable, Comparable<TimeEntry>, Serializable {
         @SerializedName("s")
         private LocalDateTime start;
         @SerializedName("e")
@@ -171,9 +170,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         public void mutated() {
             lastDuration = Duration.between(start, end);
-            times.remove(this);
-            times.add(this);
-            PlayerEntry.this.mutated();
+            notifyObservers();
         }
 
         @Override
@@ -197,7 +194,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         @Override
         public boolean equals(Object o) {
-            if(o instanceof TimeEntry) {
+            if (o instanceof TimeEntry) {
                 TimeEntry entry = ((TimeEntry) o);
 
                 return this.getStart().equals(entry.getStart()) && this.getEnd().equals(entry.getEnd());

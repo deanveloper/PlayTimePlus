@@ -1,6 +1,8 @@
-package com.deanveloper.playtimeplus.storage;
+package com.deanveloper.playtimeplus.storage.binary;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.Storage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -16,7 +18,7 @@ public class BinaryStorage implements Storage {
     private final NavigableSet<PlayerEntry> sortedPlayers;
     private final int version;
 
-    BinaryStorage() {
+    public BinaryStorage() {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.playtimeplus");
 
         // Parse the file
@@ -26,7 +28,6 @@ public class BinaryStorage implements Storage {
                 FileInputStream input = new FileInputStream(storage);
                 ObjectInputStream objIn = new ObjectInputStream(input)
         ) {
-
             tempVersion = objIn.readInt();
             tempPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
         } catch (FileNotFoundException e) {

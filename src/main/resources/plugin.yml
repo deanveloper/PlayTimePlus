@@ -18,6 +18,10 @@ commands:
     permission: playtimeplus.command.debug
     description: "Enable debug mode"
     usage: "/debug [true|false]"
+  convertstorage:
+    permission: playtimeplus.command.convertstorage
+    description: "Converts the storage method"
+    usage: "/convertstorage <binary|json>"
 
 permissions:
   playtimeplus.command.playtime:
@@ -53,6 +57,9 @@ permissions:
       playtimeplus.command.playtime.query: true
   playtimeplus.command.exportplayers:
     description: "Allows access to the /exportplayers command"
+    default: op
+  playtimeplus.command.convertstorage:
+    description: "Allows access to the /convertstorage command"
     default: op
   playtimeplus.podium:
     description: "Allows the creation/destruction of a podium"
