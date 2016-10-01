@@ -10,6 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,8 +26,8 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
     @SerializedName("t")
     private NavigableSet<TimeEntry> times;
 
-    private transient LocalDateTime lastTotalUpdated;
     private transient Duration lastTotal;
+    private transient LocalDateTime updateAgainAfter;
 
     /**
      * Use for players who have never logged on before, otherwise
@@ -36,17 +37,15 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         this.id = id;
         this.times = new TreeSet<>();
         lastTotal = Duration.ZERO;
-        lastTotalUpdated = LocalDateTime.now();
+        updateAgainAfter = LocalDateTime.MIN;
     }
 
     /**
      * This method is called internally so you will -probably- never need to use it.
      * Basically it updates the player's time to the most recent time if they are online.
      */
-    public void update() {
-        if (Bukkit.getPlayer(getId()) == null
-                || PlayTimePlus.getStorage().get(getId()) != this
-                || Duration.between(lastTotalUpdated, LocalDateTime.now()).getSeconds() < 2) {
+    public void updateLatestTime() {
+        if (Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
             return;
         }
 
@@ -73,7 +72,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * The times that the player has been online
      */
     public SortedSet<TimeEntry> getTimes() {
-        update();
+        updateLatestTime();
         return times;
     }
 
@@ -81,14 +80,16 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * Call this if you ever change the contents of getTimes()
      */
     public void mutated() {
-        lastTotal = Duration.ZERO;
-        for (TimeEntry entry : times) {
-            lastTotal = lastTotal.plus(entry.getDuration());
+        if(updateAgainAfter.isBefore(LocalDateTime.now())) {
+            lastTotal = Duration.ZERO;
+            for (TimeEntry entry : times) {
+                lastTotal = lastTotal.plus(entry.getDuration());
+            }
+
+            updateAgainAfter = LocalDateTime.now().plus(2, ChronoUnit.SECONDS);
+
+            PlayTimePlus.getStorage().update(this);
         }
-
-        lastTotalUpdated = LocalDateTime.now();
-
-        PlayTimePlus.getStorage().update(this);
     }
 
     /**
@@ -97,12 +98,12 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
     public void setOnline(boolean online) {
         if (online) {
             LocalDateTime now = LocalDateTime.now();
-            TimeEntry time = new TimeEntry(now, now);
+            TimeEntry time = new TimeEntry(now, now, id);
             getTimes().add(time);
 
             mutated();
         } else {
-            update();
+            updateLatestTime();
         }
     }
 
@@ -110,6 +111,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * The total time the player has been online
      */
     public Duration getTotalTime() {
+        updateLatestTime();
         return lastTotal;
     }
 
@@ -120,7 +122,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
     @Override
     public int compareTo(PlayerEntry o) {
-        return getTotalTime().compareTo(o.getTotalTime());
+        return lastTotal.compareTo(o.lastTotal);
     }
 
     @Override
@@ -133,6 +135,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         }
 
         clone.times = new TreeSet<>();
+        clone.lastTotal = lastTotal;
         clone.times.addAll(times.stream()
                 .map(TimeEntry::clone)
                 .collect(Collectors.toSet())
@@ -169,13 +172,13 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         }
 
         public void setStart(LocalDateTime start) {
-            mutated();
             this.start = start;
+            mutated();
         }
 
         public void setEnd(LocalDateTime end) {
-            mutated();
             this.end = end;
+            mutated();
         }
 
         public Duration getDuration() {
@@ -202,7 +205,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         @Override
         public String toString() {
-            return "TimeEntry[start=" + start + ",end=" + end + "]";
+            return "TimeEntry[parent=" + parent + ",start=" + start + ",end=" + end + "]";
         }
 
         @Override

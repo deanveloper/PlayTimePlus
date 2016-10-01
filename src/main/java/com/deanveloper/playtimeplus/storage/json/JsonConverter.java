@@ -39,7 +39,7 @@ class JsonConverter {
                 JsonObject newTime = new JsonObject();
                 newTime.add("s", oldTime.get("s"));
                 newTime.add("e", oldTime.get("e"));
-                newTime.add("i", newPlayer.get("i"));
+                newTime.add("i", oldPlayer.get("i"));
                 newTimes.add(newTime);
             }
 

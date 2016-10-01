@@ -68,7 +68,7 @@ public class BinaryStorage implements Storage {
     public void save() {
         // Update the players before saving
         for (Player p : Bukkit.getOnlinePlayers()) {
-            get(p.getUniqueId()).update();
+            get(p.getUniqueId()).updateLatestTime();
         }
 
         try (

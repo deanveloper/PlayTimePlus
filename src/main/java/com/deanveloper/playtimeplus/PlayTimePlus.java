@@ -114,7 +114,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             public void run() {
                 getStorage().save();
-                debug(getStorage().getPlayers().toString());
             }
         }.runTaskTimer(this, autosave, autosave);
     }

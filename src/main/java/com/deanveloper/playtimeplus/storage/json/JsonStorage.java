@@ -5,7 +5,6 @@ import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.storage.Storage;
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -18,13 +17,12 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.Charset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Dean
  */
 public class JsonStorage implements Storage {
-    private static final long VERSION = PlayerEntry.serialVersionUID;
+    private static final int VERSION = (int) PlayerEntry.serialVersionUID;
     private File storage;
     private Map<UUID, PlayerEntry> players;
     private NavigableSet<PlayerEntry> sortedPlayers;
@@ -54,8 +52,10 @@ public class JsonStorage implements Storage {
         }
 
         // If the version is incorrect
-        if(root.get("version").getAsInt() != VERSION) {
-            JsonConverter.convertJson(root);
+        if (root.get("version").getAsInt() != VERSION) {
+            Bukkit.getLogger().info("Player storage is the wrong version.");
+            Bukkit.getLogger().info("Old: " + root.get("version").getAsInt() + " | Current: " + VERSION);
+            root = JsonConverter.convertJson(root);
         }
 
         Type type = new TypeToken<NavigableSet<PlayerEntry>>() {
@@ -68,8 +68,10 @@ public class JsonStorage implements Storage {
             sortedPlayers = temp;
         }
 
+        sortedPlayers.forEach(PlayerEntry::mutated);
+
         players = new HashMap<>(sortedPlayers.size());
-        for(PlayerEntry entry : sortedPlayers) {
+        for (PlayerEntry entry : sortedPlayers) {
             players.put(entry.getId(), entry);
         }
     }
@@ -78,7 +80,7 @@ public class JsonStorage implements Storage {
     public void save() {
         // Update the players before saving
         for (Player p : Bukkit.getOnlinePlayers()) {
-            get(p.getUniqueId()).update();
+            get(p.getUniqueId()).updateLatestTime();
         }
         try {
             JsonObject root = new JsonObject();
@@ -97,7 +99,7 @@ public class JsonStorage implements Storage {
 
     @Override
     public void update(PlayerEntry entry) {
-        if(sortedPlayers.remove(entry)) {
+        if (sortedPlayers.remove(entry)) {
             sortedPlayers.add(entry);
         }
     }

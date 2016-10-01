@@ -23,7 +23,6 @@ public interface Storage {
      */
     void update(PlayerEntry entry);
 
-
     /**
      * Saves local cache to permanent storage.
      */

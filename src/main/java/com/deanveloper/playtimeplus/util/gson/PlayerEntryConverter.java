@@ -29,7 +29,6 @@ public class PlayerEntryConverter implements JsonDeserializer<PlayerEntry> {
             );
 
             entry.getTimes().add(time);
-            entry.mutated();
         }
 
         return entry;
