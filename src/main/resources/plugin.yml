@@ -8,11 +8,11 @@ commands:
     permission: playtimeplus.command.playtime
     description: "Command to view play times"
     usage: "/PlayTime <cmd> [args...]"
-    aliases: [playtime, ptp]
+    aliases: [playtimeplus, ptp]
   exportplayers:
     permission: playtimeplus.command.exportplayers
     description: "Exports players to a file"
-    usage: "/exportplayers [help|filetype]"
+    usage: "/exportplayers <help|filetype> [query]"
     aliases: [export]
   debug:
     permission: playtimeplus.command.debug
