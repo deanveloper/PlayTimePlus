@@ -23,7 +23,13 @@ public class LegacyConvertCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
         if (sender instanceof ConsoleCommandSender) {
-            ConfigManager config = new ConfigManager(PlayTimePlus.getInstance(), "players.yml");
+            ConfigManager config;
+            try {
+                config = new ConfigManager(PlayTimePlus.getInstance(), "players.yml");
+            } catch (IllegalArgumentException e) {
+                Bukkit.getLogger().severe("There is no players.yml provided!");
+                return false;
+            }
             Set<String> keys = config.getConfig().getKeys(true);
             for (String key : keys) {
                 UUID id;
@@ -60,9 +66,11 @@ public class LegacyConvertCommand implements CommandExecutor {
                     );
                 }
             }
+
+            return true;
         } else {
             sender.sendMessage("This command can only be executed from console");
+            return false;
         }
-        return true;
     }
 }
