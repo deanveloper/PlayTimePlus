@@ -3,6 +3,7 @@ package com.deanveloper.playtimeplus;
 import com.deanveloper.playtimeplus.commands.ConvertStorageCommand;
 import com.deanveloper.playtimeplus.commands.DebugCommand;
 import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
+import com.deanveloper.playtimeplus.commands.LegacyConvertCommand;
 import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
 import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
@@ -69,6 +70,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getCommand("exportplayers").setExecutor(new ExportPlayersCommand());
         getCommand("debug").setExecutor(new DebugCommand());
         getCommand("convertstorage").setExecutor(new ConvertStorageCommand());
+        getCommand("legacyconvert").setExecutor(new LegacyConvertCommand());
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         getLogger().info("Done!");
 

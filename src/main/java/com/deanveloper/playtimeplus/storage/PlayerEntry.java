@@ -166,10 +166,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         private transient Duration lastDuration;
         private transient boolean isClone;
 
-        public TimeEntry(LocalDateTime start, LocalDateTime end) {
-            this(start, end, null);
-        }
-
         public TimeEntry(LocalDateTime start, LocalDateTime end, UUID parent) {
             this.start = start;
             this.end = end;

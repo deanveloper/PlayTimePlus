@@ -22,6 +22,9 @@ commands:
     permission: playtimeplus.command.convertstorage
     description: "Converts the storage method"
     usage: "/convertstorage <binary|json>"
+  legacyconvert:
+    description: "Does a rough conversion from the old player.yml format into the new format"
+    usage: "/legacyconvert - Can only be done in server console"
 
 permissions:
   playtimeplus.command.playtime:
