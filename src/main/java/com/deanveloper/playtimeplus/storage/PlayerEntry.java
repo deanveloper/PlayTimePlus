@@ -65,7 +65,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * The name of the player the object describes
      */
     public String getName() {
-        return Utils.getName(id);
+        return Utils.getNameForce(id);
     }
 
     /**

@@ -51,7 +51,7 @@ public class LegacyConvertCommand implements CommandExecutor {
                     LocalDateTime start = LocalDateTime.ofInstant(Instant.EPOCH, ZoneId.systemDefault());
 
                     // If the player already has playtime at the epoch
-                    if(p.getTimes().first().getStart().equals(start)) {
+                    if (!p.getTimes().isEmpty() && p.getTimes().first().getStart().equals(start)) {
                         Bukkit.getLogger().info(id + " has already been converted from legacy, skipping...");
                         continue;
                     }
