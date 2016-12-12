@@ -7,15 +7,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * @author Dean
+ * Version 1's File Format:
+ *
+ * VERSION (int)
+ * each player: 0xFF (byte), uniqueId (UUID), time (below), 0x00 (byte)
+ * each time:   0x11 (byte), start (LocalDateTime), end (LocalDateTime), 0x00 (byte)
  */
 public class BinaryStorage implements Storage {
     private File storage;
     private Map<UUID, PlayerEntry> players;
     private NavigableSet<PlayerEntry> sortedPlayers;
+
     private static final int VERSION = 1;
 
     @Override
@@ -23,17 +29,40 @@ public class BinaryStorage implements Storage {
         storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.playtimeplus");
 
         // Parse the file
-        int tempVersion;
+        int streamVersion;
         try (
                 FileInputStream input = new FileInputStream(storage);
                 ObjectInputStream objIn = new ObjectInputStream(input)
         ) {
-            tempVersion = objIn.readInt();
+            streamVersion = objIn.readInt();
 
-            if(tempVersion != VERSION) {
-                sortedPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(objIn);
+            if (streamVersion != VERSION) {
+                sortedPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(streamVersion, objIn);
             } else {
-                sortedPlayers = (NavigableSet<PlayerEntry>) objIn.readObject();
+                int read;
+                while ((read = objIn.read()) == 0xFF) {
+                    PlayerEntry entry = new PlayerEntry((UUID) objIn.readObject());
+
+                    while ((read = objIn.read()) == 0x11) {
+                        PlayerEntry.TimeEntry time = new PlayerEntry.TimeEntry(
+                                (LocalDateTime) objIn.readObject(),
+                                (LocalDateTime) objIn.readObject(),
+                                entry.getId()
+                        );
+                        entry.getTimes().add(time);
+                    }
+                    entry.mutated();
+
+                    // If anything other than a 0x00 bit appears here, throw exception
+                    if (read != 0x00) {
+                        throw new IOException("Trouble parsing file contact developer immediately!");
+                    }
+                }
+
+                // If the file ends with anything other than 0x00, throw exception
+                if (read != 0x00) {
+                    throw new IOException("Trouble parsing file contact developer immediately!");
+                }
             }
 
         } catch (FileNotFoundException e) {
@@ -65,8 +94,28 @@ public class BinaryStorage implements Storage {
                 FileOutputStream output = new FileOutputStream(storage);
                 ObjectOutputStream objOut = new ObjectOutputStream(output)
         ) {
+            // First, write the version
             objOut.writeInt(VERSION);
-            objOut.writeObject(sortedPlayers);
+
+            // Then, write the players...
+            for (PlayerEntry entry : sortedPlayers) {
+                // 0xFF will denote we are starting a PlayerEntry Object until 0x00 is reached
+                objOut.write(0xFF);
+                // Write the entry ID
+                objOut.writeObject(entry.getId());
+
+                // Keep writing 0x11 followed by times until 0x00 is reached
+                for (PlayerEntry.TimeEntry time : entry.getTimes()) {
+                    objOut.write(0x11);
+                    objOut.writeObject(time.getStart());
+                    objOut.writeObject(time.getEnd());
+                }
+                // Now that 0x00 is reached, we go to the next object
+                objOut.write(0x00);
+            }
+
+            // Write another 0x00 to end the file
+            objOut.write(0x00);
         } catch (IOException e) {
             e.printStackTrace();
         }

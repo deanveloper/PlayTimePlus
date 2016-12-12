@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 /**
  * @author Dean
  */
-public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
+public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
 
-    public static long serialVersionUID = 2L;
+    public static final long serialVersionUID = 2L;
 
     @SerializedName("i")
     private UUID id;
@@ -154,7 +154,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
     }
 
     public static class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
-        public static long serialVersionUID = 1L;
+        public static final long serialVersionUID = 1L;
 
         @SerializedName("s")
         private LocalDateTime start;
