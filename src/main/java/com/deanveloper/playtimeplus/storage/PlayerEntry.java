@@ -26,6 +26,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
     private transient Duration lastTotal;
     private transient LocalDateTime updateAgainAfter;
+    private transient boolean online;
 
     /**
      * Use for players who have never logged on before, otherwise
@@ -43,7 +44,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * Basically it updates the player's time to the most recent time if they are online.
      */
     public void updateLatestTime() {
-        if (Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this) {
+        if (Bukkit.getPlayer(getId()) == null || PlayTimePlus.getStorage().get(getId()) != this || !online) {
             return;
         }
 
@@ -94,6 +95,13 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
      * Set the person to being online or not
      */
     public void setOnline(boolean online) {
+        // Do nothing if setting to same state
+        if(online == this.online) {
+            return;
+        }
+
+        this.online = online;
+
         if (online) {
             LocalDateTime now = LocalDateTime.now();
             TimeEntry time = new TimeEntry(now, now, id);

@@ -70,6 +70,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getCommand("debug").setExecutor(new DebugCommand());
         getCommand("convertstorage").setExecutor(new ConvertStorageCommand());
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(this, this);
         getLogger().info("Done!");
 
         getLogger().info("Loading players...");
@@ -83,7 +84,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getLogger().info("Hooking into essentials...");
         eHook = new EssentialsHook();
         getLogger().info("Done!");
-        Bukkit.getPluginManager().registerEvents(this, this);
 
         for (OfflinePlayer p : Bukkit.getOfflinePlayers()) {
             Utils.update(p.getUniqueId(), p.getName());
