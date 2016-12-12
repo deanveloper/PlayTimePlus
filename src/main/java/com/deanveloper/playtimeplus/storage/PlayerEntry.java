@@ -17,9 +17,7 @@ import java.util.stream.Collectors;
 /**
  * @author Dean
  */
-public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
-
-    public static final long serialVersionUID = 2L;
+public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
     @SerializedName("i")
     private UUID id;
@@ -143,18 +141,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
         return clone;
     }
 
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        lastTotal = Duration.ZERO;
-        for (TimeEntry entry : times) {
-            lastTotal = lastTotal.plus(entry.getDuration());
-        }
-
-        updateAgainAfter = LocalDateTime.now().plus(2, ChronoUnit.SECONDS);
-    }
-
-    public static class TimeEntry implements Cloneable, Comparable<TimeEntry>, Serializable {
-        public static final long serialVersionUID = 1L;
+    public static class TimeEntry implements Cloneable, Comparable<TimeEntry> {
 
         @SerializedName("s")
         private LocalDateTime start;
@@ -235,12 +222,6 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
             }
 
             return false;
-        }
-
-        private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-            in.defaultReadObject();
-            lastDuration = Duration.between(start, end);
-            isClone = false;
         }
     }
 }
