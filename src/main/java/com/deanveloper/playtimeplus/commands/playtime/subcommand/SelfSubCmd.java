@@ -5,14 +5,20 @@ import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
+import org.bukkit.command.ConsoleCommandSender;
 
 /**
  * @author Dean
  */
 public class SelfSubCmd implements SubCommandExecutor {
-    private String[] aliases = new String[] {"me", "s"};
+    private String[] aliases = new String[]{ "me", "s" };
+
     @Override
     public void execute(SubCommandCall call) {
+        if (call.getSender() instanceof ConsoleCommandSender) {
+            call.sendBack("Only players can execute this command!");
+            return;
+        }
         PlayerEntry playerEntry = PlayTimePlus.getStorage().get(call.getPlayer().getUniqueId());
 
         PlayTimePlus.debug("execute totalTime: " + playerEntry.getTotalTime());

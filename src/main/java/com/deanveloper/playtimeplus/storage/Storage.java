@@ -25,17 +25,20 @@ public interface Storage {
      */
     default void update(PlayerEntry entry) {
         if(getPlayersSorted().remove(entry)) {
-            PlayTimePlus.debug("Removed " + entry.getName());
+            PlayTimePlus.debug("Removed " + entry.getName() + " from sorted list");
         }
-
 
         if (getPlayersSorted().add(entry)) {
-            PlayTimePlus.debug("Added " + entry.getName());
+            PlayTimePlus.debug("Added " + entry.getName() + " to sorted list");
         }
 
+        if(getPlayers().remove(entry.getId()) != null) {
+            PlayTimePlus.debug("Removed " + entry.getName() + " from map");
+        }
 
-        getPlayers().remove(entry.getId());
-        getPlayers().put(entry.getId(), entry);
+        if(getPlayers().put(entry.getId(), entry) == null) {
+            PlayTimePlus.debug("Added " + entry.getName() + " to map");
+        }
     }
 
     /**

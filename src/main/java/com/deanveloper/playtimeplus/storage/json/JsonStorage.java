@@ -22,7 +22,7 @@ import java.util.*;
  * @author Dean
  */
 public class JsonStorage implements Storage {
-    private static final int VERSION = (int) PlayerEntry.serialVersionUID;
+    private static final int VERSION = 1;
     private File storage;
     private Map<UUID, PlayerEntry> players;
     private NavigableSet<PlayerEntry> sortedPlayers;

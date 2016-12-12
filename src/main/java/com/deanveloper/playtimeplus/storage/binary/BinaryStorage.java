@@ -39,6 +39,8 @@ public class BinaryStorage implements Storage {
             if (streamVersion != VERSION) {
                 sortedPlayers = (NavigableSet<PlayerEntry>) BinaryConverter.convertBinary(streamVersion, objIn);
             } else {
+                sortedPlayers = new TreeSet<>();
+
                 int read;
                 while ((read = objIn.read()) == 0xFF) {
                     PlayerEntry entry = new PlayerEntry((UUID) objIn.readObject());
@@ -51,7 +53,7 @@ public class BinaryStorage implements Storage {
                         );
                         entry.getTimes().add(time);
                     }
-                    entry.mutated();
+                    sortedPlayers.add(entry);
 
                     // If anything other than a 0x00 bit appears here, throw exception
                     if (read != 0x00) {
