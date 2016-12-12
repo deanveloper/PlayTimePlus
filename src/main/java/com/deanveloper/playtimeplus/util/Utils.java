@@ -3,9 +3,15 @@ package com.deanveloper.playtimeplus.util;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.Bukkit;
 import org.bukkit.scoreboard.Team;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -34,7 +40,15 @@ public class Utils {
     public static String getNameForce(UUID id) {
         String name = getName(id);
         if (name == null) {
-            name = Bukkit.getOfflinePlayer(id).getName();
+
+            try {
+                String json = getContent("https://sessionserver.mojang.com/session/minecraft/profile/" + id);
+                JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
+                name = obj.get("name").getAsString();
+            } catch (IOException e) {
+                throw new RuntimeException("Problem getting name of " + id, e);
+            }
+
             update(id, name);
         }
         return name;
@@ -87,5 +101,27 @@ public class Utils {
         return col.stream()
                 .map(PlayerEntry.TimeEntry::clone)
                 .collect(Collectors.toSet());
+    }
+
+    private static String getContent(String web) throws IOException {
+        try {
+            URL url = new URL(web);
+            URLConnection connection = url.openConnection();
+            BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder response = new StringBuilder();
+            String input;
+
+            while ((input = in.readLine()) != null) {
+                response.append(input);
+            }
+
+            in.close();
+
+            return response.toString();
+        } catch (MalformedURLException e) {
+            // no one smart enough will let this happen
+            throw new RuntimeException(e);
+        }
     }
 }
