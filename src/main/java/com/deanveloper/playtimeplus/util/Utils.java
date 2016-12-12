@@ -42,7 +42,8 @@ public class Utils {
         if (name == null) {
 
             try {
-                String json = getContent("https://sessionserver.mojang.com/session/minecraft/profile/" + id);
+                String newId = id.toString().replace("-", "");
+                String json = getContent("https://sessionserver.mojang.com/session/minecraft/profile/" + newId);
                 JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
                 name = obj.get("name").getAsString();
             } catch (IOException e) {

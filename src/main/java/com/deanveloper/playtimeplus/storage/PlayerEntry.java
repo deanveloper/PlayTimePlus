@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * @author Dean
  */
-public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializable {
+public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable {
 
     public static long serialVersionUID = 2L;
 
@@ -80,7 +80,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
      * Call this if you ever change the contents of getTimes()
      */
     public void mutated() {
-        if(updateAgainAfter.isBefore(LocalDateTime.now())) {
+        if (updateAgainAfter.isBefore(LocalDateTime.now())) {
             lastTotal = Duration.ZERO;
             for (TimeEntry entry : times) {
                 lastTotal = lastTotal.plus(entry.getDuration());
@@ -197,7 +197,7 @@ public class PlayerEntry implements Comparable<PlayerEntry>, Cloneable, Serializ
 
         public void mutated() {
             lastDuration = Duration.between(start, end);
-            if(parent != null && !isClone) {
+            if (parent != null && !isClone) {
                 PlayerEntry entry = PlayTimePlus.getStorage().get(parent);
                 entry.times.remove(this);
                 entry.times.add(this);

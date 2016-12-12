@@ -1,5 +1,7 @@
 package com.deanveloper.playtimeplus.storage;
 
+import com.deanveloper.playtimeplus.PlayTimePlus;
+
 import java.util.*;
 import java.util.function.Predicate;
 
@@ -21,7 +23,20 @@ public interface Storage {
     /**
      * Updates the player in the sorted set
      */
-    void update(PlayerEntry entry);
+    default void update(PlayerEntry entry) {
+        if(getPlayersSorted().remove(entry)) {
+            PlayTimePlus.debug("Removed " + entry.getName());
+        }
+
+
+        if (getPlayersSorted().add(entry)) {
+            PlayTimePlus.debug("Added " + entry.getName());
+        }
+
+
+        getPlayers().remove(entry.getId());
+        getPlayers().put(entry.getId(), entry);
+    }
 
     /**
      * Saves local cache to permanent storage.

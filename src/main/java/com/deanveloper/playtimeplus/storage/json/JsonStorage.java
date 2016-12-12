@@ -98,13 +98,6 @@ public class JsonStorage implements Storage {
     }
 
     @Override
-    public void update(PlayerEntry entry) {
-        if (sortedPlayers.remove(entry)) {
-            sortedPlayers.add(entry);
-        }
-    }
-
-    @Override
     public Map<UUID, PlayerEntry> getPlayers() {
         return players;
     }

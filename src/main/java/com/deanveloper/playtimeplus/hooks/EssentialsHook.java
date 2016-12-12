@@ -1,9 +1,13 @@
 package com.deanveloper.playtimeplus.hooks;
 
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.earth2me.essentials.Essentials;
+import net.ess3.api.events.AfkStatusChangeEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import java.util.UUID;
@@ -18,6 +22,7 @@ public class EssentialsHook {
         Plugin plug = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
         if (plug != null) {
             plugin = (Essentials) plug;
+            registerAfkHook();
         } else {
             Bukkit.getLogger().info("Essentials is not installed, we cannot account for if the player is AFK");
         }
@@ -60,5 +65,21 @@ public class EssentialsHook {
             }
         }
         return Utils.getPrefix(name) + nickName;
+    }
+
+    private void registerAfkHook() {
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onAfk(AfkStatusChangeEvent e) {
+                Player p = e.getAffected().getBase();
+                if (e.getValue()) { // if turning afk
+                    PlayTimePlus.getStorage().get(p.getUniqueId()).setOnline(false);
+                    PlayTimePlus.debug("Setting player " + e.getAffected().getName() + " to afk");
+                } else {
+                    PlayTimePlus.getStorage().get(p.getUniqueId()).setOnline(true);
+                    PlayTimePlus.debug("Setting player " + e.getAffected().getName() + " to non-afk");
+                }
+            }
+        }, PlayTimePlus.getInstance());
     }
 }

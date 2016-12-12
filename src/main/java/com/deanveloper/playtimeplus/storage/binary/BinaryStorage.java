@@ -55,13 +55,6 @@ public class BinaryStorage implements Storage {
     }
 
     @Override
-    public void update(PlayerEntry entry) {
-        if (sortedPlayers.remove(entry)) {
-            sortedPlayers.add(entry);
-        }
-    }
-
-    @Override
     public void save() {
         // Update the players before saving
         for (Player p : Bukkit.getOnlinePlayers()) {

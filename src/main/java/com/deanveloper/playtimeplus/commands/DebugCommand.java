@@ -18,7 +18,6 @@ public class DebugCommand implements CommandExecutor {
             if (args[0].equalsIgnoreCase("true")) {
                 PlayTimePlus.debugEnabled = true;
                 Bukkit.broadcast(sender.getName() + " enabled debug mode!", Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-                Bukkit.getLogger().info("CURRENT STATE:");
                 Bukkit.getLogger().info("CURRENT STATE:" + PlayTimePlus.getStorage().getPlayersSorted().toString());
             } else if (args[0].equalsIgnoreCase("false")) {
                 PlayTimePlus.debugEnabled = false;
