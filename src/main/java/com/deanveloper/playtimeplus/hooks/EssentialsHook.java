@@ -59,7 +59,7 @@ public class EssentialsHook {
             throw new NullPointerException("player cannot be null!");
         }
 
-        String nickName = Utils.getName(player);
+        String nickName = Utils.getNameForce(player);
         if (plugin != null) {
             Player p = Bukkit.getPlayer(player);
             if (p == null || !plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {

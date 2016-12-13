@@ -19,11 +19,6 @@ public interface Manager {
     void init();
 
     /**
-     * Gets the PlayerEntry for the associated UUID. Should never be null.
-     */
-    NavigableSet<TimeEntry> get(UUID id);
-
-    /**
      * Saves local cache to permanent storage.
      */
     void save();
@@ -32,6 +27,22 @@ public interface Manager {
      * Gets a map that contains all of the Players' times
      */
     Map<UUID, NavigableSet<TimeEntry>> getMap();
+
+    /**
+     * Gets the PlayerEntry for the associated UUID. Should never be null.
+     */
+    default NavigableSet<TimeEntry> get(UUID id) {
+        updateLastCount(id);
+        return getMap().compute(id, (key, set) -> set == null ? new TreeSet<>() : set);
+    }
+
+    /**
+     * Gets the PlayerEntry for the associated UUID. Should never be null.
+     * Doesn't update the count.
+     */
+    default NavigableSet<TimeEntry> getNoUpdate(UUID id) {
+        return getMap().compute(id, (key, set) -> set == null ? new TreeSet<>() : set);
+    }
 
     /**
      * Gets the total time a player has been online
@@ -61,7 +72,7 @@ public interface Manager {
         if(!p.isOnline() || PlayTimePlus.getEssentialsHook().isAfk(id)) {
             return;
         }
-        NavigableSet<TimeEntry> times = get(id);
+        NavigableSet<TimeEntry> times = getNoUpdate(id);
         if(!times.isEmpty()) {
             TimeEntry newEnd = times.pollLast().newEnd(LocalDateTime.now());
             times.add(newEnd);

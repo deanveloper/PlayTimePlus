@@ -76,11 +76,6 @@ public class BinaryManager implements Manager {
     }
 
     @Override
-    public NavigableSet<TimeEntry> get(UUID id) {
-        return players.getOrDefault(id, new TreeSet<>());
-    }
-
-    @Override
     public void save() {
         // Update the players before saving
         Bukkit.getOnlinePlayers().stream()

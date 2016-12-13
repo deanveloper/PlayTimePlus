@@ -94,11 +94,6 @@ public class JsonManager implements Manager {
     }
 
     @Override
-    public NavigableSet<TimeEntry> get(UUID id) {
-        return players.getOrDefault(id, new TreeSet<>());
-    }
-
-    @Override
     public Map<UUID, NavigableSet<TimeEntry>> getMap() {
         return players;
     }
