@@ -1,13 +1,12 @@
 package com.deanveloper.playtimeplus.exporter;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.SortedSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -18,15 +17,15 @@ import java.util.stream.Collectors;
 public class CsvExporter implements Exporter {
 
     @Override
-    public void export(SortedSet<PlayerEntry> entries) {
+    public void export(Map<UUID, Set<TimeEntry>> entries) {
         List<String> formatted = new ArrayList<>(entries.size());
 
         formatted.addAll(
-                entries.stream()
+                entries.entrySet().stream()
                         .map(entry -> String.format("%s,%s,%d",
-                                entry.getId(),
-                                entry.getName(),
-                                entry.getTotalTime().getSeconds()))
+                                entry.getKey(),
+                                Utils.getNameForce(entry.getKey()),
+                                PlayTimePlus.getManager().onlineTime(entry.getKey()).getSeconds()))
                         .collect(Collectors.toList())
         );
 

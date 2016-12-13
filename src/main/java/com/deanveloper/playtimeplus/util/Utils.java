@@ -1,6 +1,6 @@
 package com.deanveloper.playtimeplus.util;
 
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonObject;
@@ -11,7 +11,9 @@ import org.bukkit.scoreboard.Team;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,12 +98,6 @@ public class Utils {
         }
 
         return sb.toString();
-    }
-
-    public static Set<PlayerEntry.TimeEntry> cloneElements(Collection<PlayerEntry.TimeEntry> col) {
-        return col.stream()
-                .map(PlayerEntry.TimeEntry::clone)
-                .collect(Collectors.toSet());
     }
 
     private static String getContent(String web) throws IOException {

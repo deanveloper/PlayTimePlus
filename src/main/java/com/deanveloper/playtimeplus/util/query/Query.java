@@ -1,11 +1,11 @@
 package com.deanveloper.playtimeplus.util.query;
 
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.SortedSet;
+import java.util.NavigableSet;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,11 +38,11 @@ public class Query {
      *
      * @param type          The type of query to perform
      * @param valueAsString the value of the query
-     * @param pEntry        The PlayerEntry to use
+     * @param times         The times to query
      * @throws              QueryException If something is wrong with the query
      */
-    static SortedSet<PlayerEntry.TimeEntry> queryPlayer(String type, String valueAsString, PlayerEntry pEntry) throws QueryException {
-        SortedSet<PlayerEntry.TimeEntry> toReturn = new TreeSet<>();
+    static NavigableSet<TimeEntry> filter(String type, String valueAsString, NavigableSet<TimeEntry> times) throws QueryException {
+        NavigableSet<TimeEntry> toReturn = new TreeSet<>();
         final Duration duration;
         final LocalDateTime time;
 
@@ -50,47 +50,55 @@ public class Query {
             case "total<":
             case "total>":
                 duration = parseDur(valueAsString);
+                Duration total = Duration.ZERO;
+                for(TimeEntry entry : times) {
+                    total = total.plus(entry.getDuration());
+                }
 
                 switch (type) {
                     case "total>":
-                        if (pEntry.getTotalTime().compareTo(duration) > 0) {
-                            toReturn.addAll(Utils.cloneElements(pEntry.getTimes()));
+                        if (total.compareTo(duration) > 0) {
+                            toReturn.addAll(times);
                         }
                         break;
                     case "total<":
-                        if (pEntry.getTotalTime().compareTo(duration) < 0) {
-                            toReturn.addAll(Utils.cloneElements(pEntry.getTimes()));
+                        if (total.compareTo(duration) < 0) {
+                            toReturn.addAll(times);
                         }
                         break;
                 }
                 break;
+
             case "after":
             case "before":
                 time = parseTime(valueAsString);
+                TimeEntry entry = new TimeEntry(time, time);
 
                 switch (type) {
                     case "after": {
-                        pEntry.getTimes().stream()
-                                .filter(tEntry -> tEntry.getEnd().isAfter(time))
-                                .map(PlayerEntry.TimeEntry::clone)
-                                .forEach(tEntry -> {
-                                    if (tEntry.getStart().isBefore(time)) {
-                                        tEntry.setStart(time);
-                                    }
-                                    toReturn.add(tEntry);
-                                });
+                        // automatically add all elements that start after the given time
+                        toReturn.addAll(times.tailSet(entry));
+
+                        // check for an intersection on the last element not added in the original list
+                        TimeEntry leftover = times.lower(entry);
+                        if(leftover != null) {
+                            if (leftover.getEnd().isAfter(time)) {
+                                toReturn.add(new TimeEntry(time, leftover.getEnd()));
+                            }
+                        }
                         break;
                     }
                     case "before": {
-                        pEntry.getTimes().stream()
-                                .filter(tEntry -> tEntry.getStart().isBefore(time))
-                                .map(PlayerEntry.TimeEntry::clone)
-                                .forEach(tEntry -> {
-                                    if (tEntry.getEnd().isAfter(time)) {
-                                        tEntry.setEnd(time);
-                                    }
-                                    toReturn.add(tEntry);
-                                });
+                        // automatically add all elements that start before the given time
+                        toReturn.addAll(times.headSet(entry));
+
+                        // check for an intersection on the last element in the returning list
+                        if(!toReturn.isEmpty()) {
+                            if(toReturn.last().getEnd().isBefore(time)) {
+                                toReturn.add(toReturn.pollLast().newEnd(time));
+                            }
+                        }
+
                         break;
                     }
                 }

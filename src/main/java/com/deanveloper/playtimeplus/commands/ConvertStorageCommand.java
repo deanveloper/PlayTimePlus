@@ -1,7 +1,7 @@
 package com.deanveloper.playtimeplus.commands;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.Storage;
+import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,15 +17,14 @@ public class ConvertStorageCommand implements CommandExecutor {
             args[0] = args[0].toUpperCase();
             try {
                 StorageMethod storageMethod = StorageMethod.valueOf(args[0]);
-                Storage storage = storageMethod.getStorage();
-                Storage oldStorage = PlayTimePlus.getStorage();
+                Manager manager = storageMethod.getStorage();
+                Manager oldManager = PlayTimePlus.getManager();
 
-                storage.getPlayersSorted().addAll(oldStorage.getPlayersSorted());
-                storage.getPlayers().putAll(oldStorage.getPlayers());
+                manager.getMap().putAll(oldManager.getMap());
 
-                storage.save();
+                manager.save();
 
-                PlayTimePlus.setStorage(storageMethod);
+                PlayTimePlus.setManager(storageMethod);
             } catch (IllegalArgumentException e) {
                 sender.sendMessage("§6Storage Methods");
                 for (StorageMethod type : StorageMethod.values()) {

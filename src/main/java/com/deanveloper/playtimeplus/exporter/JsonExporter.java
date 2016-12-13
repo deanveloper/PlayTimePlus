@@ -1,7 +1,8 @@
 package com.deanveloper.playtimeplus.exporter;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -11,7 +12,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.SortedSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Export to a Json file
@@ -21,26 +24,28 @@ import java.util.SortedSet;
 public class JsonExporter implements Exporter {
 
     @Override
-    public void export(SortedSet<PlayerEntry> entries) {
+    public void export(Map<UUID, Set<TimeEntry>> entries) {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        for (PlayerEntry entry : entries) {
+        for (Map.Entry<UUID, Set<TimeEntry>> entry : entries.entrySet()) {
             JsonObject data = new JsonObject();
-            data.addProperty("name", entry.getName());
-            data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getId()));
-            data.addProperty("idString", entry.getId().toString());
+            data.addProperty("name", Utils.getNameForce(entry.getKey()));
+            data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getKey()));
+            data.addProperty("idString", entry.getKey().toString());
 
             JsonArray times = new JsonArray();
 
-            for(PlayerEntry.TimeEntry tEntry : entry.getTimes()) {
+            for(TimeEntry tEntry : entry.getValue()) {
                 JsonObject obj = new JsonObject();
                 obj.add("start", PlayTimePlus.GSON.toJsonTree(tEntry.getStart()));
                 obj.add("end", PlayTimePlus.GSON.toJsonTree(tEntry.getEnd()));
             }
 
             data.add("times", times);
-            data.add("totalTime", PlayTimePlus.GSON.toJsonTree(entry.getTotalTime()));
+            data.add("totalTime", PlayTimePlus.GSON.toJsonTree(
+                    PlayTimePlus.getManager().onlineTime(entry.getKey())
+            ));
             arr.add(data);
         }
 

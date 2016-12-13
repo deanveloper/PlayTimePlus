@@ -5,16 +5,14 @@ import com.deanveloper.playtimeplus.exporter.CsvExporter;
 import com.deanveloper.playtimeplus.exporter.Exporter;
 import com.deanveloper.playtimeplus.exporter.JsonExporter;
 import com.deanveloper.playtimeplus.exporter.PlainTextExporter;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
-import java.util.Arrays;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 /**
  * Command to export players
@@ -30,10 +28,9 @@ public class ExportPlayersCommand implements CommandExecutor {
             try {
                 Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                SortedSet<PlayerEntry> players;
-
+                Map<UUID, Set<TimeEntry>> players;
                 if (args.length == 1) {
-                    players = new TreeSet<>(PlayTimePlus.getStorage().getPlayers().values());
+                    players = new HashMap<>(PlayTimePlus.getManager().getMap());
                 } else {
                     players = QueryUtil.query(Arrays.copyOfRange(args, 1, args.length));
                 }

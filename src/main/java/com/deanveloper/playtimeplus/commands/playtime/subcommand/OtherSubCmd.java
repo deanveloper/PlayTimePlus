@@ -3,7 +3,6 @@ package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.util.UUID;
@@ -21,10 +20,10 @@ public class OtherSubCmd implements SubCommandExecutor {
             call.sendBack("Couldn't find player " + call.getArgs()[0]);
             return;
         }
-        PlayerEntry time = PlayTimePlus.getStorage().get(id);
+
         call.sendBack(
                 String.format("§d%s §ehas played for §d%s§e.",
-                        Utils.correctCase(call.getArgs()[0]), Utils.format(time.getTotalTime()))
+                        Utils.correctCase(call.getArgs()[0]), Utils.format(PlayTimePlus.getManager().onlineTime(id)))
         );
     }
 

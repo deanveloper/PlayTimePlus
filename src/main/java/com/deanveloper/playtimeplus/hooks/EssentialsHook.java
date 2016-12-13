@@ -51,20 +51,26 @@ public class EssentialsHook {
     /**
      * The player's full name
      *
-     * @param name The player to get the full name of
+     * @param player The player to get the full name of
      * @return The player's full name
      */
-    public String fullName(String name) {
-        String nickName = name;
+    public String fullName(UUID player) {
+        if (player == null) {
+            throw new NullPointerException("player cannot be null!");
+        }
+
+        String nickName = Utils.getName(player);
         if (plugin != null) {
-            Player p = Bukkit.getPlayerExact(name);
-            if (!plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {
-                return Utils.getPrefix(p.getName()) + plugin.getUser(p).getNick(true);
+            Player p = Bukkit.getPlayer(player);
+            if (p == null || !plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {
+                if (plugin.getUser(player) != null) {
+                    return plugin.getPermissionsHandler().getPrefix(p) + plugin.getUser(player).getNick(true);
+                }
             } else {
-                nickName = plugin.getUser(name).getNick(true);
+                nickName = plugin.getUser(player).getNick(true);
             }
         }
-        return Utils.getPrefix(name) + nickName;
+        return Utils.getPrefix(nickName) + nickName;
     }
 
     private void registerAfkHook() {
@@ -73,10 +79,10 @@ public class EssentialsHook {
             public void onAfk(AfkStatusChangeEvent e) {
                 Player p = e.getAffected().getBase();
                 if (e.getValue()) { // if turning afk
-                    PlayTimePlus.getStorage().get(p.getUniqueId()).setOnline(false);
+                    PlayTimePlus.getManager().updateLastCount(p.getUniqueId());
                     PlayTimePlus.debug("Setting player " + e.getAffected().getName() + " to afk");
                 } else {
-                    PlayTimePlus.getStorage().get(p.getUniqueId()).setOnline(true);
+                    PlayTimePlus.getManager().startNewEntry(p.getUniqueId());
                     PlayTimePlus.debug("Setting player " + e.getAffected().getName() + " to non-afk");
                 }
             }

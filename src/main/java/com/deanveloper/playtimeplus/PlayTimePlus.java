@@ -5,13 +5,11 @@ import com.deanveloper.playtimeplus.commands.DebugCommand;
 import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
 import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
 import com.deanveloper.playtimeplus.hooks.EssentialsHook;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
-import com.deanveloper.playtimeplus.storage.Storage;
+import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.gson.DurationConverter;
 import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
-import com.deanveloper.playtimeplus.util.gson.PlayerEntryConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
@@ -33,11 +31,10 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
-            .registerTypeAdapter(PlayerEntry.class, new PlayerEntryConverter())
             .setLongSerializationPolicy(LongSerializationPolicy.STRING)
             .create();
     public static boolean debugEnabled = false;
-    private static Storage storage;
+    private static Manager manager;
     private static EssentialsHook eHook;
     private static PlayTimePlus instance;
 
@@ -45,8 +42,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         return instance;
     }
 
-    public static Storage getStorage() {
-        return storage;
+    public static Manager getManager() {
+        return manager;
     }
 
     public static EssentialsHook getEssentialsHook() {
@@ -74,8 +71,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         getLogger().info("Done!");
 
         getLogger().info("Loading players...");
-        storage = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
-        storage.init();
+        manager = StorageMethod.valueOf(getConfig().getString("storage").toUpperCase()).getStorage();
+        manager.init();
         getLogger().info("Done!");
         getLogger().info("Starting autosave...");
         startAutoSave();
@@ -93,7 +90,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-        storage.save();
+        manager.save();
     }
 
     @EventHandler
@@ -101,9 +98,9 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         Utils.update(e.getPlayer().getUniqueId(), e.getPlayer().getName());
     }
 
-    public static void setStorage(StorageMethod storage) {
-        PlayTimePlus.storage = storage.getStorage();
-        instance.getConfig().set("storage", storage.name());
+    public static void setManager(StorageMethod manager) {
+        PlayTimePlus.manager = manager.getStorage();
+        instance.getConfig().set("storage", manager.name());
     }
 
     private void startAutoSave() {
@@ -114,7 +111,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
         new BukkitRunnable() {
             public void run() {
                 debug("Autosaving!");
-                getStorage().save();
+                getManager().save();
             }
         }.runTaskTimer(this, autosave, autosave);
     }

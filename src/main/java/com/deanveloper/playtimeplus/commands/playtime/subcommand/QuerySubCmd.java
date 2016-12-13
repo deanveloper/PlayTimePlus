@@ -3,13 +3,14 @@ package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
 import org.bukkit.ChatColor;
 
-import java.util.Set;
+import java.time.Duration;
+import java.util.*;
 
 /**
  * @author Dean
@@ -24,13 +25,25 @@ public class QuerySubCmd implements SubCommandExecutor {
         } else {
             try {
                 call.sendBack("Performing query...");
-                Set<PlayerEntry> entries = QueryUtil.query(call.getArgs());
+                Map<UUID, Set<TimeEntry>> entries = QueryUtil.query(call.getArgs());
+                Map<UUID, Duration> durations = new HashMap<>(entries.size());
+
+                for(Map.Entry<UUID, Set<TimeEntry>> e : entries.entrySet()) {
+                    Duration total = Duration.ZERO;
+                    for(TimeEntry time : e.getValue()) {
+                        total = total.plus(time.getDuration());
+                    }
+                    durations.put(e.getKey(), total);
+                }
+
                 call.sendBack("Query finished!");
                 PlayTimePlus.debug("QUERY: " + entries);
-                entries.stream()
-                        .sorted()
-                        .forEach(pEntry ->
-                                call.sendBack("§d%s §e-> §d%s", pEntry.getName(), Utils.format(pEntry.getTotalTime()))
+                durations.entrySet().stream()
+                        .sorted(Comparator.comparing(Map.Entry::getValue))
+                        .forEach(entry ->
+                                call.sendBack("§d%s §e-> §d%s",
+                                        Utils.getNameForce(entry.getKey()),
+                                        Utils.format(entry.getValue()))
                         );
             } catch (QueryException e) {
                 call.sendBack(ChatColor.RED + "ERROR: " + e.getMessage());

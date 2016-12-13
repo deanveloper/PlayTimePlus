@@ -1,10 +1,11 @@
 package com.deanveloper.playtimeplus.storage.json;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
-import com.deanveloper.playtimeplus.storage.Storage;
+import com.deanveloper.playtimeplus.storage.Manager;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.google.common.io.Files;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -21,11 +22,10 @@ import java.util.*;
 /**
  * @author Dean
  */
-public class JsonStorage implements Storage {
+public class JsonManager implements Manager {
     private static final int VERSION = 1;
     private File storage;
-    private Map<UUID, PlayerEntry> players;
-    private NavigableSet<PlayerEntry> sortedPlayers;
+    private Map<UUID, NavigableSet<TimeEntry>> players;
 
     @Override
     public void init() {
@@ -58,21 +58,22 @@ public class JsonStorage implements Storage {
             root = JsonConverter.convertJson(root);
         }
 
-        Type type = new TypeToken<NavigableSet<PlayerEntry>>() {
+        Type timeEntrySet = new TypeToken<NavigableSet<TimeEntry>>() {
         }.getType();
 
-        NavigableSet<PlayerEntry> temp = PlayTimePlus.GSON.fromJson(root.get("players"), type);
-        if (temp == null) {
-            sortedPlayers = new TreeSet<>();
+        JsonObject json = root.getAsJsonObject("players");
+        if (json == null) {
+            players = new HashMap<>();
         } else {
-            sortedPlayers = temp;
-        }
+            players = new HashMap<>(json.entrySet().size());
+            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
 
-        sortedPlayers.forEach(PlayerEntry::mutated);
+                UUID id = UUID.fromString(entry.getKey());
+                NavigableSet<TimeEntry> times =
+                        PlayTimePlus.GSON.fromJson(entry.getValue().getAsJsonArray(), timeEntrySet);
 
-        players = new HashMap<>(sortedPlayers.size());
-        for (PlayerEntry entry : sortedPlayers) {
-            players.put(entry.getId(), entry);
+                players.put(id, times);
+            }
         }
     }
 
@@ -80,12 +81,12 @@ public class JsonStorage implements Storage {
     public void save() {
         // Update the players before saving
         for (Player p : Bukkit.getOnlinePlayers()) {
-            get(p.getUniqueId()).updateLatestTime();
+            updateLastCount(p.getUniqueId());
         }
         try {
             JsonObject root = new JsonObject();
             root.addProperty("version", VERSION);
-            root.add("players", PlayTimePlus.GSON.toJsonTree(sortedPlayers));
+            root.add("players", PlayTimePlus.GSON.toJsonTree(players));
             Files.write(PlayTimePlus.GSON.toJson(root), storage, Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,17 +94,12 @@ public class JsonStorage implements Storage {
     }
 
     @Override
-    public PlayerEntry get(UUID id) {
-        return players.get(id);
+    public NavigableSet<TimeEntry> get(UUID id) {
+        return players.getOrDefault(id, new TreeSet<>());
     }
 
     @Override
-    public Map<UUID, PlayerEntry> getPlayers() {
+    public Map<UUID, NavigableSet<TimeEntry>> getMap() {
         return players;
-    }
-
-    @Override
-    public NavigableSet<PlayerEntry> getPlayersSorted() {
-        return sortedPlayers;
     }
 }

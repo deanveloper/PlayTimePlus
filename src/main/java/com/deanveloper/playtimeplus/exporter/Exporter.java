@@ -1,8 +1,11 @@
 package com.deanveloper.playtimeplus.exporter;
 
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 
-import java.util.SortedSet;
+import java.time.Duration;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * A way to export to a file
@@ -10,7 +13,7 @@ import java.util.SortedSet;
  * @author Dean B
  */
 public interface Exporter {
-    void export(SortedSet<PlayerEntry> entries);
+    void export(Map<UUID, Set<TimeEntry>> entries);
 
     default String getFileName() {
         return "PlayerReport_" + System.currentTimeMillis();

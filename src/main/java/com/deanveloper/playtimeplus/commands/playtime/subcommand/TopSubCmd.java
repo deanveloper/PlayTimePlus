@@ -3,7 +3,7 @@ package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.util.*;
@@ -16,20 +16,30 @@ public class TopSubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         try {
-            NavigableSet<PlayerEntry> allPlayers = new TreeSet<>(PlayTimePlus.getStorage().getPlayersSorted());
-
             call.getSender().sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
-            for (int i = 0; i < Math.min(10, allPlayers.size()); i++) {
-                PlayerEntry entry = allPlayers.pollLast();
+            List<UUID> top10 = PlayTimePlus.getManager().getMap().keySet().parallelStream()
+                    .sorted((id1, id2) -> PlayTimePlus.getManager().onlineTime(id2).compareTo(PlayTimePlus.getManager().onlineTime(id1)))
+                    .sequential()
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            int limit = 10;
+            for (UUID id : top10) {
+                if (limit <= 0) {
+                    break;
+                }
+
                 call.getSender().sendMessage(
                         String.format(
                                 "§d#%d. §r%s §ewith §d%s§e.",
-                                i + 1,
-                                PlayTimePlus.getEssentialsHook().fullName(entry.getName()),
-                                Utils.format(entry.getTotalTime())
+                                11 - limit,
+                                PlayTimePlus.getEssentialsHook().fullName(id),
+                                Utils.format(PlayTimePlus.getManager().onlineTime(id))
                         )
                 );
+
+                limit++;
             }
         } catch (NullPointerException e) {
             e.printStackTrace();

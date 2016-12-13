@@ -2,13 +2,11 @@ package com.deanveloper.playtimeplus.util.query;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.PlayerEntry;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Supplier;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -21,7 +19,7 @@ public class QueryUtil {
      * @param query The query to pass
      * @return A list of players containing players that pass the query
      */
-    public static Set<PlayerEntry> query(String query) throws QueryException {
+    public static Map<UUID, NavigableSet<TimeEntry>> query(String query) throws QueryException {
         return query(query.split("\\s"));
     }
 
@@ -31,10 +29,13 @@ public class QueryUtil {
      * @param args The queries to pass
      * @return A list of incomplete PlayerEntries with players that pass the query along with their TimeEntries
      */
-    public static SortedSet<PlayerEntry> query(String... args) throws QueryException {
-        SortedSet<PlayerEntry> mutating = PlayTimePlus.getStorage().getPlayers().values().stream()
-                .map(PlayerEntry::clone)
-                .collect(Collectors.toCollection(TreeSet::new));
+    public static Map<UUID, NavigableSet<TimeEntry>> query(String... args) throws QueryException {
+        Map<UUID, NavigableSet<TimeEntry>> original = PlayTimePlus.getManager().getMap();
+        Map<UUID, NavigableSet<TimeEntry>> mutating = new TreeMap<>();
+
+        for(Map.Entry<UUID, NavigableSet<TimeEntry>> entry : original.entrySet()) {
+            mutating.put(entry.getKey(), new TreeSet<>(entry.getValue()));
+        }
 
         String currentOp = "and";
         for (int i = 0; i < args.length; i++) {
@@ -63,25 +64,21 @@ public class QueryUtil {
     /**
      * Applies the query to the set of players with the or operator.
      * This is done by applying a query to all play times and then combining them.
-     * Note that this will mutate each PlayerEntry in the set.
+     * Note that this will mutate the NavigableSets
      *
-     * @param players The player set to combine with
+     * @param players The times to combine with
      * @param query   The query to perform
      * @throws QueryException if something goes wrong. Error message always provided.
      */
-    private static void or(SortedSet<PlayerEntry> players, String query) throws QueryException {
-        SortedSet<PlayerEntry> queried = new TreeSet<>();
+    private static void or(Map<UUID, NavigableSet<TimeEntry>> players, String query) throws QueryException {
+        Map<UUID, NavigableSet<TimeEntry>> queried = new HashMap<>();
         String[] parsed = parseQuery(query);
         String type = parsed[0];
         String value = parsed[1];
 
-        for (PlayerEntry base : PlayTimePlus.getStorage().getPlayers().values()) {
-            PlayerEntry entry = base.clone();
-            SortedSet<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, entry);
-            entry.getTimes().clear();
-            entry.getTimes().addAll(times);
-            entry.mutated();
-            queried.add(entry);
+        for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : PlayTimePlus.getManager().getMap().entrySet()) {
+            NavigableSet<TimeEntry> times = Query.filter(type, value, entry.getValue());
+            queried.put(entry.getKey(), times);
         }
 
         combine(players, queried);
@@ -96,14 +93,14 @@ public class QueryUtil {
      * @param query   The query to perform
      * @throws QueryException if something goes wrong. Error message always provided.
      */
-    private static void and(Set<PlayerEntry> players, String query) throws QueryException {
+    private static void and(Map<UUID, NavigableSet<TimeEntry>> players, String query) throws QueryException {
         String[] parsed = parseQuery(query);
         String type = parsed[0];
         String value = parsed[1];
 
-        for (PlayerEntry base : players) {
-            Set<PlayerEntry.TimeEntry> times = Query.queryPlayer(type, value, base);
-            base.getTimes().clear();
+        for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : players.entrySet()) {
+            NavigableSet<TimeEntry> times = Query.filter(type, value, new TreeSet<>(entry.getValue()));
+            entry.getValue().clear();
             base.getTimes().addAll(times);
             base.mutated();
         }
@@ -117,7 +114,7 @@ public class QueryUtil {
      * where n is the number of players in the set,
      * and m is the average number of time entries for each player.
      */
-    private static void combine(Set<PlayerEntry> set1, Set<PlayerEntry> set2) {
+    private static void combine(NavigableSet<TimeEntry> set1, NavigableSet<TimeEntry> set2) {
         for (PlayerEntry toMerge : set2) {
             PlayerEntry entry = null;
             for (PlayerEntry each : set1) {
