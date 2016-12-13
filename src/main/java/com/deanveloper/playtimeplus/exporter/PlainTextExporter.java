@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class PlainTextExporter implements Exporter {
 
     @Override
-    public void export(Map<UUID, Set<TimeEntry>> entries) {
+    public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
         List<String> formatted = new ArrayList<>(entries.size());
 
         formatted.addAll(

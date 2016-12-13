@@ -11,10 +11,7 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Export to a Json file
@@ -24,11 +21,11 @@ import java.util.UUID;
 public class JsonExporter implements Exporter {
 
     @Override
-    public void export(Map<UUID, Set<TimeEntry>> entries) {
+    public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
         JsonObject root = new JsonObject();
         JsonArray arr = new JsonArray();
 
-        for (Map.Entry<UUID, Set<TimeEntry>> entry : entries.entrySet()) {
+        for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : entries.entrySet()) {
             JsonObject data = new JsonObject();
             data.addProperty("name", Utils.getNameForce(entry.getKey()));
             data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getKey()));

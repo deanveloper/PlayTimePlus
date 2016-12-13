@@ -49,7 +49,7 @@ public interface Manager {
      */
     default void startNewEntry(UUID id) {
         LocalDateTime now = LocalDateTime.now();
-        get(id).add(new TimeEntry(now, now ,id));
+        get(id).add(new TimeEntry(now, now));
 
         PlayTimePlus.debug("Started new entry for " + id);
     }

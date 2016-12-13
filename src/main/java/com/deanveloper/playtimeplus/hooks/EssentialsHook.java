@@ -67,7 +67,10 @@ public class EssentialsHook {
                     return plugin.getPermissionsHandler().getPrefix(p) + plugin.getUser(player).getNick(true);
                 }
             } else {
-                nickName = plugin.getUser(player).getNick(true);
+                String nick = plugin.getUser(player).getNick(true);
+                if (nick != null) {
+                    nickName = nick;
+                }
             }
         }
         return Utils.getPrefix(nickName) + nickName;

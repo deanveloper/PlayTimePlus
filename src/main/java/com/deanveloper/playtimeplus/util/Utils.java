@@ -1,6 +1,6 @@
 package com.deanveloper.playtimeplus.util;
 
-import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonObject;
@@ -15,8 +15,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.time.Duration;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author Dean B
@@ -36,6 +37,8 @@ public class Utils {
         if (id == null) {
             throw new NullPointerException("Cannot get the name of a null UUID!");
         }
+        PlayTimePlus.debug("ID -> NAME");
+        PlayTimePlus.debug("[" + id + "] -> ["+ correctCaseMap.get(nameIdMap.get(id)) + ']');
         return correctCaseMap.get(nameIdMap.get(id));
     }
 

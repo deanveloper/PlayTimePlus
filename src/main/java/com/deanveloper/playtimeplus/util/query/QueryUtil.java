@@ -1,9 +1,7 @@
 package com.deanveloper.playtimeplus.util.query;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
-import com.deanveloper.playtimeplus.storage.PlayerEntry;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
-import com.deanveloper.playtimeplus.util.Utils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -33,7 +31,7 @@ public class QueryUtil {
         Map<UUID, NavigableSet<TimeEntry>> original = PlayTimePlus.getManager().getMap();
         Map<UUID, NavigableSet<TimeEntry>> mutating = new TreeMap<>();
 
-        for(Map.Entry<UUID, NavigableSet<TimeEntry>> entry : original.entrySet()) {
+        for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : original.entrySet()) {
             mutating.put(entry.getKey(), new TreeSet<>(entry.getValue()));
         }
 
@@ -54,9 +52,9 @@ public class QueryUtil {
             }
         }
 
-        mutating = mutating.stream()
-                .filter(pEntry -> !pEntry.getTimes().isEmpty())
-                .collect(Collectors.toCollection(TreeSet::new));
+        mutating = mutating.entrySet().stream()
+                .filter(pEntry -> !pEntry.getValue().isEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         return mutating;
     }
@@ -81,6 +79,7 @@ public class QueryUtil {
             queried.put(entry.getKey(), times);
         }
 
+
         combine(players, queried);
     }
 
@@ -101,8 +100,7 @@ public class QueryUtil {
         for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : players.entrySet()) {
             NavigableSet<TimeEntry> times = Query.filter(type, value, new TreeSet<>(entry.getValue()));
             entry.getValue().clear();
-            base.getTimes().addAll(times);
-            base.mutated();
+            entry.getValue().addAll(times);
         }
     }
 
@@ -114,39 +112,39 @@ public class QueryUtil {
      * where n is the number of players in the set,
      * and m is the average number of time entries for each player.
      */
-    private static void combine(NavigableSet<TimeEntry> set1, NavigableSet<TimeEntry> set2) {
-        for (PlayerEntry toMerge : set2) {
-            PlayerEntry entry = null;
-            for (PlayerEntry each : set1) {
-                if (each.getId().equals(toMerge.getId())) {
-                    entry = each;
-                    break;
-                }
+    private static void combine(Map<UUID, NavigableSet<TimeEntry>> pSet1, Map<UUID, NavigableSet<TimeEntry>> pSet2) {
+
+        for (UUID id : new LinkedHashSet<>(pSet1.keySet())) {
+
+            NavigableSet<TimeEntry> times1 = pSet1.get(id);
+            NavigableSet<TimeEntry> times2 = pSet2.get(id);
+
+            if (times1.isEmpty()) {
+                times1.addAll(times2);
+                return;
+            } else if (times2.isEmpty()) {
+                return;
             }
 
-            if (entry == null) {
-                set1.add(toMerge);
-            } else {
-                Set<PlayerEntry.TimeEntry> toAdd = new HashSet<>();
-                for (PlayerEntry.TimeEntry time1 : entry.getTimes()) {
-                    for (PlayerEntry.TimeEntry time2 : toMerge.getTimes()) {
-                        boolean startWithin = isWithin(time1.getStart(), time2);
-                        boolean endWithin = isWithin(time1.getEnd(), time2);
+            // Merge the lists together, and then make sure there are no overlaps.
+            times1.addAll(times2);
 
-                        if (startWithin || endWithin) {
-                            if (isWithin(time1.getStart(), time2)) {
-                                time1.setStart(time2.getStart());
-                            }
-                            if (isWithin(time1.getEnd(), time2)) {
-                                time1.setEnd(time2.getEnd());
-                            }
-                        } else {
-                            toAdd.add(time2);
-                        }
-                    }
+            TimeEntry start = null;
+            for (TimeEntry entry : new TreeSet<>(times1)) {
+                if (start == null) {
+                    // when the for loop starts, clear the set and set the start of the next element to the first.
+                    times1.clear();
+                    start = entry;
+
+                } else if (entry.getStart().isAfter(start.getEnd())) {
+                    // If the entry's start is after the "start" ends, reset the "start" variable.
+                    times1.add(start);
+                    start = entry;
+
+                } else {
+                    // If this entry starts before the "start" entry ends, set the "start"'s end to this.
+                    start = start.newEnd(entry.getEnd());
                 }
-                entry.getTimes().addAll(toAdd);
-                entry.mutated();
             }
         }
     }
@@ -158,7 +156,7 @@ public class QueryUtil {
      * @param range The entry to test with.
      * @return Whether the time is within the range.
      */
-    private static boolean isWithin(LocalDateTime time, PlayerEntry.TimeEntry range) {
+    private static boolean isWithin(LocalDateTime time, TimeEntry range) {
         return range.getStart().isBefore(time) && range.getEnd().isAfter(time);
     }
 
@@ -199,6 +197,6 @@ public class QueryUtil {
             throw new QueryException("Type or value is empty!");
         }
 
-        return new String[]{type, value};
+        return new String[]{ type, value };
     }
 }

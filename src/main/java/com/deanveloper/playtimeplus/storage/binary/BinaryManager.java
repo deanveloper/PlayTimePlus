@@ -49,8 +49,7 @@ public class BinaryManager implements Manager {
                     while ((read = objIn.read()) == 0x11) {
                         TimeEntry time = new TimeEntry(
                                 (LocalDateTime) objIn.readObject(),
-                                (LocalDateTime) objIn.readObject(),
-                                id
+                                (LocalDateTime) objIn.readObject()
                         );
                         times.add(time);
                     }

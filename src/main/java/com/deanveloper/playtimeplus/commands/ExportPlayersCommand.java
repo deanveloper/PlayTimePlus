@@ -28,7 +28,7 @@ public class ExportPlayersCommand implements CommandExecutor {
             try {
                 Exporter exporter = FileType.valueOf(args[0]).getExporter();
 
-                Map<UUID, Set<TimeEntry>> players;
+                Map<UUID, NavigableSet<TimeEntry>> players;
                 if (args.length == 1) {
                     players = new HashMap<>(PlayTimePlus.getManager().getMap());
                 } else {

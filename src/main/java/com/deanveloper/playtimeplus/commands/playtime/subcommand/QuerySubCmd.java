@@ -25,10 +25,10 @@ public class QuerySubCmd implements SubCommandExecutor {
         } else {
             try {
                 call.sendBack("Performing query...");
-                Map<UUID, Set<TimeEntry>> entries = QueryUtil.query(call.getArgs());
+                Map<UUID, NavigableSet<TimeEntry>> entries = QueryUtil.query(call.getArgs());
                 Map<UUID, Duration> durations = new HashMap<>(entries.size());
 
-                for(Map.Entry<UUID, Set<TimeEntry>> e : entries.entrySet()) {
+                for(Map.Entry<UUID, NavigableSet<TimeEntry>> e : entries.entrySet()) {
                     Duration total = Duration.ZERO;
                     for(TimeEntry time : e.getValue()) {
                         total = total.plus(time.getDuration());
