@@ -62,7 +62,7 @@ public class EssentialsHook {
         String nickName = Utils.getNameForce(player);
         if (plugin != null) {
             Player p = Bukkit.getPlayer(player);
-            if (p == null || !plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {
+            if (p != null && !plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {
                 if (plugin.getUser(player) != null) {
                     return plugin.getPermissionsHandler().getPrefix(p) + plugin.getUser(player).getNick(true);
                 }
