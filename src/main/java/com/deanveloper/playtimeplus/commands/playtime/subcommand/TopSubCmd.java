@@ -42,7 +42,7 @@ public class TopSubCmd implements SubCommandExecutor {
                         )
                 );
 
-                limit++;
+                limit--;
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
