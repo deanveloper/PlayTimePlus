@@ -37,6 +37,7 @@ public class JsonExporter implements Exporter {
                 JsonObject obj = new JsonObject();
                 obj.add("start", PlayTimePlus.GSON.toJsonTree(tEntry.getStart()));
                 obj.add("end", PlayTimePlus.GSON.toJsonTree(tEntry.getEnd()));
+                times.add(obj);
             }
 
             data.add("times", times);

@@ -6,6 +6,7 @@ import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ public class TopSubCmd implements SubCommandExecutor {
         try {
             call.getSender().sendMessage("§e---------------§a[Playtime Top]§e---------------");
 
-            Bukkit.getOnlinePlayers().forEach(p -> PlayTimePlus.getManager().updateLastCount(p.getUniqueId()));
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                PlayTimePlus.getManager().updateLastCount(p.getUniqueId());
+            }
 
             List<UUID> top10 = PlayTimePlus.getManager().getMap().keySet().parallelStream()
                     .sorted((id1, id2) -> PlayTimePlus.getManager().onlineTime(id2).compareTo(PlayTimePlus.getManager().onlineTime(id1)))

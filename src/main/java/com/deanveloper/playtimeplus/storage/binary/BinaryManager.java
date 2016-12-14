@@ -4,6 +4,7 @@ import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.time.LocalDateTime;
@@ -78,10 +79,9 @@ public class BinaryManager implements Manager {
     @Override
     public void save() {
         // Update the players before saving
-        Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !PlayTimePlus.getEssentialsHook().isAfk(p))
-                .forEach(p -> updateLastCount(p.getUniqueId()));
-
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            updateLastCount(p.getUniqueId());
+        }
 
         try (
                 FileOutputStream output = new FileOutputStream(storage);

@@ -3,6 +3,7 @@ package com.deanveloper.playtimeplus.storage;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -60,16 +61,16 @@ public interface Manager {
      */
     default void startNewEntry(UUID id) {
         LocalDateTime now = LocalDateTime.now();
-        get(id).add(new TimeEntry(now, now));
+        getNoUpdate(id).add(new TimeEntry(now, now));
 
         PlayTimePlus.debug("Started new entry for " + id);
     }
 
     default void updateLastCount(UUID id) {
-        OfflinePlayer p = Bukkit.getOfflinePlayer(id);
+        Player p = Bukkit.getPlayer(id);
 
         // never increase player time while offline or afk
-        if(!p.isOnline() || PlayTimePlus.getEssentialsHook().isAfk(id)) {
+        if(p == null || PlayTimePlus.getEssentialsHook().isAfk(id)) {
             return;
         }
         NavigableSet<TimeEntry> times = getNoUpdate(id);
