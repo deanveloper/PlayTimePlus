@@ -42,8 +42,8 @@ permissions:
     default: op
     children:
       playtimeplus.command.playtime: true
-  playtimeplus.command.playtime.version:
-    description: "Allows access to view the version of the plugin"
+  playtimeplus.command.playtime.query:
+    description: "Allows access to query playtimes"
     default: op
     children:
       playtimeplus.command.playtime: true
