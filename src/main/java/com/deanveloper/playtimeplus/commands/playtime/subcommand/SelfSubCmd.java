@@ -15,12 +15,29 @@ public class SelfSubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         if (call.getSender() instanceof ConsoleCommandSender) {
-            call.sendBack("Only players can execute this command!");
+            call.sendBack(
+                    Utils.configMessage(
+                            "messages.cmd.playtime.self.consoleuse",
+                            call.getSender().getName(),
+                            "",
+                            "",
+                            "",
+                            ""
+                    )
+            );
             return;
         }
 
-        call.sendBack("§dYou §ehave played for §d%s§e.",
-                Utils.format(PlayTimePlus.getManager().onlineTime(call.getPlayer().getUniqueId())));
+        call.sendBack(
+                Utils.configMessage(
+                        "messages.cmd.playtime.self.success",
+                        call.getSender().getName(),
+                        call.getSender().getName(),
+                        "",
+                        Utils.format(PlayTimePlus.getManager().onlineTime(call.getPlayer().getUniqueId())),
+                        ""
+                )
+        );
     }
 
     @Override

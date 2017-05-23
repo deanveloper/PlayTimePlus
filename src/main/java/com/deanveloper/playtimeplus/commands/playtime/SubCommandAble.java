@@ -5,6 +5,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.deanveloper.playtimeplus.util.Utils;
+
 import java.util.*;
 
 /**
@@ -43,6 +45,16 @@ public class SubCommandAble implements CommandExecutor {
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
                     sender.sendMessage("§aUsage: /" + label + " " + args[0].toLowerCase() + " §d" + subCmd.getUsage());
+                } catch (Exception e) {
+                    sender.sendMessage(
+                            Utils.configMessage("messages.cmd.playtime.error",
+                                    sender.getName(),
+                                    "",
+                                    "",
+                                    "",
+                                    e.getMessage()
+                            )
+                    );
                 }
             }
         }

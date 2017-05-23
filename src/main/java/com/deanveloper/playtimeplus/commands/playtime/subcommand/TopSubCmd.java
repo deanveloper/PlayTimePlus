@@ -37,11 +37,13 @@ public class TopSubCmd implements SubCommandExecutor {
                 }
 
                 call.getSender().sendMessage(
-                        String.format(
-                                "§d#%d. §r%s §ewith §d%s§e.",
-                                11 - limit,
+                        Utils.configMessage(
+                                "messages.cmd.playtime.top.eachPlayer",
+                                call.getSender().getName(),
                                 PlayTimePlus.getEssentialsHook().fullName(id),
-                                Utils.format(PlayTimePlus.getManager().onlineTime(id))
+                                11 - limit + "",
+                                Utils.format(PlayTimePlus.getManager().onlineTime(id)),
+                                ""
                         )
                 );
 

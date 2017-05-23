@@ -1,3 +1,23 @@
 storage: binary
 autosave: 300
 version: 0
+# Available variables in messages: {{sender}} {{target}} {{num}} {{time}} {{error}}. Will be empty if not found.
+messages:
+  cmd:
+    playtime:
+      error: "&cERROR: {{error}}"
+      other:
+        success: "&d{{target}} &ehas played for &d{{time}}§e."
+        fail: "Couldn't find player {{target}}"
+      query:
+        help: "Go to this page for help: https://goo.gl/Y1KeoG"
+        start: "Performing query..."
+        success: "Query finished!"
+        eachPlayer: "&d{{target}} &e-> &d{{time}}"
+        queryError: "&cQuery Error: {{error}}"
+      self:
+        consoleuse: "Only players can execute this command"
+        success: "&dYou &ehave played for &d{{time}}&e."
+      top:
+        header: "&e---------------&a[Playtime Top]&e---------------"
+        eachPlayer: "&d#{{num}}. &r{{target}} &ewith &d{{time}}&e."

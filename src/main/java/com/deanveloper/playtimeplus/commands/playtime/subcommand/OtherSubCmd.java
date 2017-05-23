@@ -17,13 +17,25 @@ public class OtherSubCmd implements SubCommandExecutor {
     public void execute(SubCommandCall call) {
         UUID id = Utils.getUuid(call.getArgs()[0]);
         if (id == null) {
-            call.sendBack("Couldn't find player " + call.getArgs()[0]);
+            call.sendBack(
+                    Utils.configMessage("messages.cmd.playtime.other.fail",
+                            call.getSender().getName(),
+                            call.getArgs()[0],
+                            "",
+                            "",
+                            "Could not find player!"
+                    ));
             return;
         }
 
         call.sendBack(
-                String.format("§d%s §ehas played for §d%s§e.",
-                        Utils.correctCase(call.getArgs()[0]), Utils.format(PlayTimePlus.getManager().onlineTime(id)))
+                Utils.configMessage("messages.cmd.playtime.other.success",
+                        call.getSender().getName(),
+                        call.getArgs()[0],
+                        "",
+                        Utils.format(PlayTimePlus.getManager().onlineTime(id)),
+                        ""
+                )
         );
     }
 

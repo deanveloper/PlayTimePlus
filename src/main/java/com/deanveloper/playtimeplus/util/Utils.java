@@ -103,6 +103,17 @@ public class Utils {
         return sb.toString();
     }
 
+    public static String configMessage(String path, String sender, String target, String num, String time, String error) {
+        String format = PlayTimePlus.getInstance().getConfig().getString(path);
+        format = format.replace("{{sender}}", sender);
+        format = format.replace("{{target}}", target);
+        format = format.replace("{{num}}", num);
+        format = format.replace("{{time}}", time);
+        format = format.replace("{{error}}", error);
+
+        return format;
+    }
+
     private static String getContent(String web) throws IOException {
         try {
             URL url = new URL(web);

@@ -21,10 +21,26 @@ public class QuerySubCmd implements SubCommandExecutor {
     @Override
     public void execute(SubCommandCall call) {
         if (call.getArgs()[0].equals("help")) {
-            call.sendBack("Go to this page for help: https://goo.gl/Y1KeoG");
+            call.sendBack(
+                    Utils.configMessage("messages.cmd.playtime.query.help",
+                            call.getSender().getName(),
+                            "",
+                            "",
+                            "",
+                            ""
+                    )
+            );
         } else {
             try {
-                call.sendBack("Performing query...");
+                call.sendBack(
+                        Utils.configMessage("messages.cmd.playtime.query.start",
+                                call.getSender().getName(),
+                                "",
+                                "",
+                                "",
+                                ""
+                        )
+                );
                 Map<UUID, NavigableSet<TimeEntry>> entries = QueryUtil.query(call.getArgs());
                 Map<UUID, Duration> durations = new HashMap<>(entries.size());
 
@@ -36,17 +52,39 @@ public class QuerySubCmd implements SubCommandExecutor {
                     durations.put(e.getKey(), total);
                 }
 
-                call.sendBack("Query finished!");
+                call.sendBack(
+                        Utils.configMessage("messages.cmd.playtime.query.success",
+                                call.getSender().getName(),
+                                "",
+                                "",
+                                "",
+                                ""
+                        )
+                );
                 PlayTimePlus.debug("QUERY: " + entries);
                 durations.entrySet().stream()
                         .sorted(Comparator.comparing(Map.Entry::getValue))
                         .forEach(entry ->
-                                call.sendBack("§d%s §e-> §d%s",
-                                        Utils.getNameForce(entry.getKey()),
-                                        Utils.format(entry.getValue()))
+                                call.sendBack(
+                                        Utils.configMessage("messages.cmd.playtime.query.eachPlayer",
+                                                call.getSender().getName(),
+                                                Utils.getNameForce(entry.getKey()),
+                                                "",
+                                                Utils.format(entry.getValue()),
+                                                ""
+                                        )
+                                )
                         );
             } catch (QueryException e) {
-                call.sendBack(ChatColor.RED + "ERROR: " + e.getMessage());
+                call.sendBack(
+                        Utils.configMessage("messages.cmd.playtime.query.queryError",
+                                call.getSender().getName(),
+                                "",
+                                "",
+                                "",
+                                e.getMessage()
+                        )
+                );
             }
         }
     }

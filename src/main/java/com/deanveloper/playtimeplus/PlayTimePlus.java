@@ -7,6 +7,7 @@ import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
 import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
+import com.deanveloper.playtimeplus.util.ConfigManager;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.gson.DurationConverter;
 import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
