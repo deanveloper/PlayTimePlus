@@ -9,12 +9,12 @@ import com.deanveloper.playtimeplus.commands.playtime.subcommand.TopSubCmd;
  * @author Dean B
  */
 public class PlayTimeCommand extends SubCommandAble {
-    public PlayTimeCommand() {
-        super(
-                new SelfSubCmd(),
-                new TopSubCmd(),
-                new OtherSubCmd(),
-                new QuerySubCmd()
-        );
-    }
+	public PlayTimeCommand() {
+		super(
+				new SelfSubCmd(),
+				new TopSubCmd(),
+				new OtherSubCmd(),
+				new QuerySubCmd()
+		);
+	}
 }

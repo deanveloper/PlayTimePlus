@@ -4,60 +4,59 @@ import com.google.gson.annotations.SerializedName;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 /**
  * @author Dean
  */
 public class TimeEntry implements Comparable<TimeEntry> {
 
-    @SerializedName("s")
-    private final LocalDateTime start;
-    @SerializedName("e")
-    private final LocalDateTime end;
+	@SerializedName("s")
+	private final LocalDateTime start;
+	@SerializedName("e")
+	private final LocalDateTime end;
 
-    private transient Duration lazyDuration;
+	private transient Duration lazyDuration;
 
-    public TimeEntry(LocalDateTime start, LocalDateTime end) {
-        this.start = start;
-        this.end = end;
-        lazyDuration = Duration.between(start, end);
-    }
+	public TimeEntry(LocalDateTime start, LocalDateTime end) {
+		this.start = start;
+		this.end = end;
+		lazyDuration = Duration.between(start, end);
+	}
 
-    public Duration getDuration() {
-        return lazyDuration;
-    }
+	public Duration getDuration() {
+		return lazyDuration;
+	}
 
-    public LocalDateTime getStart() {
-        return start;
-    }
+	public TimeEntry newEnd(LocalDateTime end) {
+		return new TimeEntry(this.start, end);
+	}
 
-    public LocalDateTime getEnd() {
-        return end;
-    }
+	@Override
+	public String toString() {
+		return "TimeEntry[start=" + start + ",end=" + end + "]";
+	}
 
-    public TimeEntry newEnd(LocalDateTime end) {
-        return new TimeEntry(this.start, end);
-    }
+	@Override
+	public int compareTo(TimeEntry o) {
+		return start.compareTo(o.start);
+	}
 
-    @Override
-    public String toString() {
-        return "TimeEntry[start=" + start + ",end=" + end + "]";
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof TimeEntry) {
+			TimeEntry entry = ((TimeEntry) o);
 
-    @Override
-    public int compareTo(TimeEntry o) {
-        return start.compareTo(o.start);
-    }
+			return this.getStart().equals(entry.getStart()) && this.getEnd().equals(entry.getEnd());
+		}
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof TimeEntry) {
-            TimeEntry entry = ((TimeEntry) o);
+		return false;
+	}
 
-            return this.getStart().equals(entry.getStart()) && this.getEnd().equals(entry.getEnd());
-        }
+	public LocalDateTime getStart() {
+		return start;
+	}
 
-        return false;
-    }
+	public LocalDateTime getEnd() {
+		return end;
+	}
 }

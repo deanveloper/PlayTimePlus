@@ -8,23 +8,23 @@ import com.deanveloper.playtimeplus.util.Lazy;
  * @author Dean
  */
 public enum StorageMethod {
-    JSON(Lazy.create(JsonManager::new), "Not very space efficient, but sorta user-readable"),
-    BINARY(Lazy.create(BinaryManager::new), "Space efficient, not user-readable");
+	JSON(Lazy.create(JsonManager::new), "Not very space efficient, but sorta user-readable"),
+	BINARY(Lazy.create(BinaryManager::new), "Space efficient, not user-readable");
 
-    private final Lazy<Manager> storageSupplier;
-    private final String desc;
+	private final Lazy<Manager> storageSupplier;
+	private final String desc;
 
 
-    StorageMethod(Lazy<Manager> storageSupplier, String desc) {
-        this.storageSupplier = storageSupplier;
-        this.desc = desc;
-    }
+	StorageMethod(Lazy<Manager> storageSupplier, String desc) {
+		this.storageSupplier = storageSupplier;
+		this.desc = desc;
+	}
 
-    public Manager getStorage() {
-        return storageSupplier.get();
-    }
+	public Manager getStorage() {
+		return storageSupplier.get();
+	}
 
-    public String getDesc() {
-        return desc;
-    }
+	public String getDesc() {
+		return desc;
+	}
 }

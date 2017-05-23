@@ -14,68 +14,68 @@ import java.util.logging.Level;
  * @author Dean B
  */
 public class ConfigManager {
-    private Plugin plugin;
-    private String fileName;
-    private File configFile;
-    private FileConfiguration config;
+	private Plugin plugin;
+	private String fileName;
+	private File configFile;
+	private FileConfiguration config;
 
-    public ConfigManager(Plugin plugin, String fileName) {
-        this.plugin = plugin;
-        this.fileName = fileName;
+	public ConfigManager(Plugin plugin, String fileName) {
+		this.plugin = plugin;
+		this.fileName = fileName;
 
-        this.configFile = new File(plugin.getDataFolder(), fileName);
+		this.configFile = new File(plugin.getDataFolder(), fileName);
 
-        saveDefault();
-        reload();
-    }
+		saveDefault();
+		reload();
+	}
 
-    public Object get(String path) {
-        return config.get(path);
-    }
+	private void saveDefault() {
+		if (!configFile.exists()) {
+			plugin.saveResource(fileName, false);
+		}
+	}
 
-    public <T> T get(String path, T def) {
-        return (T) config.get(path, def);
-    }
+	public void reload() {
+		config = YamlConfiguration.loadConfiguration(configFile);
 
-    public <T> T get(String path, Class<T> type) {
-        return (T) config.get(path);
-    }
+		// Look for defaults in the jar
+		InputStream defaults = plugin.getResource(fileName);
+		if (defaults != null) {
+			config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defaults)));
+		}
+	}
 
-    public ConfigManager set(String path, Object value) {
-        config.set(path, value);
-        return this;
-    }
+	public Object get(String path) {
+		return config.get(path);
+	}
 
-    public void reload() {
-        config = YamlConfiguration.loadConfiguration(configFile);
+	public <T> T get(String path, T def) {
+		return (T) config.get(path, def);
+	}
 
-        // Look for defaults in the jar
-        InputStream defaults = plugin.getResource(fileName);
-        if (defaults != null) {
-            config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defaults)));
-        }
-    }
+	public <T> T get(String path, Class<T> type) {
+		return (T) config.get(path);
+	}
 
-    public FileConfiguration getConfig() {
-        return config;
-    }
+	public ConfigManager set(String path, Object value) {
+		config.set(path, value);
+		return this;
+	}
 
-    public void save() {
-        try {
-            config.save(configFile);
-        } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
-        }
-    }
+	public FileConfiguration getConfig() {
+		return config;
+	}
 
-    private void saveDefault() {
-        if (!configFile.exists()) {
-            plugin.saveResource(fileName, false);
-        }
-    }
+	public void save() {
+		try {
+			config.save(configFile);
+		} catch (IOException ex) {
+			plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
+		}
+	}
 
-    @Override
-    public String toString() {
-        return config.toString();
-    }
+	@Override
+	public String toString() {
+		return config.toString();
+	}
 }

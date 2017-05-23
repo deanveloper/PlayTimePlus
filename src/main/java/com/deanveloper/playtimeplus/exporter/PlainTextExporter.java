@@ -17,27 +17,27 @@ import java.util.stream.Collectors;
  */
 public class PlainTextExporter implements Exporter {
 
-    @Override
-    public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
-        List<String> formatted = new ArrayList<>(entries.size());
+	@Override
+	public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
+		List<String> formatted = new ArrayList<>(entries.size());
 
-        formatted.addAll(
-                entries.entrySet().stream()
-                        .map(entry -> String.format(
-                                "%s (aka %s) has been on for %s",
-                                entry.getKey(),
-                                Utils.getNameForce(entry.getKey()),
-                                PlayTimePlus.getManager().onlineTime(entry.getKey()).getSeconds())
-                        ).collect(Collectors.toList())
-        );
+		formatted.addAll(
+				entries.entrySet().stream()
+						.map(entry -> String.format(
+								"%s (aka %s) has been on for %s",
+								entry.getKey(),
+								Utils.getNameForce(entry.getKey()),
+								PlayTimePlus.getManager().onlineTime(entry.getKey()).getSeconds())
+						).collect(Collectors.toList())
+		);
 
-        try {
-            Files.write(
-                    Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
-                    formatted
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			Files.write(
+					Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
+					formatted
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

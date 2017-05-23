@@ -16,26 +16,26 @@ import java.util.stream.Collectors;
  */
 public class CsvExporter implements Exporter {
 
-    @Override
-    public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
-        List<String> formatted = new ArrayList<>(entries.size());
+	@Override
+	public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
+		List<String> formatted = new ArrayList<>(entries.size());
 
-        formatted.addAll(
-                entries.entrySet().stream()
-                        .map(entry -> String.format("%s,%s,%d",
-                                entry.getKey(),
-                                Utils.getNameForce(entry.getKey()),
-                                PlayTimePlus.getManager().onlineTime(entry.getKey()).getSeconds()))
-                        .collect(Collectors.toList())
-        );
+		formatted.addAll(
+				entries.entrySet().stream()
+						.map(entry -> String.format("%s,%s,%d",
+								entry.getKey(),
+								Utils.getNameForce(entry.getKey()),
+								PlayTimePlus.getManager().onlineTime(entry.getKey()).getSeconds()))
+						.collect(Collectors.toList())
+		);
 
-        try {
-            Files.write(
-                    PlayTimePlus.getInstance().getDataFolder().toPath().resolve(getFileName() + ".csv"),
-                    formatted
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			Files.write(
+					PlayTimePlus.getInstance().getDataFolder().toPath().resolve(getFileName() + ".csv"),
+					formatted
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

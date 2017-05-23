@@ -11,7 +11,10 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.NavigableSet;
+import java.util.UUID;
 
 /**
  * Export to a Json file
@@ -20,46 +23,46 @@ import java.util.*;
  */
 public class JsonExporter implements Exporter {
 
-    @Override
-    public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
-        JsonObject root = new JsonObject();
-        JsonArray arr = new JsonArray();
+	@Override
+	public void export(Map<UUID, NavigableSet<TimeEntry>> entries) {
+		JsonObject root = new JsonObject();
+		JsonArray arr = new JsonArray();
 
-        for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : entries.entrySet()) {
-            JsonObject data = new JsonObject();
-            data.addProperty("name", Utils.getNameForce(entry.getKey()));
-            data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getKey()));
-            data.addProperty("idString", entry.getKey().toString());
+		for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : entries.entrySet()) {
+			JsonObject data = new JsonObject();
+			data.addProperty("name", Utils.getNameForce(entry.getKey()));
+			data.add("id", PlayTimePlus.GSON.toJsonTree(entry.getKey()));
+			data.addProperty("idString", entry.getKey().toString());
 
-            JsonArray times = new JsonArray();
+			JsonArray times = new JsonArray();
 
-            for(TimeEntry tEntry : entry.getValue()) {
-                JsonObject obj = new JsonObject();
-                obj.add("start", PlayTimePlus.GSON.toJsonTree(tEntry.getStart()));
-                obj.add("end", PlayTimePlus.GSON.toJsonTree(tEntry.getEnd()));
-                times.add(obj);
-            }
+			for (TimeEntry tEntry : entry.getValue()) {
+				JsonObject obj = new JsonObject();
+				obj.add("start", PlayTimePlus.GSON.toJsonTree(tEntry.getStart()));
+				obj.add("end", PlayTimePlus.GSON.toJsonTree(tEntry.getEnd()));
+				times.add(obj);
+			}
 
-            data.add("times", times);
-            data.add("totalTime", PlayTimePlus.GSON.toJsonTree(
-                    PlayTimePlus.getManager().onlineTime(entry.getKey())
-            ));
-            arr.add(data);
-        }
+			data.add("times", times);
+			data.add("totalTime", PlayTimePlus.GSON.toJsonTree(
+					PlayTimePlus.getManager().onlineTime(entry.getKey())
+			));
+			arr.add(data);
+		}
 
-        root.add("players", arr);
+		root.add("players", arr);
 
-        Gson prettyPrint = new GsonBuilder().setPrettyPrinting().create();
-        String prettyJson = prettyPrint.toJson(root);
+		Gson prettyPrint = new GsonBuilder().setPrettyPrinting().create();
+		String prettyJson = prettyPrint.toJson(root);
 
-        try {
-            Files.write(
-                    Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
-                    Arrays.asList(prettyJson.split("\\n"))
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+		try {
+			Files.write(
+					Paths.get(PlayTimePlus.getInstance().getDataFolder().getAbsolutePath(), getFileName() + ".txt"),
+					Arrays.asList(prettyJson.split("\\n"))
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-    }
+	}
 }
