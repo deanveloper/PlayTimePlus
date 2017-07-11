@@ -84,6 +84,7 @@ public class BinaryManager implements Manager {
 					}
 				}
 			} else {
+				file.close();
 				BinaryManagerV1 old = new BinaryManagerV1();
 				old.init();
 				players = old.getMap();
