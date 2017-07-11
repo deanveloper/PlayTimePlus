@@ -21,7 +21,12 @@ import java.util.*;
 public class BinaryManager implements Manager {
 	private static final int VERSION = 1;
 	private File storage;
-	private Map<UUID, NavigableSet<TimeEntry>> players = new HashMap<>();
+	private Map<UUID, NavigableSet<TimeEntry>> players;
+
+	public BinaryManager() {
+		storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
+		players = new HashMap<>();
+	}
 
 	@Override
 	public void init() {

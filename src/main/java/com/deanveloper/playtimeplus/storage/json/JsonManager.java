@@ -29,12 +29,15 @@ import java.util.UUID;
 public class JsonManager implements Manager {
 	private static final int VERSION = 1;
 	private File storage;
-	private Map<UUID, NavigableSet<TimeEntry>> players = new HashMap<>();
+	private Map<UUID, NavigableSet<TimeEntry>> players;
+
+	public JsonManager() {
+		storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
+		players = new HashMap<>();
+	}
 
 	@Override
 	public void init() {
-		storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
-
 		// Parse the file
 		JsonObject root;
 		try {
