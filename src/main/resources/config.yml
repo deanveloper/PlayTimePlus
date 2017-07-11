@@ -1,7 +1,6 @@
 storage: binary
 autosave: 300
 version: 0
-# Available variables in messages: {{sender}} {{target}} {{num}} {{time}} {{error}}. Will be empty if not found.
 messages:
   prefix: "&a[PlayTime+] &r"
   cmd:
@@ -14,7 +13,7 @@ messages:
         help: "{{prefix}}Go to this page for help: https://goo.gl/Y1KeoG"
         start: "{{prefix}}Performing query..."
         success: "{{prefix}}Query finished!"
-        eachPlayer: "{{prefix}}&d{{target}} &e-> &d{{time}}"
+        eachPlayer: "{{prefix}}&d{{player}} &e-> &d{{time}}"
         queryError: "{{prefix}}&cQuery Error: {{error}}"
       self:
         consoleuse: "{{prefix}}Only players can execute this command"

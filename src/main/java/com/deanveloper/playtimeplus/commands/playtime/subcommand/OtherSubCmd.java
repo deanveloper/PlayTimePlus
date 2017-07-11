@@ -3,6 +3,7 @@ package com.deanveloper.playtimeplus.commands.playtime.subcommand;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
+import com.deanveloper.playtimeplus.util.ConfigVar;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.util.UUID;
@@ -19,22 +20,18 @@ public class OtherSubCmd implements SubCommandExecutor {
 		if (id == null) {
 			call.sendBack(
 					Utils.configMessage("messages.cmd.playtime.other.fail",
-							call.getSender().getName(),
-							call.getArgs()[0],
-							"",
-							"",
-							"Could not find player!"
+							new ConfigVar("sender", call.getSender().getName()),
+							new ConfigVar("target", call.getArgs()[0]),
+							new ConfigVar("error", "Could not find player!")
 					));
 			return;
 		}
 
 		call.sendBack(
 				Utils.configMessage("messages.cmd.playtime.other.success",
-						call.getSender().getName(),
-						call.getArgs()[0],
-						"",
-						Utils.format(PlayTimePlus.getManager().onlineTime(id)),
-						""
+						new ConfigVar("sender", call.getSender().getName()),
+						new ConfigVar("target", call.getArgs()[0]),
+						new ConfigVar("time", Utils.format(PlayTimePlus.getManager().onlineTime(id)))
 				)
 		);
 	}

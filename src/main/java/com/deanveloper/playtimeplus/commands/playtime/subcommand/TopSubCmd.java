@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
+import com.deanveloper.playtimeplus.util.ConfigVar;
 import com.deanveloper.playtimeplus.util.Utils;
 
 import java.util.List;
@@ -37,14 +38,14 @@ public class TopSubCmd implements SubCommandExecutor {
 					break;
 				}
 
+
 				call.getSender().sendMessage(
 						Utils.configMessage(
 								"messages.cmd.playtime.top.eachPlayer",
-								call.getSender().getName(),
-								PlayTimePlus.getEssentialsHook().fullName(id),
-								11 - limit + "",
-								Utils.format(PlayTimePlus.getManager().onlineTime(id)),
-								""
+								new ConfigVar("sender", call.getSender().getName()),
+								new ConfigVar("player", PlayTimePlus.getEssentialsHook().fullName(id)),
+								new ConfigVar("num", 11 - limit + ""),
+								new ConfigVar("time", Utils.format(PlayTimePlus.getManager().onlineTime(id)))
 						)
 				);
 

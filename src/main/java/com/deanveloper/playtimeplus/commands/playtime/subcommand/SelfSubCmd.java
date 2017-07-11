@@ -5,6 +5,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
+import com.deanveloper.playtimeplus.util.ConfigVar;
 import com.deanveloper.playtimeplus.util.Utils;
 
 /**
@@ -19,11 +20,7 @@ public class SelfSubCmd implements SubCommandExecutor {
 			call.sendBack(
 					Utils.configMessage(
 							"messages.cmd.playtime.self.consoleuse",
-							call.getSender().getName(),
-							"",
-							"",
-							"",
-							""
+							new ConfigVar("sender", call.getSender().getName())
 					)
 			);
 			return;
@@ -32,11 +29,12 @@ public class SelfSubCmd implements SubCommandExecutor {
 		call.sendBack(
 				Utils.configMessage(
 						"messages.cmd.playtime.self.success",
-						call.getSender().getName(),
-						call.getSender().getName(),
-						"",
-						Utils.format(PlayTimePlus.getManager().onlineTime(call.getPlayer().getUniqueId())),
-						""
+						new ConfigVar("sender", call.getSender().getName()),
+						new ConfigVar("target", call.getSender().getName()),
+						new ConfigVar(
+								"time",
+								Utils.format(PlayTimePlus.getManager().onlineTime(call.getPlayer().getUniqueId()))
+						)
 				)
 		);
 	}

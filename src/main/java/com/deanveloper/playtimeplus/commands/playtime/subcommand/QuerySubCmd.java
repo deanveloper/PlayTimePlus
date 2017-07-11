@@ -4,6 +4,7 @@ import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandCall;
 import com.deanveloper.playtimeplus.commands.playtime.SubCommandExecutor;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.ConfigVar;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
@@ -22,22 +23,14 @@ public class QuerySubCmd implements SubCommandExecutor {
 		if (call.getArgs()[0].equals("help")) {
 			call.sendBack(
 					Utils.configMessage("messages.cmd.playtime.query.help",
-							call.getSender().getName(),
-							"",
-							"",
-							"",
-							""
+							new ConfigVar("sender", call.getSender().getName())
 					)
 			);
 		} else {
 			try {
 				call.sendBack(
 						Utils.configMessage("messages.cmd.playtime.query.start",
-								call.getSender().getName(),
-								"",
-								"",
-								"",
-								""
+								new ConfigVar("sender", call.getSender().getName())
 						)
 				);
 				Map<UUID, NavigableSet<TimeEntry>> entries = QueryUtil.query(call.getArgs());
@@ -53,11 +46,7 @@ public class QuerySubCmd implements SubCommandExecutor {
 
 				call.sendBack(
 						Utils.configMessage("messages.cmd.playtime.query.success",
-								call.getSender().getName(),
-								"",
-								"",
-								"",
-								""
+								new ConfigVar("sender", call.getSender().getName())
 						)
 				);
 				PlayTimePlus.debug("QUERY: " + entries);
@@ -66,22 +55,18 @@ public class QuerySubCmd implements SubCommandExecutor {
 						.forEach(entry ->
 								call.sendBack(
 										Utils.configMessage("messages.cmd.playtime.query.eachPlayer",
-												call.getSender().getName(),
-												Utils.getNameForce(entry.getKey()),
-												"",
-												Utils.format(entry.getValue()),
-												""
+												new ConfigVar("sender", call.getSender().getName()),
+												new ConfigVar("other", Utils.getNameForce(entry.getKey())),
+												new ConfigVar("time", Utils.format(entry.getValue()))
 										)
 								)
 						);
 			} catch (QueryException e) {
 				call.sendBack(
-						Utils.configMessage("messages.cmd.playtime.query.queryError",
-								call.getSender().getName(),
-								"",
-								"",
-								"",
-								e.getMessage()
+						Utils.configMessage(
+								"messages.cmd.playtime.query.queryError",
+								new ConfigVar("sender", call.getSender().getName()),
+								new ConfigVar("error", e.getMessage())
 						)
 				);
 			}
