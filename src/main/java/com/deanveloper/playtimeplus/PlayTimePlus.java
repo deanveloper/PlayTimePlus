@@ -2,6 +2,7 @@ package com.deanveloper.playtimeplus;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
 
+import java.io.File;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -42,7 +44,8 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 	@Override
 	public void onEnable() {
 		instance = this;
-		saveDefaultConfig();
+
+		updateConfig();
 
 		getLogger().info("Setting commands and listeners...");
 		getCommand("playtime").setExecutor(new PlayTimeCommand());
@@ -69,6 +72,14 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 			Utils.update(p.getUniqueId(), p.getName());
 		}
 		getLogger().info("PlayTimePlus enabled!");
+	}
+
+	private void updateConfig() {
+		saveDefaultConfig();
+		if (getConfig().getInt("version") <= 0) {
+			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
+			getConfig().set("messages", defaultConfig.getConfigurationSection("messages"));
+		}
 	}
 
 	private void startAutoSave() {
