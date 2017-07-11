@@ -1,6 +1,7 @@
 package com.deanveloper.playtimeplus.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Team;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
@@ -146,6 +147,7 @@ public class Utils {
 		for (ConfigVar cfVar : vars) {
 			message = message.replace("{{" + cfVar.getKey() + "}}", cfVar.getValue());
 		}
+		message = ChatColor.translateAlternateColorCodes('&', message);
 		return message;
 	}
 }
