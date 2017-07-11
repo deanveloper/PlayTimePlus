@@ -72,7 +72,7 @@ public class SubCommandAble implements CommandExecutor {
 										new ConfigVar("sender", sender.getName()),
 										new ConfigVar("cmd", label),
 										new ConfigVar("subcmd", subCmd.getName()),
-										new ConfigVar("args", subCmd.getDesc()),
+										new ConfigVar("args", subCmd.getUsage()),
 										new ConfigVar("desc", subCmd.getDesc())
 								)
 						)
