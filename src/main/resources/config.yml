@@ -7,7 +7,7 @@ messages:
     playtime:
       error: "&cERROR: {{error}}"
       other:
-        success: "&d{{target}} &ehas played for &d{{time}}§e."
+        success: "&d{{target}} &ehas played for &d{{time}}&e."
         fail: "Couldn't find player {{target}}"
       query:
         help: "Go to this page for help: https://goo.gl/Y1KeoG"
