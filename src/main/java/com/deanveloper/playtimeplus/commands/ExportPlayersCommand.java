@@ -10,6 +10,7 @@ import com.deanveloper.playtimeplus.exporter.Exporter;
 import com.deanveloper.playtimeplus.exporter.JsonExporter;
 import com.deanveloper.playtimeplus.exporter.PlainTextExporter;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
 
@@ -43,7 +44,14 @@ public class ExportPlayersCommand implements CommandExecutor {
 					sender.sendMessage("§d" + type.name() + " §b- " + "§a" + type.getDesc());
 				}
 			} catch (QueryException e) {
-				sender.sendMessage("§6ERROR: " + e.getMessage());
+				sender.sendMessage(Utils.configMessage(
+						"messages.cmd.exportplayers.error",
+						sender.getName(),
+						"",
+						"",
+						"",
+						e.getMessage()
+				));
 			}
 
 			return true;

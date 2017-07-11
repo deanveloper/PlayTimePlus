@@ -138,4 +138,14 @@ public class Utils {
 
 		return format;
 	}
+
+	public static String configMessage(String path, ConfigVar... vars) {
+		String message = PlayTimePlus.getInstance().getConfig().getString(path);
+		String prefix = PlayTimePlus.getInstance().getConfig().getString("messages.prefix");
+		message = message.replace("{{prefix}}", prefix);
+		for (ConfigVar cfVar : vars) {
+			message = message.replace("{{" + cfVar.getKey() + "}}", cfVar.getValue());
+		}
+		return message;
+	}
 }
