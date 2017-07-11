@@ -5,7 +5,10 @@ messages:
   prefix: "&a[PlayTime+] &r"
   criticalerr: "{{prefix}}Encountered error {{error}}, please check console and notify the developer!"
   cmd:
+    exportplayers:
+      success: "{{prefix}}&aSuccess!"
     convertstorage:
+      success: "{{prefix}}&aSuccess!"
       error:
         header: "&6Storage Methods"
         eachMethod: "&d{{type}} &b- &a{{desc}}"

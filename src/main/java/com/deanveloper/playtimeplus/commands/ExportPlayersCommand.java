@@ -40,6 +40,13 @@ public class ExportPlayersCommand implements CommandExecutor {
 				}
 
 				exporter.export(players);
+
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.cmd.exportplayers.success",
+								new ConfigVar("sender", sender.getName())
+						)
+				);
 			} catch (IllegalArgumentException e) {
 				// use ConvertStorage command stuff here since it should be the same no matter what
 				sender.sendMessage(

@@ -28,6 +28,13 @@ public class ConvertStorageCommand implements CommandExecutor {
 				manager.save();
 
 				PlayTimePlus.setManager(storageMethod);
+
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.cmd.convertstorage.success",
+								new ConfigVar("sender", sender.getName())
+						)
+				);
 			} catch (IllegalArgumentException e) {
 				sender.sendMessage(
 						Utils.configMessage(
