@@ -27,6 +27,7 @@ public class ConvertStorageCommand implements CommandExecutor {
 									new ConfigVar("sender", sender.getName())
 							)
 					);
+					return true;
 				}
 				Manager manager = storageMethod.getStorage();
 				Manager oldManager = PlayTimePlus.getManager();
