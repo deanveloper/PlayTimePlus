@@ -105,6 +105,7 @@ public class BinaryManager implements Manager {
 
 			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
 			versionBuffer.putInt(VERSION);
+			versionBuffer.rewind();
 			file.write(versionBuffer);
 
 			try (GZIPOutputStream gzip = new GZIPOutputStream(Channels.newOutputStream(file));
@@ -113,6 +114,7 @@ public class BinaryManager implements Manager {
 
 				ByteBuffer playerLengthBuf = ByteBuffer.allocate(Integer.BYTES);
 				playerLengthBuf.putInt(playerLength);
+				playerLengthBuf.rewind();
 				zipper.write(playerLengthBuf);
 
 				for (Map.Entry<UUID, NavigableSet<TimeEntry>> player : players.entrySet()) {
@@ -123,6 +125,7 @@ public class BinaryManager implements Manager {
 					playerHeader.putLong(id.getMostSignificantBits());
 					playerHeader.putLong(id.getLeastSignificantBits());
 					playerHeader.putInt(times.size());
+					playerHeader.rewind();
 					zipper.write(playerHeader);
 
 					ByteBuffer timeBuf = ByteBuffer.allocate(30 * times.size());
@@ -130,6 +133,7 @@ public class BinaryManager implements Manager {
 						putLdt(timeBuf, time.getStart());
 						putLdt(timeBuf, time.getEnd());
 					}
+					timeBuf.rewind();
 					zipper.write(timeBuf);
 				}
 			}
