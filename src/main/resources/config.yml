@@ -3,21 +3,22 @@ autosave: 300
 version: 0
 # Available variables in messages: {{sender}} {{target}} {{num}} {{time}} {{error}}. Will be empty if not found.
 messages:
+  prefix: "&a[PlayTime+] &r"
   cmd:
     playtime:
-      error: "&cERROR: {{error}}"
+      error: "{{prefix}}&cERROR: {{error}}"
       other:
-        success: "&d{{target}} &ehas played for &d{{time}}&e."
-        fail: "Couldn't find player {{target}}"
+        success: "{{prefix}}&d{{target}} &ehas played for &d{{time}}§e."
+        fail: "{{prefix}}Couldn't find player {{target}}"
       query:
-        help: "Go to this page for help: https://goo.gl/Y1KeoG"
-        start: "Performing query..."
-        success: "Query finished!"
-        eachPlayer: "&d{{target}} &e-> &d{{time}}"
-        queryError: "&cQuery Error: {{error}}"
+        help: "{{prefix}}Go to this page for help: https://goo.gl/Y1KeoG"
+        start: "{{prefix}}Performing query..."
+        success: "{{prefix}}Query finished!"
+        eachPlayer: "{{prefix}}&d{{target}} &e-> &d{{time}}"
+        queryError: "{{prefix}}&cQuery Error: {{error}}"
       self:
-        consoleuse: "Only players can execute this command"
-        success: "&dYou &ehave played for &d{{time}}&e."
+        consoleuse: "{{prefix}}Only players can execute this command"
+        success: "{{prefix}}&dYou &ehave played for &d{{time}}&e."
       top:
         header: "&e---------------&a[Playtime Top]&e---------------"
         eachPlayer: "&d#{{num}}. &r{{target}} &ewith &d{{time}}&e."

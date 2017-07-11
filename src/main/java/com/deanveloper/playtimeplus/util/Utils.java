@@ -128,6 +128,8 @@ public class Utils {
 
 	public static String configMessage(String path, String sender, String target, String num, String time, String error) {
 		String format = PlayTimePlus.getInstance().getConfig().getString(path);
+		String prefix = PlayTimePlus.getInstance().getConfig().getString("messages.prefix");
+		format = format.replace("{{prefix}}", prefix);
 		format = format.replace("{{sender}}", sender);
 		format = format.replace("{{target}}", target);
 		format = format.replace("{{num}}", num);
