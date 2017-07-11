@@ -12,7 +12,8 @@ messages:
         eachMethod: "&d{{type}} &b- &a{{desc}}"
     convertstorage:
       success: "{{prefix}}&aSuccess!"
-      error:
+      alreadyUsing: "{{prefix}}&cYou are already using this storage method!"
+      help:
         header: "&6Storage Methods"
         eachMethod: "&d{{type}} &b- &a{{desc}}"
     playtime:

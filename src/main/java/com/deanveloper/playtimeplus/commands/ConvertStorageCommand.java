@@ -20,6 +20,14 @@ public class ConvertStorageCommand implements CommandExecutor {
 			args[0] = args[0].toUpperCase();
 			try {
 				StorageMethod storageMethod = StorageMethod.valueOf(args[0]);
+				if (storageMethod.getStorage() == PlayTimePlus.getManager()) {
+					sender.sendMessage(
+							Utils.configMessage(
+									"messages.cmd.convertstorage.alreadyUsing",
+									new ConfigVar("sender", sender.getName())
+							)
+					);
+				}
 				Manager manager = storageMethod.getStorage();
 				Manager oldManager = PlayTimePlus.getManager();
 
@@ -37,14 +45,14 @@ public class ConvertStorageCommand implements CommandExecutor {
 			} catch (IllegalArgumentException e) {
 				sender.sendMessage(
 						Utils.configMessage(
-								"messages.cmd.convertstorage.error.header",
+								"messages.cmd.convertstorage.help.header",
 								new ConfigVar("sender", sender.getName())
 						)
 				);
 				for (StorageMethod type : StorageMethod.values()) {
 					sender.sendMessage(
 							Utils.configMessage(
-									"messages.cmd.convertstorage.error.eachMethod",
+									"messages.cmd.convertstorage.help.eachMethod",
 									new ConfigVar("sender", sender.getName()),
 									new ConfigVar("type", type.name()),
 									new ConfigVar("desc", type.getDesc())
