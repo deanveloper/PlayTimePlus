@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,12 +45,12 @@ public class BinaryManager implements Manager {
 	@Override
 	public void init() {
 		// Parse the file
-		int streamVersion;
 
-		try (FileChannel file = FileChannel.open(storage)) {
+		try (FileChannel file = FileChannel.open(storage, StandardOpenOption.READ)) {
 			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
 			file.read(versionBuffer);
-			streamVersion = versionBuffer.getInt();
+			versionBuffer.rewind();
+			int streamVersion = versionBuffer.getInt();
 
 			if (VERSION == streamVersion) {
 				try (GZIPInputStream gzip = new GZIPInputStream(Channels.newInputStream(file));
@@ -57,11 +58,13 @@ public class BinaryManager implements Manager {
 
 					ByteBuffer playerLengthBuf = ByteBuffer.allocate(Integer.BYTES);
 					unzipper.read(playerLengthBuf);
+					playerLengthBuf.rewind();
 					int playerLength = playerLengthBuf.getInt();
 
 					for (int i = 0; i < playerLength; i++) {
 						ByteBuffer playerHeader = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES);
 						unzipper.read(playerHeader);
+						playerHeader.rewind();
 
 						UUID id = new UUID(playerHeader.getLong(), playerHeader.getLong());
 						int length = playerHeader.getInt(); // length is the number of entries, not number of LDTs
@@ -69,6 +72,7 @@ public class BinaryManager implements Manager {
 						// Each LocalDateTime is 15 bytes. 2 LocalDateTimes make a TimeEntry
 						ByteBuffer times = ByteBuffer.allocate(30 * length);
 						unzipper.read(times);
+						times.rewind();
 						NavigableSet<TimeEntry> entries = new TreeSet<>();
 						for (int j = 0; j < length; j++) {
 							LocalDateTime start = readLdt(times);
@@ -97,7 +101,7 @@ public class BinaryManager implements Manager {
 			updateLastCount(p.getUniqueId());
 		}
 
-		try (FileChannel file = FileChannel.open(storage)) {
+		try (FileChannel file = FileChannel.open(storage, StandardOpenOption.WRITE, StandardOpenOption.CREATE)) {
 
 			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
 			versionBuffer.putInt(VERSION);
