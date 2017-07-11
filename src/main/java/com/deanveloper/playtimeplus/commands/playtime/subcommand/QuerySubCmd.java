@@ -56,7 +56,7 @@ public class QuerySubCmd implements SubCommandExecutor {
 								call.sendBack(
 										Utils.configMessage("messages.cmd.playtime.query.eachPlayer",
 												new ConfigVar("sender", call.getSender().getName()),
-												new ConfigVar("other", Utils.getNameForce(entry.getKey())),
+												new ConfigVar("player", Utils.getNameForce(entry.getKey())),
 												new ConfigVar("time", Utils.format(entry.getValue()))
 										)
 								)

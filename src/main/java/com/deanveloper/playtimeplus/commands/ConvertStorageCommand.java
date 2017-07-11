@@ -16,7 +16,7 @@ import com.deanveloper.playtimeplus.util.Utils;
 public class ConvertStorageCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String lbl, String[] args) {
-		if (args.length == 1) {
+		if (args.length >= 1) {
 			args[0] = args[0].toUpperCase();
 			try {
 				StorageMethod storageMethod = StorageMethod.valueOf(args[0]);
@@ -62,6 +62,8 @@ public class ConvertStorageCommand implements CommandExecutor {
 						)
 				);
 			}
+		} else {
+			onCommand(sender, cmd, lbl, new String[]{"help"});
 		}
 		return true;
 	}
