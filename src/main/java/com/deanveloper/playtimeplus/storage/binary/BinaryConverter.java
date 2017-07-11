@@ -10,6 +10,4 @@ public class BinaryConverter {
 		// not needed right now, hopefully never needed o.o
 		throw new UnsupportedOperationException("No use yet");
 	}
-
-
 }

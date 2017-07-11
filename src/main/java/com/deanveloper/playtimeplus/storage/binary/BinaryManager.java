@@ -6,23 +6,33 @@ import org.bukkit.entity.Player;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.storage.binary.old.BinaryManagerV1;
+import sun.nio.ch.ChannelInputStream;
 
-import java.io.*;
-import java.nio.channels.FileChannel;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
-/**
- * Version 1's File Format:
+/* (non-javadoc)
+ * Version 2's File Format:
  * <p>
  * VERSION (int)
- * each player: 0xFF (byte), uniqueId (UUID), times (below), 0x00 (byte)
- * each time:   0x11 (byte), start (LocalDateTime), end (LocalDateTime), 0x00 (byte)
+ * GZIP the rest:
+ * players (int)
+ * each player: idLeastSig (long), idMostSig(long), length (int), times (LocalDateTime[2][])
  */
 public class BinaryManager implements Manager {
-	private static final int VERSION = 1;
+	private static final int VERSION = 2;
 	private Path storage;
 	private Map<UUID, NavigableSet<TimeEntry>> players;
 
@@ -35,50 +45,48 @@ public class BinaryManager implements Manager {
 	public void init() {
 		// Parse the file
 		int streamVersion;
-		try (
-				FileInputStream input = new FileInputStream(storage.toFile());
-				ObjectInputStream objIn = new ObjectInputStream(input)
-		) {
-			streamVersion = objIn.readInt();
 
-			if (streamVersion != VERSION) {
-				//noinspection unchecked
-				players = (Map<UUID, NavigableSet<TimeEntry>>) BinaryConverter.convertBinary(streamVersion,
-						objIn);
+		try (FileChannel file = FileChannel.open(storage)) {
+			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
+			file.read(versionBuffer);
+			streamVersion = versionBuffer.getInt();
+
+			if (VERSION == streamVersion) {
+				try (GZIPInputStream gzip = new GZIPInputStream(Channels.newInputStream(file));
+				     ReadableByteChannel unzipper = Channels.newChannel(gzip)) {
+
+					ByteBuffer playerLengthBuf = ByteBuffer.allocate(Integer.BYTES);
+					unzipper.read(playerLengthBuf);
+					int playerLength = playerLengthBuf.getInt();
+
+					for (int i = 0; i < playerLength; i++) {
+						ByteBuffer playerHeader = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES);
+						unzipper.read(playerHeader);
+
+						UUID id = new UUID(playerHeader.getLong(), playerHeader.getLong());
+						int length = playerHeader.getInt(); // length is the number of entries, not number of LDTs
+
+						// Each LocalDateTime is 15 bytes. 2 LocalDateTimes make a TimeEntry
+						ByteBuffer times = ByteBuffer.allocate(30 * length);
+						unzipper.read(times);
+						NavigableSet<TimeEntry> entries = new TreeSet<>();
+						for (int j = 0; j < length; j++) {
+							LocalDateTime start = readLdt(times);
+							LocalDateTime end = readLdt(times);
+							entries.add(new TimeEntry(start, end));
+						}
+
+						players.put(id, entries);
+					}
+				}
 			} else {
-				players = new HashMap<>();
-
-				int read;
-				while ((read = objIn.read()) == 0xFF) {
-					UUID id = (UUID) objIn.readObject();
-					NavigableSet<TimeEntry> times = new TreeSet<>();
-
-					while ((read = objIn.read()) == 0x11) {
-						TimeEntry time = new TimeEntry(
-								(LocalDateTime) objIn.readObject(),
-								(LocalDateTime) objIn.readObject()
-						);
-						times.add(time);
-					}
-					players.put(id, times);
-
-					// If anything other than a 0x00 bit appears here, throw exception
-					if (read != 0x00) {
-						throw new IOException("Trouble parsing file contact developer immediately!");
-					}
-				}
-
-				// If the file ends with anything other than 0x00, throw exception
-				if (read != 0x00) {
-					throw new IOException("Trouble parsing file contact developer immediately!");
-				}
+				BinaryManagerV1 old = new BinaryManagerV1();
+				old.init();
+				players = old.getMap();
 			}
 
-		} catch (FileNotFoundException e) {
-			players = new HashMap<>();
-			save();
-		} catch (IOException | ClassNotFoundException e) {
-			throw new RuntimeException(e);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -89,32 +97,39 @@ public class BinaryManager implements Manager {
 			updateLastCount(p.getUniqueId());
 		}
 
-		try (
-				FileOutputStream output = new FileOutputStream(storage.toFile());
-				ObjectOutputStream objOut = new ObjectOutputStream(output)
-		) {
-			// First, write the version
-			objOut.writeInt(VERSION);
+		try (FileChannel file = FileChannel.open(storage)) {
 
-			// Then, write the players...
-			for (Map.Entry<UUID, NavigableSet<TimeEntry>> entry : players.entrySet()) {
-				// 0xFF will denote we are starting an Entry until 0x00 is reached
-				objOut.write(0xFF);
-				// Write the entry ID
-				objOut.writeObject(entry.getKey());
+			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
+			versionBuffer.putInt(VERSION);
+			file.write(versionBuffer);
 
-				// Keep writing 0x11 followed by times until 0x00 is reached
-				for (TimeEntry time : entry.getValue()) {
-					objOut.write(0x11);
-					objOut.writeObject(time.getStart());
-					objOut.writeObject(time.getEnd());
+			try (GZIPOutputStream gzip = new GZIPOutputStream(Channels.newOutputStream(file));
+			     WritableByteChannel zipper = Channels.newChannel(gzip)) {
+				int playerLength = players.size();
+
+				ByteBuffer playerLengthBuf = ByteBuffer.allocate(Integer.BYTES);
+				playerLengthBuf.putInt(playerLength);
+				zipper.write(playerLengthBuf);
+
+				for (Map.Entry<UUID, NavigableSet<TimeEntry>> player : players.entrySet()) {
+					UUID id = player.getKey();
+					NavigableSet<TimeEntry> times = player.getValue();
+
+					ByteBuffer playerHeader = ByteBuffer.allocate(Long.BYTES * 2 + Integer.BYTES);
+					playerHeader.putLong(id.getMostSignificantBits());
+					playerHeader.putLong(id.getLeastSignificantBits());
+					playerHeader.putInt(times.size());
+					zipper.write(playerHeader);
+
+					ByteBuffer timeBuf = ByteBuffer.allocate(30 * times.size());
+					for (TimeEntry time : times) {
+						putLdt(timeBuf, time.getStart());
+						putLdt(timeBuf, time.getEnd());
+					}
+					zipper.write(timeBuf);
 				}
-				// Now that 0x00 is reached, we go to the next object
-				objOut.write(0x00);
 			}
 
-			// Write another 0x00 to end the file
-			objOut.write(0x00);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -129,4 +144,27 @@ public class BinaryManager implements Manager {
 	public Map<UUID, NavigableSet<TimeEntry>> getMap() {
 		return players;
 	}
+
+	private LocalDateTime readLdt(ByteBuffer times) {
+		return LocalDateTime.of(
+				times.getInt(),     // year
+				times.getShort(),   // month of year
+				times.getShort(),   // day of month
+				times.get(),        // hour of day
+				times.get(),        // minute of hour
+				times.get(),        // second of minute
+				times.getInt()      // nano of second
+		);
+	}
+
+	private void putLdt(ByteBuffer times, LocalDateTime ldt) {
+		times.putInt(ldt.getYear());
+		times.putShort((short) ldt.getMonthValue());
+		times.putShort((short) ldt.getDayOfMonth());
+		times.put((byte) ldt.getHour());
+		times.put((byte) ldt.getMinute());
+		times.put((byte) ldt.getSecond());
+		times.putInt(ldt.getNano());
+	}
+
 }
