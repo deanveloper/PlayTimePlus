@@ -24,7 +24,6 @@ public class ConvertStorageCommand implements CommandExecutor {
 				Manager oldManager = PlayTimePlus.getManager();
 
 				manager.getMap().putAll(oldManager.getMap());
-
 				manager.save();
 
 				PlayTimePlus.setManager(storageMethod);

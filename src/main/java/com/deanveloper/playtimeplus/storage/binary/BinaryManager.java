@@ -21,7 +21,7 @@ import java.util.*;
 public class BinaryManager implements Manager {
 	private static final int VERSION = 1;
 	private File storage;
-	private Map<UUID, NavigableSet<TimeEntry>> players;
+	private Map<UUID, NavigableSet<TimeEntry>> players = new HashMap<>();
 
 	@Override
 	public void init() {
