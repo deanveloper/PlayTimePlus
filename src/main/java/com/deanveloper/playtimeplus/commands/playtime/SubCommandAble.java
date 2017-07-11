@@ -66,16 +66,26 @@ public class SubCommandAble implements CommandExecutor {
 				.filter(subCmd -> sender.hasPermission(subCmd.getPermission()))
 				.filter(subCmd -> sender instanceof Player || subCmd.canConsoleExecute())
 				.forEach(subCmd ->
-						join.add(String.format(
-								"§b/%s %s §d%s §e%s",
-								label,
-								subCmd.getName(),
-								subCmd.getUsage(),
-								subCmd.getDesc()
-						))
+						join.add(
+								Utils.configMessage(
+										"messages.cmd.playtime.help.eachCmd",
+										new ConfigVar("sender", sender.getName()),
+										new ConfigVar("cmd", label),
+										new ConfigVar("subcmd", subCmd.getName()),
+										new ConfigVar("args", subCmd.getDesc()),
+										new ConfigVar("desc", subCmd.getDesc())
+								)
+						)
 				);
 
-		sender.sendMessage("§6Usage: " + label + " <command> [args...]");
+		sender.sendMessage(
+				Utils.configMessage(
+						"messages.cmd.playtime.help.header",
+						new ConfigVar("sender", sender.getName()),
+						new ConfigVar("cmd", label)
+				)
+		);
+
 		sender.sendMessage(join.toString());
 	}
 }

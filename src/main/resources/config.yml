@@ -13,6 +13,9 @@ messages:
         header: "&6Storage Methods"
         eachMethod: "&d{{type}} &b- &a{{desc}}"
     playtime:
+      help:
+        header: "&6Usage: /{{cmd}} <command> [args...]"
+        eachCmd: "&a/{{cmd}} {{subcmd}} &d{{args}} &e{{desc}}"
       error: "{{prefix}}&cERROR: {{error}}"
       other:
         success: "{{prefix}}&d{{target}} &ehas played for &d{{time}}§e."
