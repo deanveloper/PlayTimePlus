@@ -97,11 +97,13 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 	public static void setManager(StorageMethod manager) {
 		PlayTimePlus.manager = manager.getStorage();
 		instance.getConfig().set("storage", manager.name());
+		instance.saveConfig();
 	}
 
 	@Override
 	public void onDisable() {
 		manager.save();
+		instance.saveConfig();
 	}
 
 	@EventHandler
