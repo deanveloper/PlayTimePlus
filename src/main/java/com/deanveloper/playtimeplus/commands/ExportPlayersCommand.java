@@ -51,14 +51,14 @@ public class ExportPlayersCommand implements CommandExecutor {
 				// use ConvertStorage command stuff here since it should be the same no matter what
 				sender.sendMessage(
 						Utils.configMessage(
-								"messages.cmd.exportplayers.error.header",
+								"messages.cmd.exportplayers.help.header",
 								new ConfigVar("sender", sender.getName())
 						)
 				);
 				for (FileType type : FileType.values()) {
 					sender.sendMessage(
 							Utils.configMessage(
-									"messages.cmd.exportplayers.error.eachMethod",
+									"messages.cmd.exportplayers.help.eachMethod",
 									new ConfigVar("sender", sender.getName()),
 									new ConfigVar("type", type.name()),
 									new ConfigVar("desc", type.getDesc())

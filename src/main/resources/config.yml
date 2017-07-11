@@ -7,7 +7,7 @@ messages:
   cmd:
     exportplayers:
       success: "{{prefix}}&aSuccess!"
-      error:
+      help:
         header: "&6File Types"
         eachMethod: "&d{{type}} &b- &a{{desc}}"
     convertstorage:
