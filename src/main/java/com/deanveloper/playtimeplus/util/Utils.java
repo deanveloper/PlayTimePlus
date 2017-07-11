@@ -127,19 +127,6 @@ public class Utils {
 		return sb.toString();
 	}
 
-	public static String configMessage(String path, String sender, String target, String num, String time, String error) {
-		String format = PlayTimePlus.getInstance().getConfig().getString(path);
-		String prefix = PlayTimePlus.getInstance().getConfig().getString("messages.prefix");
-		format = format.replace("{{prefix}}", prefix);
-		format = format.replace("{{sender}}", sender);
-		format = format.replace("{{target}}", target);
-		format = format.replace("{{num}}", num);
-		format = format.replace("{{time}}", time);
-		format = format.replace("{{error}}", error);
-
-		return format;
-	}
-
 	public static String configMessage(String path, ConfigVar... vars) {
 		String message = PlayTimePlus.getInstance().getConfig().getString(path);
 		String prefix = PlayTimePlus.getInstance().getConfig().getString("messages.prefix");

@@ -66,14 +66,13 @@ public class ExportPlayersCommand implements CommandExecutor {
 					);
 				}
 			} catch (QueryException e) {
-				sender.sendMessage(Utils.configMessage(
-						"messages.cmd.exportplayers.error",
-						sender.getName(),
-						"",
-						"",
-						"",
-						e.getMessage()
-				));
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.cmd.convertstorage.error.eachMethod",
+								new ConfigVar("sender", sender.getName()),
+								new ConfigVar("error", e.getMessage())
+						)
+				);
 			}
 
 			return true;
