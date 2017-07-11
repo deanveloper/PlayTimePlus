@@ -63,7 +63,7 @@ public class ConvertStorageCommand implements CommandExecutor {
 				);
 			}
 		} else {
-			onCommand(sender, cmd, lbl, new String[]{"help"});
+			return false;
 		}
 		return true;
 	}

@@ -7,7 +7,7 @@ commands:
   playtime:
     permission: playtimeplus.command.playtime
     description: "Command to view play times"
-    usage: "/PlayTime <cmd> [args...]"
+    usage: "/playtime <cmd> [args...]"
     aliases: [playtimeplus, ptp]
   exportplayers:
     permission: playtimeplus.command.exportplayers
@@ -17,11 +17,11 @@ commands:
   debug:
     permission: playtimeplus.command.debug
     description: "Enable debug mode"
-    usage: "/debug [true|false]"
+    usage: "/debug <true|false>"
   convertstorage:
     permission: playtimeplus.command.convertstorage
     description: "Converts the storage method"
-    usage: "/convertstorage <binary|json>"
+    usage: "/convertstorage <help|storagetype>"
 
 permissions:
   playtimeplus.command.playtime:
