@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
 
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -23,6 +24,11 @@ public interface Manager {
 	 * Saves local cache to permanent storage.
 	 */
 	void save();
+
+	/**
+	 * Gets the file for this manager
+	 */
+	Path getStorage();
 
 	/**
 	 * Gets the total time a player has been online

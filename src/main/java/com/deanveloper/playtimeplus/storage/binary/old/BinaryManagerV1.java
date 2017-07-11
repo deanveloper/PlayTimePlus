@@ -1,4 +1,4 @@
-package com.deanveloper.playtimeplus.storage.binary;
+package com.deanveloper.playtimeplus.storage.binary.old;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -6,8 +6,11 @@ import org.bukkit.entity.Player;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.storage.binary.BinaryConverter;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,12 +24,12 @@ import java.util.*;
  * each player: 0xFF (byte), uniqueId (UUID), times (below), 0x00 (byte)
  * each time:   0x11 (byte), start (LocalDateTime), end (LocalDateTime), 0x00 (byte)
  */
-public class BinaryManager implements Manager {
+public class BinaryManagerV1 implements Manager {
 	private static final int VERSION = 1;
 	private Path storage;
 	private Map<UUID, NavigableSet<TimeEntry>> players;
 
-	public BinaryManager() {
+	public BinaryManagerV1() {
 		storage = PlayTimePlus.getInstance().getDataFolder().toPath().resolve("players.playtimeplus");
 		players = new HashMap<>();
 	}

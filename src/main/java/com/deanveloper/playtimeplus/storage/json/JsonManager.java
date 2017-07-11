@@ -6,18 +6,17 @@ import org.bukkit.entity.Player;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
-import com.google.common.io.Files;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -28,11 +27,11 @@ import java.util.UUID;
  */
 public class JsonManager implements Manager {
 	private static final int VERSION = 1;
-	private File storage;
+	private Path storage;
 	private Map<UUID, NavigableSet<TimeEntry>> players;
 
 	public JsonManager() {
-		storage = new File(PlayTimePlus.getInstance().getDataFolder(), "players.json");
+		storage = PlayTimePlus.getInstance().getDataFolder().toPath().resolve("players.json");
 		players = new HashMap<>();
 	}
 
@@ -41,7 +40,7 @@ public class JsonManager implements Manager {
 		// Parse the file
 		JsonObject root;
 		try {
-			String line = Files.readFirstLine(storage, Charset.defaultCharset());
+			String line = Files.readAllLines(storage).get(0);
 			if (line == null || line.isEmpty()) {
 				throw new FileNotFoundException("Just in case");
 			}
@@ -94,10 +93,15 @@ public class JsonManager implements Manager {
 			JsonObject root = new JsonObject();
 			root.addProperty("version", VERSION);
 			root.add("players", PlayTimePlus.GSON.toJsonTree(players));
-			Files.write(PlayTimePlus.GSON.toJson(root), storage, Charset.defaultCharset());
+			Files.write(storage, PlayTimePlus.GSON.toJson(root).getBytes());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public Path getStorage() {
+		return storage;
 	}
 
 	@Override
