@@ -3,7 +3,12 @@ autosave: 300
 version: 0
 messages:
   prefix: "&a[PlayTime+] &r"
+  criticalerr: "{{prefix}}Encountered error {{error}}, please check console and notify the developer!"
   cmd:
+    convertstorage:
+      error:
+        header: "&6Storage Methods"
+        eachMethod: "&d{{type}} &b- &a{{desc}}"
     playtime:
       error: "{{prefix}}&cERROR: {{error}}"
       other:

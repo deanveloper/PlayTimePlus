@@ -9,7 +9,9 @@ import com.deanveloper.playtimeplus.exporter.CsvExporter;
 import com.deanveloper.playtimeplus.exporter.Exporter;
 import com.deanveloper.playtimeplus.exporter.JsonExporter;
 import com.deanveloper.playtimeplus.exporter.PlainTextExporter;
+import com.deanveloper.playtimeplus.storage.StorageMethod;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
+import com.deanveloper.playtimeplus.util.ConfigVar;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.util.query.QueryException;
 import com.deanveloper.playtimeplus.util.query.QueryUtil;
@@ -39,9 +41,22 @@ public class ExportPlayersCommand implements CommandExecutor {
 
 				exporter.export(players);
 			} catch (IllegalArgumentException e) {
-				sender.sendMessage("§6File Types");
-				for (FileType type : FileType.values()) {
-					sender.sendMessage("§d" + type.name() + " §b- " + "§a" + type.getDesc());
+				// use ConvertStorage command stuff here since it should be the same no matter what
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.cmd.convertstorage.error.header",
+								new ConfigVar("sender", sender.getName())
+						)
+				);
+				for (StorageMethod type : StorageMethod.values()) {
+					sender.sendMessage(
+							Utils.configMessage(
+									"messages.cmd.convertstorage.error.eachMethod",
+									new ConfigVar("sender", sender.getName()),
+									new ConfigVar("type", type.name()),
+									new ConfigVar("desc", type.getDesc())
+							)
+					);
 				}
 			} catch (QueryException e) {
 				sender.sendMessage(Utils.configMessage(

@@ -7,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
+import com.deanveloper.playtimeplus.util.ConfigVar;
+import com.deanveloper.playtimeplus.util.Utils;
 
 /**
  * @author Dean
@@ -27,10 +29,31 @@ public class ConvertStorageCommand implements CommandExecutor {
 
 				PlayTimePlus.setManager(storageMethod);
 			} catch (IllegalArgumentException e) {
-				sender.sendMessage("§6Storage Methods");
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.cmd.convertstorage.error.header",
+								new ConfigVar("sender", sender.getName())
+						)
+				);
 				for (StorageMethod type : StorageMethod.values()) {
-					sender.sendMessage("§d" + type.name() + " §b- " + "§a" + type.getDesc());
+					sender.sendMessage(
+							Utils.configMessage(
+									"messages.cmd.convertstorage.error.eachMethod",
+									new ConfigVar("sender", sender.getName()),
+									new ConfigVar("type", type.name()),
+									new ConfigVar("desc", type.getDesc())
+							)
+					);
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				sender.sendMessage(
+						Utils.configMessage(
+								"messages.criticalerr",
+								new ConfigVar("sender", sender.getName()),
+								new ConfigVar("criticalerr", e.getMessage())
+						)
+				);
 			}
 		}
 		return true;
