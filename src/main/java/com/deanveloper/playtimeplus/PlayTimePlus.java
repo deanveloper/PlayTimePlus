@@ -76,10 +76,13 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 
 	private void updateConfig() {
 		saveDefaultConfig();
-		if (getConfig().getInt("version") <= 0) {
+		if (getConfig().getInt("version") == 0) {
 			YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "config.yml"));
 			getConfig().set("messages", defaultConfig.getConfigurationSection("messages"));
+			getConfig().set("version", 1);
 		}
+
+		saveConfig();
 	}
 
 	private void startAutoSave() {
