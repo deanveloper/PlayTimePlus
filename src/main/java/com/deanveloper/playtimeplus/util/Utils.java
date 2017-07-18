@@ -115,6 +115,12 @@ public class Utils {
 		return team.getPrefix();
 	}
 
+	/**
+	 * Returns the nickname of the player.
+	 *
+	 * @param id the id of the player
+	 * @return the nickname that they have
+	 */
 	public static String getNick(UUID id) {
 		if (EssentialsHook.isHooked()) {
 			return EssentialsHook.getNickname(id);
@@ -126,6 +132,17 @@ public class Utils {
 		}
 
 		return getNameForce(id);
+	}
+
+	/**
+	 * Returns the full name of the player.
+	 *
+	 * @param world the world to check in
+	 * @param id the id of the player
+	 * @return the prefix and nickname of the player
+	 */
+	public static String getFullName(String world, UUID id) {
+		return getPrefix(world, id) + getNick(id);
 	}
 
 	public static String format(Duration dur) {

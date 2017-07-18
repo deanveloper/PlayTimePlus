@@ -41,8 +41,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 	private static final int CONFIG_VERSION = 1;
 	public static boolean debugEnabled = false;
 	private static Manager manager;
-	private static EssentialsHook eHook;
-	private static ChatHook chatHook;
 	private static PlayTimePlus instance;
 
 	@Override
@@ -69,10 +67,6 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 		getLogger().info("Done!");
 		getLogger().info("Starting autosave...");
 		startAutoSave();
-		getLogger().info("Done!");
-
-		getLogger().info("Hooking into vault...");
-		chatHook = new ChatHook();
 		getLogger().info("Done!");
 
 		getLogger().info("PlayTimePlus enabled!");
@@ -133,9 +127,5 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 
 	public static PlayTimePlus getInstance() {
 		return instance;
-	}
-
-	public static EssentialsHook getEssentialsHook() {
-		return eHook;
 	}
 }

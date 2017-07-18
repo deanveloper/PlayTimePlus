@@ -38,12 +38,17 @@ public class TopSubCmd implements SubCommandExecutor {
 					break;
 				}
 
+				String world = Bukkit.getWorlds().get(0).getName();
+				if (call.getSender() instanceof Player) {
+					world = ((Player) call.getSender()).getWorld().getName();
+				}
+
 
 				call.getSender().sendMessage(
 						Utils.configMessage(
 								"messages.cmd.playtime.top.eachPlayer",
 								new ConfigVar("sender", call.getSender().getName()),
-								new ConfigVar("player", PlayTimePlus.getEssentialsHook().fullName(id)),
+								new ConfigVar("player", Utils.getFullName(world, id)),
 								new ConfigVar("num", 11 - limit + ""),
 								new ConfigVar("time", Utils.format(PlayTimePlus.getManager().onlineTime(id)))
 						)
