@@ -30,7 +30,7 @@ public class OtherSubCmd implements SubCommandExecutor {
 		call.sendBack(
 				Utils.configMessage("messages.cmd.playtime.other.success",
 						new ConfigVar("sender", call.getSender().getName()),
-						new ConfigVar("target", call.getArgs()[0]),
+						new ConfigVar("target", Utils.correctCase(call.getArgs()[0])),
 						new ConfigVar("time", Utils.format(PlayTimePlus.getManager().onlineTime(id)))
 				)
 		);

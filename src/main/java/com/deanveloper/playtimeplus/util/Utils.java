@@ -85,7 +85,7 @@ public class Utils {
 	}
 
 	public static String correctCase(String name) {
-		return correctCaseMap.getOrDefault(name.toLowerCase(), name.toLowerCase());
+		return correctCaseMap.getOrDefault(name.toLowerCase(), name);
 	}
 
 	/**
