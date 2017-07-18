@@ -6,14 +6,9 @@ import org.bukkit.entity.Player;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
-import com.deanveloper.playtimeplus.storage.binary.BinaryConverter;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.channels.FileChannel;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -44,11 +39,7 @@ public class BinaryManagerV1 implements Manager {
 		) {
 			streamVersion = objIn.readInt();
 
-			if (streamVersion != VERSION) {
-				//noinspection unchecked
-				players = (Map<UUID, NavigableSet<TimeEntry>>) BinaryConverter.convertBinary(streamVersion,
-						objIn);
-			} else {
+			if (streamVersion == VERSION) {
 				players = new HashMap<>();
 
 				int read;
