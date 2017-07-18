@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 
 import java.nio.file.Path;
 import java.time.Duration;
@@ -53,7 +54,7 @@ public interface Manager {
 		Player p = Bukkit.getPlayer(id);
 
 		// never increase player time while offline or afk
-		if (p == null || PlayTimePlus.getEssentialsHook().isAfk(id)) {
+		if (p == null || (EssentialsHook.isHooked() && EssentialsHook.isAfk(id))) {
 			return;
 		}
 		NavigableSet<TimeEntry> times = getNoUpdate(id);
