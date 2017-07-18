@@ -15,16 +15,16 @@ public class TimeEntry implements Comparable<TimeEntry> {
 	@SerializedName("e")
 	private final LocalDateTime end;
 
-	private transient Duration lazyDuration;
+	private transient Duration dur;
 
 	public TimeEntry(LocalDateTime start, LocalDateTime end) {
 		this.start = start;
 		this.end = end;
-		lazyDuration = Duration.between(start, end);
+		dur = Duration.between(start, end);
 	}
 
 	public Duration getDuration() {
-		return lazyDuration;
+		return dur;
 	}
 
 	public TimeEntry newEnd(LocalDateTime end) {
