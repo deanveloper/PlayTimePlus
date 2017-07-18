@@ -2,7 +2,7 @@ name: PlayTimePlus
 author: Deanveloper
 main: com.deanveloper.playtimeplus.PlayTimePlus
 version: ${project.version}
-softdepend: [GroupManager, Essentials]
+softdepend: [Vault]
 commands:
   playtime:
     permission: playtimeplus.command.playtime

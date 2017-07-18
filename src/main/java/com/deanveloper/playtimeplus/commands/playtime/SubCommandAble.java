@@ -54,6 +54,7 @@ public class SubCommandAble implements CommandExecutor {
 									new ConfigVar("error", e.getMessage())
 							)
 					);
+					e.printStackTrace();
 				}
 			}
 		}

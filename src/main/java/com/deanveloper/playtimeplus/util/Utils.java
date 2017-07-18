@@ -2,13 +2,18 @@ package com.deanveloper.playtimeplus.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
 
 import com.deanveloper.playtimeplus.PlayTimePlus;
+import com.deanveloper.playtimeplus.hooks.ChatHook;
+import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,14 +44,15 @@ public class Utils {
 		String name = getName(id);
 		if (name == null) {
 
+			String newId = id.toString().replace("-", "");
+			String json;
 			try {
-				String newId = id.toString().replace("-", "");
-				String json = getContent("https://sessionserver.mojang.com/session/minecraft/profile/" + newId);
-				JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
-				name = obj.get("name").getAsString();
+				json = getContent("https://sessionserver.mojang.com/session/minecraft/profile/" + newId);
 			} catch (IOException e) {
 				throw new RuntimeException("Problem getting name of " + id, e);
 			}
+			JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
+			name = obj.get("name").getAsString();
 
 			update(id, name);
 		}
@@ -59,29 +65,18 @@ public class Utils {
 		}
 		PlayTimePlus.debug("ID -> NAME");
 		PlayTimePlus.debug("[" + id + "] -> [" + correctCaseMap.get(nameIdMap.get(id)) + ']');
-		return correctCaseMap.get(nameIdMap.get(id));
+		String name = correctCaseMap.get(nameIdMap.get(id));
+		if (name == null) {
+			OfflinePlayer op = Bukkit.getOfflinePlayer(id);
+			name = op.getName();
+			update(id, name);
+		}
+		return name;
 	}
 
 	private static String getContent(String web) throws IOException {
-		try {
-			URL url = new URL(web);
-			URLConnection connection = url.openConnection();
-			BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-			StringBuilder response = new StringBuilder();
-			String input;
-
-			while ((input = in.readLine()) != null) {
-				response.append(input);
-			}
-
-			in.close();
-
-			return response.toString();
-		} catch (MalformedURLException e) {
-			// no one smart enough will let this happen
-			throw new RuntimeException(e);
-		}
+		URL url = new URL(web);
+		return IOUtils.toString(url, "UTF8");
 	}
 
 	public static void update(UUID id, String name) {
@@ -93,16 +88,44 @@ public class Utils {
 		return correctCaseMap.getOrDefault(name.toLowerCase(), name.toLowerCase());
 	}
 
-	public static String getPrefix(String name) {
-		if (name == null) {
-			throw new NullPointerException("Cannot get the prefix of a null name!");
+	/**
+	 * Returns the prefix of the player.
+	 *
+	 * First checks through vault. If vault is not installed, then it uses Scoreboards.
+	 *
+	 * @param world The world to check in
+	 * @param id the id of the player
+	 * @return the prefix of the player in the world
+	 */
+	public static String getPrefix(String world, UUID id) {
+		if (ChatHook.isHooked()) {
+			return ChatHook.getPrefix(world, id);
 		}
+
+		String name = getName(id);
+		if (name == null){
+			return "";
+		}
+
 		Team team = Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(name);
 		if (team == null) {
 			return "";
-		} else {
-			return team.getPrefix();
 		}
+
+		return team.getPrefix();
+	}
+
+	public static String getNick(UUID id) {
+		if (EssentialsHook.isHooked()) {
+			return EssentialsHook.getNickname(id);
+		}
+
+		Player p = Bukkit.getPlayer(id);
+		if (p != null) {
+			return p.getDisplayName();
+		}
+
+		return getNameForce(id);
 	}
 
 	public static String format(Duration dur) {

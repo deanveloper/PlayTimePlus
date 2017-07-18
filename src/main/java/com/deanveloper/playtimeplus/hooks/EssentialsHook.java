@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.earth2me.essentials.Essentials;
+import com.earth2me.essentials.User;
 import net.ess3.api.events.AfkStatusChangeEvent;
 
 import java.util.UUID;
@@ -17,9 +18,9 @@ import java.util.UUID;
  * @author Dean B
  */
 public class EssentialsHook {
-	private Essentials plugin;
+	private static Essentials plugin;
 
-	public EssentialsHook() {
+	static {
 		Plugin plug = Bukkit.getServer().getPluginManager().getPlugin("Essentials");
 		if (plug != null) {
 			plugin = (Essentials) plug;
@@ -29,7 +30,7 @@ public class EssentialsHook {
 		}
 	}
 
-	private void registerAfkHook() {
+	private static void registerAfkHook() {
 		Bukkit.getPluginManager().registerEvents(new Listener() {
 			@EventHandler
 			public void onAfk(AfkStatusChangeEvent e) {
@@ -45,14 +46,8 @@ public class EssentialsHook {
 		}, PlayTimePlus.getInstance());
 	}
 
-	/**
-	 * If the player is afk
-	 *
-	 * @param p The player to check
-	 * @return If they are AFK, assumes not AFK if essentials is not installed
-	 */
-	public boolean isAfk(Player p) {
-		return plugin != null && plugin.getUser(p).isAfk();
+	public static boolean isHooked() {
+		return plugin != null;
 	}
 
 	/**
@@ -61,35 +56,27 @@ public class EssentialsHook {
 	 * @param p The player to check
 	 * @return If they are AFK, assumes not AFK if essentials is not installed
 	 */
-	public boolean isAfk(UUID p) {
-		return plugin != null && plugin.getUser(p).isAfk();
+	public static boolean isAfk(Player p) {
+		return plugin.getUser(p).isAfk();
 	}
 
 	/**
-	 * The player's full name
+	 * If the player is afk
 	 *
-	 * @param player The player to get the full name of
-	 * @return The player's full name
+	 * @param p The player to check
+	 * @return If they are AFK, assumes not AFK if essentials is not installed
 	 */
-	public String fullName(UUID player) {
-		if (player == null) {
-			throw new NullPointerException("player cannot be null!");
-		}
+	public static boolean isAfk(UUID p) {
+		return plugin.getUser(p).isAfk();
+	}
 
-		String nickName = Utils.getNameForce(player);
-		if (plugin != null) {
-			Player p = Bukkit.getPlayer(player);
-			if (p != null && !plugin.getPermissionsHandler().getPrefix(p).isEmpty()) {
-				if (plugin.getUser(player) != null) {
-					return plugin.getPermissionsHandler().getPrefix(p) + plugin.getUser(player).getNick(true);
-				}
-			} else {
-				String nick = plugin.getUser(player).getNick(true);
-				if (nick != null) {
-					nickName = nick;
-				}
-			}
-		}
-		return Utils.getPrefix(nickName) + nickName;
+	/**
+	 * Gets a players nickname from essentials
+	 *
+	 * @param id the id of the player to check
+	 * @return the nickname of the player
+	 */
+	public static String getNickname(UUID id) {
+		return plugin.getUser(id).getNick(true);
 	}
 }

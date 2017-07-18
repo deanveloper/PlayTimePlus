@@ -35,4 +35,4 @@ messages:
         success: "{{prefix}}&dYou &ehave played for &d{{time}}&e."
       top:
         header: "&e---------------&a[Playtime Top]&e---------------"
-        eachPlayer: "&d#{{num}}. &r{{target}} &ewith &d{{time}}&e."
+        eachPlayer: "&d#{{num}}. &r{{player}} &ewith &d{{time}}&e."
