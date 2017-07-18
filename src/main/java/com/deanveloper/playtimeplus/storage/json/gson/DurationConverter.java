@@ -1,4 +1,4 @@
-package com.deanveloper.playtimeplus.util.gson;
+package com.deanveloper.playtimeplus.storage.json.gson;
 
 import com.google.gson.*;
 

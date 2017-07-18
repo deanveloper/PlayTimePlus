@@ -1,7 +1,6 @@
 package com.deanveloper.playtimeplus;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,17 +12,14 @@ import com.deanveloper.playtimeplus.commands.ConvertStorageCommand;
 import com.deanveloper.playtimeplus.commands.DebugCommand;
 import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
 import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
-import com.deanveloper.playtimeplus.hooks.ChatHook;
-import com.deanveloper.playtimeplus.hooks.EssentialsHook;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
 import com.deanveloper.playtimeplus.util.Utils;
-import com.deanveloper.playtimeplus.util.gson.DurationConverter;
-import com.deanveloper.playtimeplus.util.gson.LocalDateTimeConverter;
+import com.deanveloper.playtimeplus.storage.json.gson.DurationConverter;
+import com.deanveloper.playtimeplus.storage.json.gson.LocalDateTimeConverter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
-import net.milkbowl.vault.chat.Chat;
 
 import java.io.*;
 import java.time.Duration;
