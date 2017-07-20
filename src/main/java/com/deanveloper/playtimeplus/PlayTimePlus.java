@@ -45,7 +45,7 @@ public class PlayTimePlus extends JavaPlugin implements Listener {
 	public void onEnable() {
 		instance = this;
 
-		saveConfig();
+		saveDefaultConfig();
 		if (getConfig().getInt("version") != CONFIG_VERSION) {
 			updateConfig();
 		}

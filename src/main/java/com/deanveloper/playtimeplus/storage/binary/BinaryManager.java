@@ -7,19 +7,17 @@ import com.deanveloper.playtimeplus.PlayTimePlus;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.storage.binary.old.BinaryManagerV1;
-import sun.nio.ch.ChannelInputStream;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.channels.*;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -46,6 +44,9 @@ public class BinaryManager implements Manager {
 	public void init() {
 		// Parse the file
 
+		if (Files.notExists(storage)) {
+			return;
+		}
 		try (FileChannel file = FileChannel.open(storage, StandardOpenOption.READ)) {
 			ByteBuffer versionBuffer = ByteBuffer.allocate(Integer.BYTES);
 			file.read(versionBuffer);
