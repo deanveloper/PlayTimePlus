@@ -68,10 +68,7 @@ public class JsonManager implements Manager {
 		}.getType();
 
 		JsonObject json = root.getAsJsonObject("players");
-		if (json == null) {
-			players = new HashMap<>();
-		} else {
-			players = new HashMap<>(json.entrySet().size());
+		if (json != null) {
 			for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
 
 				UUID id = UUID.fromString(entry.getKey());

@@ -14,6 +14,7 @@ import com.deanveloper.playtimeplus.commands.ExportPlayersCommand;
 import com.deanveloper.playtimeplus.commands.playtime.PlayTimeCommand;
 import com.deanveloper.playtimeplus.storage.Manager;
 import com.deanveloper.playtimeplus.storage.StorageMethod;
+import com.deanveloper.playtimeplus.storage.TimeEntry;
 import com.deanveloper.playtimeplus.storage.json.gson.TimeEntryDeserializer;
 import com.deanveloper.playtimeplus.util.Utils;
 import com.deanveloper.playtimeplus.storage.json.gson.DurationConverter;
@@ -31,7 +32,7 @@ import java.time.LocalDateTime;
  */
 public class PlayTimePlus extends JavaPlugin implements Listener {
 	public static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(TimeEntryDeserializer.class, new TimeEntryDeserializer())
+			.registerTypeAdapter(TimeEntry.class, new TimeEntryDeserializer())
 			.registerTypeAdapter(LocalDateTime.class, new LocalDateTimeConverter())
 			.registerTypeAdapter(Duration.class, new DurationConverter())
 			.setLongSerializationPolicy(LongSerializationPolicy.STRING)
