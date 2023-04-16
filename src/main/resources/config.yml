@@ -1,0 +1,38 @@
+storage: binary
+autosave: 300
+version: 1
+messages:
+  prefix: "&a[PlayTime+] &r"
+  criticalerr: "{{prefix}}Encountered error {{error}}, please check console and notify the developer!"
+  cmd:
+    exportplayers:
+      success: "{{prefix}}&aSuccess!"
+      help:
+        header: "&6File Types"
+        eachMethod: "&d{{type}} &b- &a{{desc}}"
+    convertstorage:
+      success: "{{prefix}}&aSuccess!"
+      alreadyUsing: "{{prefix}}&cYou are already using this storage method!"
+      help:
+        header: "&6Storage Methods"
+        eachMethod: "&d{{type}} &b- &a{{desc}}"
+    playtime:
+      help:
+        header: "&6Usage: /{{cmd}} <command> [args...]"
+        eachCmd: "&a/{{cmd}} {{subcmd}} &d{{args}} &e{{desc}}"
+      error: "{{prefix}}&cERROR: {{error}}"
+      other:
+        success: "{{prefix}}&d{{target}} &ehas played for &d{{time}}§e."
+        fail: "{{prefix}}Couldn't find player {{target}}"
+      query:
+        help: "{{prefix}}Go to this page for help: https://goo.gl/Y1KeoG"
+        start: "{{prefix}}Performing query..."
+        success: "{{prefix}}Query finished!"
+        eachPlayer: "{{prefix}}&d{{player}} &e-> &d{{time}}"
+        queryError: "{{prefix}}&cQuery Error: {{error}}"
+      self:
+        consoleuse: "{{prefix}}Only players can execute this command"
+        success: "{{prefix}}&dYou &ehave played for &d{{time}}&e."
+      top:
+        header: "&e---------------&a[Playtime Top]&e---------------"
+        eachPlayer: "&d#{{num}}. &r{{player}} &ewith &d{{time}}&e."

@@ -1,0 +1,66 @@
+name: PlayTimePlus
+author: Deanveloper
+main: com.deanveloper.playtimeplus.PlayTimePlus
+version: ${project.version}
+softdepend: [Vault]
+commands:
+  playtime:
+    permission: playtimeplus.command.playtime
+    description: "Command to view play times"
+    usage: "/playtime <cmd> [args...]"
+    aliases: [playtimeplus, ptp]
+  exportplayers:
+    permission: playtimeplus.command.exportplayers
+    description: "Exports players to a file"
+    usage: "/exportplayers <help|filetype> [query]"
+    aliases: [export]
+  debug:
+    permission: playtimeplus.command.debug
+    description: "Enable debug mode"
+    usage: "/debug <true|false>"
+  convertstorage:
+    permission: playtimeplus.command.convertstorage
+    description: "Converts the storage method"
+    usage: "/convertstorage <help|storagetype>"
+
+permissions:
+  playtimeplus.command.playtime:
+    description: "Allows access to use /playtimeplus (Note: subcommands must be given separately)"
+    default: true
+  playtimeplus.command.playtime.self:
+    description: "Allows access to view their own play time"
+    default: true
+    children:
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.top:
+    description: "Allows access to view the top 10 players"
+    default: true
+    children:
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.other:
+    description: "Allows access to view other people's play times"
+    default: op
+    children:
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.query:
+    description: "Allows access to query playtimes"
+    default: op
+    children:
+      playtimeplus.command.playtime: true
+  playtimeplus.command.playtime.*:
+    description: "Allows full access to the /playtime command"
+    default: op
+    children:
+      playtimeplus.command.playtime.self: true
+      playtimeplus.command.playtime.top: true
+      playtimeplus.command.playtime.other: true
+      playtimeplus.command.playtime.query: true
+  playtimeplus.command.exportplayers:
+    description: "Allows access to the /exportplayers command"
+    default: op
+  playtimeplus.command.convertstorage:
+    description: "Allows access to the /convertstorage command"
+    default: op
+  playtimeplus.podium:
+    description: "Allows the creation/destruction of a podium"
+    default: op
